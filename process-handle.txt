@@ -1,0 +1,79 @@
+  processExtractedHandle(handle, method, url = '') {
+    if (!handle) return;
+    
+    // 1. Aggressive Purge: Remove ALL numbers and trailing tech fragments
+    let cleanHandle = handle.toLowerCase()
+      .replace(/[0-9]/g, '') // Remove ALL numbers
+      .replace(/-app$/, '')  // Remove trailing -app
+      .replace(/[^a-z-]/g, '') // Only keep letters and dashes
+      .replace(/-+$/, '') // Remove trailing dashes
+      .trim();
+
+    // 2. Explicit System Block (Catching 'perf', 'monorail', etc.)
+    const systemBlacklist = [
+      'assets', 'scripts', 'files', 'shop', 'storefront', 'perf', 'monorail', 
+      'site-declaration', 'shopify-pay', 'b-cdn', 'shopify-cloud', 'app-bridge',
+      'blob', 'zip', 'rates', 'state', 'country', 'translation', 'common',
+      'jquery', 'bootstrap', 'theme', 'settings', 'config', 'utils', 'analytics',
+      'vitals', 'checkpoint', 'recaptcha', 'perfkit'
+    ];
+    
+    if (cleanHandle.length < 3 || systemBlacklist.some(b => cleanHandle.includes(b))) return;
+
+    // 3. Precision Brand Mapping
+    const brandMap = {
+      'cart-drawer-cart-upsell': 'Boostly',
+      'zepto-product-personalizer': 'Zepto Product Personalizer',
+      'zeptoapps': 'Zepto Product Personalizer',
+      'pplr-common': 'Zepto Product Personalizer',
+      'tinyseo': 'Tiny: SEO Image Optimizer',
+      'infinseo-seo-image-optimizer': 'InfinSEO',
+      'infin-seo': 'InfinSEO',
+      'avada': 'Avada',
+      'popman-popups-social': 'Popman'
+    };
+    
+    let finalName = brandMap[cleanHandle] || '';
+
+    // 4. Database Search Fallback
+    if (!finalName) {
+      const foundApp = this.apps.find(app => {
+        if (!app || !app.name) return false;
+        const dbHandle = app.name.toLowerCase().replace(/[^a-z]/g, '');
+        const searchHandle = cleanHandle.replace(/-/g, '');
+        return dbHandle.includes(searchHandle) || searchHandle.includes(dbHandle);
+      });
+      if (foundApp) finalName = foundApp.name;
+    }
+
+    // 5. Heuristic fallback for unknown brands
+    if (!finalName) {
+      finalName = cleanHandle
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    }
+
+    // 6. Intelligent Deduplication & Merging
+    let existingMaster = null;
+    for (let [name, data] of this.detectedApps) {
+      const n1 = name.toLowerCase().replace(/[^a-z]/g, '');
+      const n2 = finalName.toLowerCase().replace(/[^a-z]/g, '');
+      if (n1.includes(n2) || n2.includes(n1)) {
+        existingMaster = name;
+        break;
+      }
+    }
+
+    if (existingMaster) {
+      const masterName = (finalName.length >= existingMaster.length) ? finalName : existingMaster;
+      if (masterName !== existingMaster) {
+        const data = this.detectedApps.get(existingMaster);
+        this.detectedApps.delete(existingMaster);
+        this.detectedApps.set(masterName, data);
+      }
+      this.recordDetection(masterName, method, 0.99, { handle: cleanHandle, url });
+    } else {
+      this.recordDetection(finalName, method, 0.95, { handle: cleanHandle, url });
+    }
+  }

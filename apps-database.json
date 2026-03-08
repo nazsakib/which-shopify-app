@@ -1,0 +1,5586 @@
+{
+  "apps": [
+    {
+      "name": "Klaviyo",
+      "category": "Email Marketing",
+      "domains": [
+        "klaviyo.com",
+        "static.klaviyo.com",
+        "a.klaviyo.com"
+      ],
+      "scripts": [
+        "klaviyo.js",
+        "k.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/klaviyo",
+        "/klaviyo"
+      ],
+      "dom": [
+        "data-klaviyo",
+        ".klaviyo"
+      ],
+      "globals": [
+        "klaviyo",
+        "Klaviyo"
+      ],
+      "proxy_paths": [
+        "/apps/klaviyo"
+      ],
+      "confidence": 0.95,
+      "webhook_patterns": [
+        "webhooks/klaviyo"
+      ]
+    },
+    {
+      "name": "Loox",
+      "category": "Reviews",
+      "domains": [
+        "loox.io",
+        "widget.loox.io"
+      ],
+      "scripts": [
+        "loox.js",
+        "loox-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/loox",
+        "/loox"
+      ],
+      "dom": [
+        "#looxReviews",
+        ".loox-reviews"
+      ],
+      "globals": [
+        "Loox",
+        "looxWidget"
+      ],
+      "proxy_paths": [
+        "/apps/loox"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Judge.me",
+      "category": "Reviews",
+      "domains": [
+        "judge.me",
+        "cdn.judge.me",
+        "widget.judge.me"
+      ],
+      "scripts": [
+        "judgeme.js",
+        "judge.me.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/judgeme",
+        "/judgeme"
+      ],
+      "dom": [
+        "#judgeme_product_reviews",
+        ".judgeme"
+      ],
+      "globals": [
+        "judgeme",
+        "JudgeMe"
+      ],
+      "proxy_paths": [
+        "/apps/judgeme"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Yotpo",
+      "category": "Reviews",
+      "domains": [
+        "yotpo.com",
+        "staticw2.yotpo.com"
+      ],
+      "scripts": [
+        "yotpo.js",
+        "yotpo-main.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/yotpo",
+        "/yotpo"
+      ],
+      "dom": [
+        "#yotpo",
+        ".yotpo"
+      ],
+      "globals": [
+        "yotpo",
+        "Yotpo"
+      ],
+      "proxy_paths": [
+        "/apps/yotpo"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "ReCharge",
+      "category": "Subscriptions",
+      "domains": [
+        "rechargeapps.com",
+        "static.rechargeapps.com"
+      ],
+      "scripts": [
+        "recharge.js",
+        "recharge-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/recharge",
+        "/recharge"
+      ],
+      "dom": [
+        "#recharge",
+        ".recharge-widget"
+      ],
+      "globals": [
+        "ReCharge",
+        "rechargeWidget"
+      ],
+      "proxy_paths": [
+        "/apps/recharge",
+        "/tools/recharge"
+      ],
+      "confidence": 0.95,
+      "webhook_patterns": [
+        "webhooks/recharge"
+      ]
+    },
+    {
+      "name": "AfterShip",
+      "category": "Shipping",
+      "domains": [
+        "aftership.com",
+        "static.aftership.com"
+      ],
+      "scripts": [
+        "aftership.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/aftership",
+        "/aftership"
+      ],
+      "dom": [
+        "#aftership",
+        ".aftership-tracking"
+      ],
+      "globals": [
+        "AfterShip"
+      ],
+      "proxy_paths": [
+        "/apps/aftership"
+      ],
+      "confidence": 0.95,
+      "webhook_patterns": [
+        "webhooks/aftership"
+      ]
+    },
+    {
+      "name": "Privy",
+      "category": "Popups & Email",
+      "domains": [
+        "privy.com",
+        "widget.privy.com"
+      ],
+      "scripts": [
+        "privy.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/privy",
+        "/privy"
+      ],
+      "dom": [
+        "#privy",
+        ".privy-popup"
+      ],
+      "globals": [
+        "Privy"
+      ],
+      "proxy_paths": [
+        "/apps/privy"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Smile.io",
+      "category": "Loyalty",
+      "domains": [
+        "smile.io",
+        "cdn.smile.io"
+      ],
+      "scripts": [
+        "smile.js",
+        "smile-io.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/smile",
+        "/smile",
+        "/smile-rewards"
+      ],
+      "dom": [
+        ".smile-rewards",
+        ".smile-ui"
+      ],
+      "globals": [
+        "Smile",
+        "smileIO"
+      ],
+      "proxy_paths": [
+        "/apps/smile"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Tidio",
+      "category": "Live Chat",
+      "domains": [
+        "tidio.co",
+        "widget.tidio.co"
+      ],
+      "scripts": [
+        "tidio.js",
+        "tidio-chat.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/tidio",
+        "/tidio"
+      ],
+      "dom": [
+        "#tidio",
+        ".tidio-chat"
+      ],
+      "globals": [
+        "tidio",
+        "Tidio"
+      ],
+      "proxy_paths": [
+        "/apps/tidio"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Crisp",
+      "category": "Live Chat",
+      "domains": [
+        "crisp.chat",
+        "widget.crisp.co"
+      ],
+      "scripts": [
+        "crisp.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/crisp",
+        "/crisp"
+      ],
+      "dom": [
+        "#crisp",
+        ".crisp-widget"
+      ],
+      "globals": [
+        "Crisp"
+      ],
+      "proxy_paths": [
+        "/apps/crisp"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Zendesk",
+      "category": "Customer Service",
+      "domains": [
+        "zendesk.com",
+        "static.zdassets.com"
+      ],
+      "scripts": [
+        "zendesk.js",
+        "zendesk-web-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/zendesk",
+        "/zendesk"
+      ],
+      "dom": [
+        "#webWidget",
+        ".zendesk"
+      ],
+      "globals": [
+        "zE",
+        "zendeskWebWidget"
+      ],
+      "proxy_paths": [
+        "/apps/zendesk"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Tawk.to",
+      "category": "Live Chat",
+      "domains": [
+        "tawk.to",
+        "embed.tawk.to"
+      ],
+      "scripts": [
+        "tawk.js",
+        "tawk-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/tawk",
+        "/tawk"
+      ],
+      "dom": [
+        "#tawk-container",
+        ".tawk-to"
+      ],
+      "globals": [
+        "TawkAPI"
+      ],
+      "proxy_paths": [
+        "/apps/tawk"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Hotjar",
+      "category": "Analytics",
+      "domains": [
+        "hotjar.com",
+        "static.hotjar.com"
+      ],
+      "scripts": [
+        "hotjar.js",
+        "hj.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/hotjar",
+        "/hotjar"
+      ],
+      "dom": [
+        "#hotjar"
+      ],
+      "globals": [
+        "hotjar",
+        "hj"
+      ],
+      "proxy_paths": [
+        "/apps/hotjar"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Google Tag Manager",
+      "category": "Analytics",
+      "domains": [
+        "googletagmanager.com"
+      ],
+      "scripts": [
+        "gtm.js"
+      ],
+      "cdn_fingerprints": [
+        "/gtm",
+        "/gtm-"
+      ],
+      "dom": [
+        "[data-gtm]",
+        "[data-google-tag-manager]"
+      ],
+      "globals": [
+        "dataLayer",
+        "google_tag_manager"
+      ],
+      "proxy_paths": [
+        "/a/gtm"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Meta Pixel",
+      "category": "Analytics",
+      "domains": [
+        "connect.facebook.net",
+        "facebook.com/tr"
+      ],
+      "scripts": [
+        "fbevents.js",
+        "fb-pixel.js"
+      ],
+      "cdn_fingerprints": [
+        "/fb",
+        "/facebook"
+      ],
+      "dom": [
+        "#fb-root"
+      ],
+      "globals": [
+        "fbq",
+        "_fbq"
+      ],
+      "proxy_paths": [
+        "/a/fb"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "TikTok Pixel",
+      "category": "Analytics",
+      "domains": [
+        "tiktok.com",
+        "analytics.tiktok.com"
+      ],
+      "scripts": [
+        "tiktok-pixel.js",
+        "ttq.js"
+      ],
+      "cdn_fingerprints": [
+        "/tiktok",
+        "/ttq"
+      ],
+      "dom": [
+        "#tiktok"
+      ],
+      "globals": [
+        "ttq"
+      ],
+      "proxy_paths": [
+        "/a/tiktok"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "PageFly",
+      "category": "Page Builder",
+      "domains": [
+        "pagefly.io",
+        "cdn.pagefly.io"
+      ],
+      "scripts": [
+        "pagefly.js",
+        "pagefly-element.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/pagefly",
+        "/pagefly"
+      ],
+      "dom": [
+        "#pagefly",
+        ".pagefly-element"
+      ],
+      "globals": [
+        "PageFly"
+      ],
+      "proxy_paths": [
+        "/apps/pagefly"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "GemPages",
+      "category": "Page Builder",
+      "domains": [
+        "gempages.net",
+        "cdn.gempages.net"
+      ],
+      "scripts": [
+        "gempages.js",
+        "gempages-element.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/gempages",
+        "/gempages"
+      ],
+      "dom": [
+        "#gempages",
+        ".gempages-element"
+      ],
+      "globals": [
+        "GemPages"
+      ],
+      "proxy_paths": [
+        "/apps/gempages"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Bold Subscriptions",
+      "category": "Subscriptions",
+      "domains": [
+        "boldapps.net",
+        "bold-subscriptions.com"
+      ],
+      "scripts": [
+        "bold-subscriptions.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/bold",
+        "/bold"
+      ],
+      "dom": [
+        ".bold-subscriptions"
+      ],
+      "globals": [
+        "Bold",
+        "BoldSubscriptions"
+      ],
+      "proxy_paths": [
+        "/apps/bold"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Gorgias",
+      "category": "Customer Service",
+      "domains": [
+        "gorgias.com",
+        "widget.gorgias.io"
+      ],
+      "scripts": [
+        "gorgias.js",
+        "gorgias-chat.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/gorgias",
+        "/gorgias"
+      ],
+      "dom": [
+        "#gorgias",
+        ".gorgias-chat"
+      ],
+      "globals": [
+        "Gorgias"
+      ],
+      "proxy_paths": [
+        "/apps/gorgias"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "PushOwl",
+      "category": "Push Notifications",
+      "domains": [
+        "pushowl.com",
+        "cdn.pushowl.com"
+      ],
+      "scripts": [
+        "pushowl.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/pushowl",
+        "/pushowl"
+      ],
+      "dom": [
+        "#pushowl",
+        ".pushowl"
+      ],
+      "globals": [
+        "PushOwl"
+      ],
+      "proxy_paths": [
+        "/apps/pushowl"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Omnisend",
+      "category": "Email Marketing",
+      "domains": [
+        "omnisend.com",
+        "static.omnisend.com"
+      ],
+      "scripts": [
+        "omnisend.js",
+        "omnisend-sdk.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/omnisend",
+        "/omnisend"
+      ],
+      "dom": [
+        "#omnisend",
+        ".omnisend"
+      ],
+      "globals": [
+        "omnisend"
+      ],
+      "proxy_paths": [
+        "/apps/omnisend"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Mailchimp",
+      "category": "Email Marketing",
+      "domains": [
+        "mailchimp.com",
+        "cdn.mailchimp.com"
+      ],
+      "scripts": [
+        "mailchimp.js",
+        "mc-validate.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/mailchimp",
+        "/mailchimp"
+      ],
+      "dom": [
+        "#mc-embedded-subscribe",
+        ".mailchimp"
+      ],
+      "globals": [
+        "MailChimp",
+        "mc"
+      ],
+      "proxy_paths": [
+        "/apps/mailchimp"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Kustomer",
+      "category": "Customer Service",
+      "domains": [
+        "kustomer.com",
+        "widget.kustomerapp.com"
+      ],
+      "scripts": [
+        "kustomer.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/kustomer",
+        "/kustomer"
+      ],
+      "dom": [
+        "#kustomer",
+        ".kustomer"
+      ],
+      "globals": [
+        "Kustomer"
+      ],
+      "proxy_paths": [
+        "/apps/kustomer"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Intercom",
+      "category": "Live Chat",
+      "domains": [
+        "intercom.io",
+        "widget.intercom.io"
+      ],
+      "scripts": [
+        "intercom.js",
+        "intercom-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/intercom",
+        "/intercom"
+      ],
+      "dom": [
+        "#intercom",
+        ".intercom-widget"
+      ],
+      "globals": [
+        "Intercom",
+        "intercomSettings"
+      ],
+      "proxy_paths": [
+        "/apps/intercom"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Freshdesk",
+      "category": "Customer Service",
+      "domains": [
+        "freshdesk.com",
+        "widget.freshdesk.com"
+      ],
+      "scripts": [
+        "freshdesk.js",
+        "freshdesk-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/freshdesk",
+        "/freshdesk"
+      ],
+      "dom": [
+        "#freshwidget",
+        ".freshdesk"
+      ],
+      "globals": [
+        "Freshdesk"
+      ],
+      "proxy_paths": [
+        "/apps/freshdesk"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Recart",
+      "category": "Messenger Marketing",
+      "domains": [
+        "recart.com",
+        "cdn.recart.com"
+      ],
+      "scripts": [
+        "recart.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/recart",
+        "/recart"
+      ],
+      "dom": [
+        "#recart",
+        ".recart"
+      ],
+      "globals": [
+        "Recart"
+      ],
+      "proxy_paths": [
+        "/apps/recart"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "ManyChat",
+      "category": "Messenger Marketing",
+      "domains": [
+        "manychat.com",
+        "widget.manychat.com"
+      ],
+      "scripts": [
+        "manychat.js",
+        "manychat-fb.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/manychat",
+        "/manychat"
+      ],
+      "dom": [
+        "#manychat",
+        ".manychat"
+      ],
+      "globals": [
+        "ManyChat"
+      ],
+      "proxy_paths": [
+        "/apps/manychat"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Snapchat Pixel",
+      "category": "Analytics",
+      "domains": [
+        "snapchat.com",
+        "sc-static.net"
+      ],
+      "scripts": [
+        "snapchat-pixel.js",
+        "scq.js"
+      ],
+      "cdn_fingerprints": [
+        "/snapchat",
+        "/scq"
+      ],
+      "dom": [
+        "#snap"
+      ],
+      "globals": [
+        "snap_pixel"
+      ],
+      "proxy_paths": [
+        "/a/snapchat"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Pinterest Pixel",
+      "category": "Analytics",
+      "domains": [
+        "pinterest.com",
+        "ct.pinterest.com"
+      ],
+      "scripts": [
+        "pinit.js",
+        "pinterest-pixel.js"
+      ],
+      "cdn_fingerprints": [
+        "/pinterest",
+        "/pin"
+      ],
+      "dom": [
+        "#pinterest"
+      ],
+      "globals": [
+        "pintrk"
+      ],
+      "proxy_paths": [
+        "/a/pinterest"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Twitter Pixel",
+      "category": "Analytics",
+      "domains": [
+        "twitter.com",
+        "static.ads-twitter.com"
+      ],
+      "scripts": [
+        "twitter-pixel.js",
+        "twq.js"
+      ],
+      "cdn_fingerprints": [
+        "/twitter",
+        "/twq"
+      ],
+      "dom": [
+        "#twitter"
+      ],
+      "globals": [
+        "twq"
+      ],
+      "proxy_paths": [
+        "/a/twitter"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "LinkedIn Insight",
+      "category": "Analytics",
+      "domains": [
+        "linkedin.com",
+        "px.ads.linkedin.com"
+      ],
+      "scripts": [
+        "linkedin-insight.js",
+        "li.js"
+      ],
+      "cdn_fingerprints": [
+        "/linkedin",
+        "/li"
+      ],
+      "dom": [
+        "#linkedin"
+      ],
+      "globals": [
+        "lintrk"
+      ],
+      "proxy_paths": [
+        "/a/linkedin"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Segment",
+      "category": "Analytics",
+      "domains": [
+        "segment.com",
+        "cdn.segment.com"
+      ],
+      "scripts": [
+        "segment.js",
+        "analytics.js"
+      ],
+      "cdn_fingerprints": [
+        "/segment",
+        "/analytics"
+      ],
+      "dom": [
+        "#segment"
+      ],
+      "globals": [
+        "analytics",
+        "segment"
+      ],
+      "proxy_paths": [
+        "/a/segment"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "FullStory",
+      "category": "Analytics",
+      "domains": [
+        "fullstory.com",
+        "rs.fullstory.com"
+      ],
+      "scripts": [
+        "fullstory.js",
+        "fs.js"
+      ],
+      "cdn_fingerprints": [
+        "/fullstory",
+        "/fs"
+      ],
+      "dom": [
+        "#fullstory"
+      ],
+      "globals": [
+        "FS",
+        "FullStory"
+      ],
+      "proxy_paths": [
+        "/a/fullstory"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Microsoft Clarity",
+      "category": "Analytics",
+      "domains": [
+        "clarity.ms",
+        "www.clarity.ms"
+      ],
+      "scripts": [
+        "clarity.js"
+      ],
+      "cdn_fingerprints": [
+        "/clarity",
+        "/msclarity"
+      ],
+      "dom": [
+        "#clarity"
+      ],
+      "globals": [
+        "clarity"
+      ],
+      "proxy_paths": [
+        "/a/clarity"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Amplitude",
+      "category": "Analytics",
+      "domains": [
+        "amplitude.com",
+        "cdn.amplitude.com"
+      ],
+      "scripts": [
+        "amplitude.js"
+      ],
+      "cdn_fingerprints": [
+        "/amplitude",
+        "/amplitude-js"
+      ],
+      "dom": [
+        "#amplitude"
+      ],
+      "globals": [
+        "amplitude"
+      ],
+      "proxy_paths": [
+        "/a/amplitude"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Mixpanel",
+      "category": "Analytics",
+      "domains": [
+        "mixpanel.com",
+        "cdn.mxpnl.com"
+      ],
+      "scripts": [
+        "mixpanel.js"
+      ],
+      "cdn_fingerprints": [
+        "/mixpanel",
+        "/mixpanel-js"
+      ],
+      "dom": [
+        "#mixpanel"
+      ],
+      "globals": [
+        "mixpanel"
+      ],
+      "proxy_paths": [
+        "/a/mixpanel"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Heap",
+      "category": "Analytics",
+      "domains": [
+        "heap.io",
+        "heapanalytics.com"
+      ],
+      "scripts": [
+        "heap.js",
+        "heap-analytics.js"
+      ],
+      "cdn_fingerprints": [
+        "/heap",
+        "/heapanalytics"
+      ],
+      "dom": [
+        "#heap"
+      ],
+      "globals": [
+        "heap"
+      ],
+      "proxy_paths": [
+        "/a/heap"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "GA4",
+      "category": "Analytics",
+      "domains": [
+        "google-analytics.com",
+        "googletagmanager.com"
+      ],
+      "scripts": [
+        "gtag.js",
+        "analytics-ga4.js"
+      ],
+      "cdn_fingerprints": [
+        "/gtag",
+        "/ga4"
+      ],
+      "dom": [
+        "#ga"
+      ],
+      "globals": [
+        "gtag",
+        "dataLayer"
+      ],
+      "proxy_paths": [
+        "/a/ga"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Crazy Egg",
+      "category": "Analytics",
+      "domains": [
+        "crazyegg.com",
+        "cdn.crazyegg.com"
+      ],
+      "scripts": [
+        "crazyegg.js",
+        "ceg.js"
+      ],
+      "cdn_fingerprints": [
+        "/crazyegg",
+        "/ceg"
+      ],
+      "dom": [
+        "#crazyegg"
+      ],
+      "globals": [
+        "CE2"
+      ],
+      "proxy_paths": [
+        "/a/crazyegg"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Lucky Orange",
+      "category": "Analytics",
+      "domains": [
+        "luckyorange.com",
+        "cdn.luckyorange.com"
+      ],
+      "scripts": [
+        "luckyorange.js",
+        "lo-main.js"
+      ],
+      "cdn_fingerprints": [
+        "/luckyorange",
+        "/lo"
+      ],
+      "dom": [
+        "#luckyorange"
+      ],
+      "globals": [
+        "LuckyOrange",
+        "lo"
+      ],
+      "proxy_paths": [
+        "/a/luckyorange"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Smartlook",
+      "category": "Analytics",
+      "domains": [
+        "smartlook.com",
+        "rec.smartlook.com"
+      ],
+      "scripts": [
+        "smartlook.js"
+      ],
+      "cdn_fingerprints": [
+        "/smartlook",
+        "/smartlook-rec"
+      ],
+      "dom": [
+        "#smartlook"
+      ],
+      "globals": [
+        "smartlook"
+      ],
+      "proxy_paths": [
+        "/a/smartlook"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Mouseflow",
+      "category": "Analytics",
+      "domains": [
+        "mouseflow.com",
+        "cdn.mouseflow.com"
+      ],
+      "scripts": [
+        "mouseflow.js"
+      ],
+      "cdn_fingerprints": [
+        "/mouseflow",
+        "/mouseflow-cdn"
+      ],
+      "dom": [
+        "#mouseflow"
+      ],
+      "globals": [
+        "Mouseflow",
+        "mf"
+      ],
+      "proxy_paths": [
+        "/a/mouseflow"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "HubSpot",
+      "category": "CRM",
+      "domains": [
+        "hubspot.com",
+        "js.hs-scripts.com"
+      ],
+      "scripts": [
+        "hubspot.js",
+        "hubspot-tracking.js"
+      ],
+      "cdn_fingerprints": [
+        "/hubspot",
+        "/hs-scripts"
+      ],
+      "dom": [
+        ".hs-cta-wrapper",
+        "#hs-cta"
+      ],
+      "globals": [
+        "_hsq",
+        "hubspot"
+      ],
+      "proxy_paths": [
+        "/apps/hubspot"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Salesforce",
+      "category": "CRM",
+      "domains": [
+        "salesforce.com",
+        "static.salesforce.com"
+      ],
+      "scripts": [
+        "salesforce.js"
+      ],
+      "cdn_fingerprints": [
+        "/salesforce",
+        "/sfdc"
+      ],
+      "dom": [
+        "#salesforce",
+        ".salesforce"
+      ],
+      "globals": [
+        "sfdc"
+      ],
+      "proxy_paths": [
+        "/a/salesforce"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Zoho",
+      "category": "CRM",
+      "domains": [
+        "zoho.com",
+        "crm.zoho.com"
+      ],
+      "scripts": [
+        "zoho.js",
+        "zoho-crm.js"
+      ],
+      "cdn_fingerprints": [
+        "/zoho",
+        "/zoho-crm"
+      ],
+      "dom": [
+        "#zoho",
+        ".zoho-crm"
+      ],
+      "globals": [
+        "zsiq",
+        "Zoho"
+      ],
+      "proxy_paths": [
+        "/a/zoho"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Trustpilot",
+      "category": "Reviews",
+      "domains": [
+        "trustpilot.com",
+        "widget.trustpilot.com"
+      ],
+      "scripts": [
+        "trustpilot.js",
+        "trustpilot-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/trustpilot",
+        "/trustpilot-widget"
+      ],
+      "dom": [
+        ".trustpilot-widget",
+        "#trustpilot"
+      ],
+      "globals": [
+        "trustpilot"
+      ],
+      "proxy_paths": [
+        "/apps/trustpilot"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Okendo",
+      "category": "Reviews",
+      "domains": [
+        "okendo.io",
+        "cdn.okendo.io"
+      ],
+      "scripts": [
+        "okendo.js",
+        "okendo-reviews.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/okendo",
+        "/okendo"
+      ],
+      "dom": [
+        "#okendo",
+        ".okendo-reviews"
+      ],
+      "globals": [
+        "Okendo"
+      ],
+      "proxy_paths": [
+        "/apps/okendo"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Junip",
+      "category": "Reviews",
+      "domains": [
+        "junip.co",
+        "cdn.junip.co"
+      ],
+      "scripts": [
+        "junip.js",
+        "junip-reviews.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/junip",
+        "/junip"
+      ],
+      "dom": [
+        "#junip",
+        ".junip"
+      ],
+      "globals": [
+        "Junip"
+      ],
+      "proxy_paths": [
+        "/apps/junip"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Stamped.io",
+      "category": "Reviews",
+      "domains": [
+        "stamped.io",
+        "cdn.stamped.io"
+      ],
+      "scripts": [
+        "stamped.js",
+        "stamped-reviews.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/stamped",
+        "/stamped"
+      ],
+      "dom": [
+        "#stamped",
+        ".stamped"
+      ],
+      "globals": [
+        "Stamped"
+      ],
+      "proxy_paths": [
+        "/apps/stamped"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Proof",
+      "category": "Social Proof",
+      "domains": [
+        "useproof.com",
+        "cdn.useproof.com"
+      ],
+      "scripts": [
+        "proof.js",
+        "proof-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/proof",
+        "/proof"
+      ],
+      "dom": [
+        "#proof",
+        ".proof-widget"
+      ],
+      "globals": [
+        "Proof"
+      ],
+      "proxy_paths": [
+        "/apps/proof"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Fomo",
+      "category": "Social Proof",
+      "domains": [
+        "fomo.com",
+        "cdn.fomo.com"
+      ],
+      "scripts": [
+        "fomo.js",
+        "fomo-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/fomo",
+        "/fomo"
+      ],
+      "dom": [
+        "#fomo",
+        ".fomo-widget"
+      ],
+      "globals": [
+        "Fomo"
+      ],
+      "proxy_paths": [
+        "/apps/fomo"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Nosto",
+      "category": "Personalization",
+      "domains": [
+        "nosto.com",
+        "connect.nosto.com"
+      ],
+      "scripts": [
+        "nosto.js",
+        "nosto-personalization.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/nosto",
+        "/nosto"
+      ],
+      "dom": [
+        "#nosto",
+        ".nosto"
+      ],
+      "globals": [
+        "nosto"
+      ],
+      "proxy_paths": [
+        "/apps/nosto"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Dynamic Yield",
+      "category": "Personalization",
+      "domains": [
+        "dynamicyield.com",
+        "cdn.dynamicyield.com"
+      ],
+      "scripts": [
+        "dynamicyield.js",
+        "dy-main.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/dynamicyield",
+        "/dynamicyield"
+      ],
+      "dom": [
+        "#dy",
+        ".dynamicyield"
+      ],
+      "globals": [
+        "DY",
+        "dynamicyield"
+      ],
+      "proxy_paths": [
+        "/apps/dynamicyield"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Optimizely",
+      "category": "A/B Testing",
+      "domains": [
+        "optimizely.com",
+        "cdn.optimizely.com"
+      ],
+      "scripts": [
+        "optimizely.js"
+      ],
+      "cdn_fingerprints": [
+        "/optimizely",
+        "/optimizely-js"
+      ],
+      "dom": [
+        "#optimizely"
+      ],
+      "globals": [
+        "optimizely"
+      ],
+      "proxy_paths": [
+        "/a/optimizely"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "VWO",
+      "category": "A/B Testing",
+      "domains": [
+        "vwo.com",
+        "cdn.vwo.com"
+      ],
+      "scripts": [
+        "vwo.js",
+        "vwo-tracking.js"
+      ],
+      "cdn_fingerprints": [
+        "/vwo",
+        "/vwo-js"
+      ],
+      "dom": [
+        "#vwo"
+      ],
+      "globals": [
+        "vwo",
+        "VWO"
+      ],
+      "proxy_paths": [
+        "/a/vwo"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Google Optimize",
+      "category": "A/B Testing",
+      "domains": [
+        "googleoptimize.com"
+      ],
+      "scripts": [
+        "google-optimize.js",
+        "optimize-main.js"
+      ],
+      "cdn_fingerprints": [
+        "/optimize",
+        "/gtag/optimize"
+      ],
+      "dom": [
+        "#optimize"
+      ],
+      "globals": [
+        "optimize"
+      ],
+      "proxy_paths": [
+        "/a/optimize"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Refersion",
+      "category": "Affiliate",
+      "domains": [
+        "refersion.com",
+        "cdn.refersion.com"
+      ],
+      "scripts": [
+        "refersion.js",
+        "refersion-tracking.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/refersion",
+        "/refersion"
+      ],
+      "dom": [
+        "#refersion",
+        ".refersion"
+      ],
+      "globals": [
+        "refersion"
+      ],
+      "proxy_paths": [
+        "/apps/refersion"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Stripe",
+      "category": "Payment",
+      "domains": [
+        "js.stripe.com",
+        "api.stripe.com"
+      ],
+      "scripts": [
+        "stripe.js",
+        "stripe-v3.js"
+      ],
+      "cdn_fingerprints": [
+        "/stripe",
+        "/js.stripe"
+      ],
+      "dom": [
+        "#stripe",
+        ".stripe"
+      ],
+      "globals": [
+        "Stripe",
+        "stripe"
+      ],
+      "proxy_paths": [
+        "/a/stripe"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "PayPal",
+      "category": "Payment",
+      "domains": [
+        "paypal.com",
+        "js.paypal.com"
+      ],
+      "scripts": [
+        "paypal.js",
+        "paypal-checkout.js"
+      ],
+      "cdn_fingerprints": [
+        "/paypal",
+        "/js.paypal"
+      ],
+      "dom": [
+        "#paypal-button",
+        ".paypal"
+      ],
+      "globals": [
+        "paypal"
+      ],
+      "proxy_paths": [
+        "/a/paypal"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Klarna",
+      "category": "Payment",
+      "domains": [
+        "klarna.com",
+        "js.klarna.com"
+      ],
+      "scripts": [
+        "klarna.js",
+        "klarna-payments.js"
+      ],
+      "cdn_fingerprints": [
+        "/klarna",
+        "/js.klarna"
+      ],
+      "dom": [
+        ".klarna",
+        "#klarna"
+      ],
+      "globals": [
+        "Klarna"
+      ],
+      "proxy_paths": [
+        "/a/klarna"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Affirm",
+      "category": "Payment",
+      "domains": [
+        "affirm.com",
+        "js.affirm.com"
+      ],
+      "scripts": [
+        "affirm.js",
+        "affirm-checkout.js"
+      ],
+      "cdn_fingerprints": [
+        "/affirm",
+        "/js.affirm"
+      ],
+      "dom": [
+        "#affirm",
+        ".affirm"
+      ],
+      "globals": [
+        "affirm"
+      ],
+      "proxy_paths": [
+        "/a/affirm"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Afterpay",
+      "category": "Payment",
+      "domains": [
+        "afterpay.com",
+        "js.afterpay.com"
+      ],
+      "scripts": [
+        "afterpay.js",
+        "afterpay-checkout.js"
+      ],
+      "cdn_fingerprints": [
+        "/afterpay",
+        "/js.afterpay"
+      ],
+      "dom": [
+        "#afterpay",
+        ".afterpay"
+      ],
+      "globals": [
+        "Afterpay"
+      ],
+      "proxy_paths": [
+        "/a/afterpay"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Sezzle",
+      "category": "Payment",
+      "domains": [
+        "sezzle.com",
+        "widget.sezzle.com"
+      ],
+      "scripts": [
+        "sezzle.js",
+        "sezzle-checkout.js"
+      ],
+      "cdn_fingerprints": [
+        "/sezzle",
+        "/sezzle-widget"
+      ],
+      "dom": [
+        "#sezzle",
+        ".sezzle"
+      ],
+      "globals": [
+        "Sezzle"
+      ],
+      "proxy_paths": [
+        "/a/sezzle"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Zip",
+      "category": "Payment",
+      "domains": [
+        "zip.co",
+        "widget.zip.co"
+      ],
+      "scripts": [
+        "zip.js",
+        "zip-pay.js"
+      ],
+      "cdn_fingerprints": [
+        "/zip",
+        "/zip-widget"
+      ],
+      "dom": [
+        "#zip",
+        ".zip"
+      ],
+      "globals": [
+        "Zip"
+      ],
+      "proxy_paths": [
+        "/a/zip"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Weglot",
+      "category": "International",
+      "domains": [
+        "weglot.com",
+        "cdn.weglot.com"
+      ],
+      "scripts": [
+        "weglot.js",
+        "weglot-translate.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/weglot",
+        "/weglot"
+      ],
+      "dom": [
+        "#weglot",
+        ".wg-languages"
+      ],
+      "globals": [
+        "Weglot"
+      ],
+      "proxy_paths": [
+        "/apps/weglot"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Global-E",
+      "category": "International",
+      "domains": [
+        "global-e.com",
+        "checkout.globale.com"
+      ],
+      "scripts": [
+        "global-e.js",
+        "globale-checkout.js"
+      ],
+      "cdn_fingerprints": [
+        "/global-e",
+        "/globale"
+      ],
+      "dom": [
+        "#globale",
+        ".global-e"
+      ],
+      "globals": [
+        "GlobalE"
+      ],
+      "proxy_paths": [
+        "/a/globale"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Shipstation",
+      "category": "Shipping",
+      "domains": [
+        "shipstation.com",
+        "apps.shipstation.com"
+      ],
+      "scripts": [
+        "shipstation.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/shipstation",
+        "/shipstation"
+      ],
+      "dom": [
+        "#shipstation",
+        ".shipstation"
+      ],
+      "globals": [
+        "ShipStation"
+      ],
+      "proxy_paths": [
+        "/apps/shipstation"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Shippo",
+      "category": "Shipping",
+      "domains": [
+        "shippo.com",
+        "api.goshippo.com"
+      ],
+      "scripts": [
+        "shippo.js",
+        "shippo-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/shippo",
+        "/shippo"
+      ],
+      "dom": [
+        "#shippo",
+        ".shippo"
+      ],
+      "globals": [
+        "Shippo"
+      ],
+      "proxy_paths": [
+        "/apps/shippo"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Returnly",
+      "category": "Returns",
+      "domains": [
+        "returnly.com",
+        "cdn.returnly.com"
+      ],
+      "scripts": [
+        "returnly.js",
+        "returnly-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/returnly",
+        "/returnly"
+      ],
+      "dom": [
+        "#returnly",
+        ".returnly"
+      ],
+      "globals": [
+        "Returnly"
+      ],
+      "proxy_paths": [
+        "/apps/returnly"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Loop Returns",
+      "category": "Returns",
+      "domains": [
+        "loopreturns.com",
+        "cdn.loopreturns.com"
+      ],
+      "scripts": [
+        "loop.js",
+        "loop-returns.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/loop",
+        "/loopreturns"
+      ],
+      "dom": [
+        "#loop",
+        ".loop-returns"
+      ],
+      "globals": [
+        "Loop",
+        "LoopReturns"
+      ],
+      "proxy_paths": [
+        "/apps/loop"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Searchspring",
+      "category": "Search",
+      "domains": [
+        "searchspring.net",
+        "cdn.searchspring.net"
+      ],
+      "scripts": [
+        "searchspring.js",
+        "searchspring-snap.js"
+      ],
+      "cdn_fingerprints": [
+        "/searchspring",
+        "/snap.searchspring"
+      ],
+      "dom": [
+        "#searchspring",
+        ".searchspring"
+      ],
+      "globals": [
+        "SearchSpring"
+      ],
+      "proxy_paths": [
+        "/a/searchspring"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Algolia",
+      "category": "Search",
+      "domains": [
+        "algolia.com",
+        "cdn.jsdelivr.net/algoliasearch"
+      ],
+      "scripts": [
+        "algoliasearch.js",
+        "algolia-instantsearch.js"
+      ],
+      "cdn_fingerprints": [
+        "/algolia",
+        "/algoliasearch"
+      ],
+      "dom": [
+        ".algolia",
+        "#algolia"
+      ],
+      "globals": [
+        "algoliasearch",
+        "algolia"
+      ],
+      "proxy_paths": [
+        "/a/algolia"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Glew",
+      "category": "Analytics",
+      "domains": [
+        "glew.io",
+        "cdn.glew.io"
+      ],
+      "scripts": [
+        "glew.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/glew",
+        "/glew"
+      ],
+      "dom": [
+        "#glew",
+        ".glew"
+      ],
+      "globals": [
+        "Glew"
+      ],
+      "proxy_paths": [
+        "/apps/glew"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Wiser",
+      "category": "Analytics",
+      "domains": [
+        "wiser.io",
+        "api.wiser.io"
+      ],
+      "scripts": [
+        "wiser.js",
+        "wiser-personalization.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/wiser",
+        "/wiser"
+      ],
+      "dom": [
+        "#wiser",
+        ".wiser"
+      ],
+      "globals": [
+        "Wiser"
+      ],
+      "proxy_paths": [
+        "/apps/wiser"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Littledata",
+      "category": "Analytics",
+      "domains": [
+        "littledata.io",
+        "cdn.littledata.io"
+      ],
+      "scripts": [
+        "littledata.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/littledata",
+        "/littledata"
+      ],
+      "dom": [
+        "#littledata",
+        ".littledata"
+      ],
+      "globals": [
+        "Littledata"
+      ],
+      "proxy_paths": [
+        "/apps/littledata"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Triple Whale",
+      "category": "Analytics",
+      "domains": [
+        "triplewhale.com",
+        "cdn.triplewhale.com"
+      ],
+      "scripts": [
+        "triplewhale.js"
+      ],
+      "cdn_fingerprints": [
+        "/triplewhale",
+        "/triple-whale"
+      ],
+      "dom": [
+        "#triplewhale",
+        ".triplewhale"
+      ],
+      "globals": [
+        "TripleWhale"
+      ],
+      "proxy_paths": [
+        "/a/triplewhale"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Wisepops",
+      "category": "Popups",
+      "domains": [
+        "wisepops.com",
+        "cdn.wisepops.com"
+      ],
+      "scripts": [
+        "wisepops.js",
+        "wisepops-popup.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/wisepops",
+        "/wisepops"
+      ],
+      "dom": [
+        "#wisepops",
+        ".wisepop"
+      ],
+      "globals": [
+        "Wisepops"
+      ],
+      "proxy_paths": [
+        "/apps/wisepops"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "OptinMonster",
+      "category": "Popups",
+      "domains": [
+        "optinmonster.com",
+        "cdn.optinmonster.com"
+      ],
+      "scripts": [
+        "optinmonster.js",
+        "optinmonster-popup.js"
+      ],
+      "cdn_fingerprints": [
+        "/optinmonster",
+        "/om-js"
+      ],
+      "dom": [
+        "#om-popup",
+        ".optinmonster"
+      ],
+      "globals": [
+        "OptinMonster",
+        "omHooks"
+      ],
+      "proxy_paths": [
+        "/a/optinmonster"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Sumo",
+      "category": "Popups",
+      "domains": [
+        "sumo.com",
+        "cdn.sumo.com"
+      ],
+      "scripts": [
+        "sumo.js",
+        "sumo-list-builder.js"
+      ],
+      "cdn_fingerprints": [
+        "/sumo",
+        "/sumo-js"
+      ],
+      "dom": [
+        "#sumo",
+        ".sumo-list-builder"
+      ],
+      "globals": [
+        "SUMO",
+        "SumoMe"
+      ],
+      "proxy_paths": [
+        "/a/sumo"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Sendinblue",
+      "category": "Email Marketing",
+      "domains": [
+        "sendinblue.com",
+        "sibautomation.com"
+      ],
+      "scripts": [
+        "sendinblue.js",
+        "sib.js"
+      ],
+      "cdn_fingerprints": [
+        "/sendinblue",
+        "/sib"
+      ],
+      "dom": [
+        "#sendinblue",
+        ".sendinblue"
+      ],
+      "globals": [
+        "SendinBlue",
+        "sib"
+      ],
+      "proxy_paths": [
+        "/a/sendinblue"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "GetResponse",
+      "category": "Email Marketing",
+      "domains": [
+        "getresponse.com",
+        "js.getresponse.com"
+      ],
+      "scripts": [
+        "getresponse.js",
+        "gr-tracking.js"
+      ],
+      "cdn_fingerprints": [
+        "/getresponse",
+        "/getresponse-js"
+      ],
+      "dom": [
+        "#getresponse",
+        ".getresponse"
+      ],
+      "globals": [
+        "GetResponse"
+      ],
+      "proxy_paths": [
+        "/a/getresponse"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "AWeber",
+      "category": "Email Marketing",
+      "domains": [
+        "aweber.com",
+        "forms.aweber.com"
+      ],
+      "scripts": [
+        "aweber.js",
+        "aweber-forms.js"
+      ],
+      "cdn_fingerprints": [
+        "/aweber",
+        "/aweber-forms"
+      ],
+      "dom": [
+        ".aweber",
+        "#aweber"
+      ],
+      "globals": [
+        "AWeber"
+      ],
+      "proxy_paths": [
+        "/a/aweber"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "ActiveCampaign",
+      "category": "Email Marketing",
+      "domains": [
+        "activecampaign.com",
+        "trackcmp.net"
+      ],
+      "scripts": [
+        "activecampaign.js",
+        "trackcmp.js"
+      ],
+      "cdn_fingerprints": [
+        "/activecampaign",
+        "/trackcmp"
+      ],
+      "dom": [
+        "#activecampaign",
+        ".activecampaign"
+      ],
+      "globals": [
+        "ActiveCampaign"
+      ],
+      "proxy_paths": [
+        "/a/activecampaign"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Drip",
+      "category": "Email Marketing",
+      "domains": [
+        "drip.com",
+        "cdn.drip.com"
+      ],
+      "scripts": [
+        "drip.js",
+        "getdrip.js"
+      ],
+      "cdn_fingerprints": [
+        "/drip",
+        "/getdrip"
+      ],
+      "dom": [
+        "#drip",
+        ".drip"
+      ],
+      "globals": [
+        "Drip"
+      ],
+      "proxy_paths": [
+        "/a/drip"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Campaign Monitor",
+      "category": "Email Marketing",
+      "domains": [
+        "campaignmonitor.com",
+        "cdn.createsend.com"
+      ],
+      "scripts": [
+        "campaignmonitor.js",
+        "createsend.js"
+      ],
+      "cdn_fingerprints": [
+        "/campaignmonitor",
+        "/createsend"
+      ],
+      "dom": [
+        "#campaignmonitor",
+        ".campaignmonitor"
+      ],
+      "globals": [
+        "CampaignMonitor"
+      ],
+      "proxy_paths": [
+        "/a/campaignmonitor"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "LiveChat",
+      "category": "Live Chat",
+      "domains": [
+        "livechat.com",
+        "cdn.livechatinc.com"
+      ],
+      "scripts": [
+        "livechat.js",
+        "livechat-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/livechat",
+        "/livechatinc"
+      ],
+      "dom": [
+        "#livechat",
+        ".livechat"
+      ],
+      "globals": [
+        "LC_2",
+        "livechat"
+      ],
+      "proxy_paths": [
+        "/a/livechat"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Olark",
+      "category": "Live Chat",
+      "domains": [
+        "olark.com",
+        "static.olark.com"
+      ],
+      "scripts": [
+        "olark.js",
+        "olark-chat.js"
+      ],
+      "cdn_fingerprints": [
+        "/olark",
+        "/olark-api"
+      ],
+      "dom": [
+        "#olark",
+        ".olark-chat"
+      ],
+      "globals": [
+        "Olark",
+        "olark"
+      ],
+      "proxy_paths": [
+        "/a/olark"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Chatra",
+      "category": "Live Chat",
+      "domains": [
+        "chatra.io",
+        "cdn.chatra.io"
+      ],
+      "scripts": [
+        "chatra.js",
+        "chatra-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/chatra",
+        "/chatra-js"
+      ],
+      "dom": [
+        "#chatra",
+        ".chatra"
+      ],
+      "globals": [
+        "Chatra"
+      ],
+      "proxy_paths": [
+        "/a/chatra"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Drift",
+      "category": "Live Chat",
+      "domains": [
+        "drift.com",
+        "js.drift.com"
+      ],
+      "scripts": [
+        "drift.js",
+        "drift-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/drift",
+        "/drift-js"
+      ],
+      "dom": [
+        "#drift",
+        ".drift-widget"
+      ],
+      "globals": [
+        "drift",
+        "driftApp"
+      ],
+      "proxy_paths": [
+        "/a/drift"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "JivoChat",
+      "category": "Live Chat",
+      "domains": [
+        "jivochat.com",
+        "widget.jivosite.com"
+      ],
+      "scripts": [
+        "jivo.js",
+        "jivo-site.js"
+      ],
+      "cdn_fingerprints": [
+        "/jivo",
+        "/jivosite"
+      ],
+      "dom": [
+        "#jivo",
+        ".jivo-chat"
+      ],
+      "globals": [
+        "jivo"
+      ],
+      "proxy_paths": [
+        "/a/jivo"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Reamaze",
+      "category": "Live Chat",
+      "domains": [
+        "reamaze.com",
+        "cdn.reamaze.com"
+      ],
+      "scripts": [
+        "reamaze.js",
+        "reamaze-chat.js"
+      ],
+      "cdn_fingerprints": [
+        "/reamaze",
+        "/reamaze-js"
+      ],
+      "dom": [
+        "#reamaze",
+        ".reamaze-chat"
+      ],
+      "globals": [
+        "Reamaze"
+      ],
+      "proxy_paths": [
+        "/a/reamaze"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Freshchat",
+      "category": "Live Chat",
+      "domains": [
+        "freshchat.com",
+        "js.freshchat.com"
+      ],
+      "scripts": [
+        "freshchat.js",
+        "freshchat-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/freshchat",
+        "/freshchat-js"
+      ],
+      "dom": [
+        "#freshchat",
+        ".freshchat-widget"
+      ],
+      "globals": [
+        "Freshchat"
+      ],
+      "proxy_paths": [
+        "/a/freshchat"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Braintree",
+      "category": "Payment",
+      "domains": [
+        "braintreegateway.com",
+        "js.braintreegateway.com"
+      ],
+      "scripts": [
+        "braintree.js",
+        "braintree-web.js"
+      ],
+      "cdn_fingerprints": [
+        "/braintree",
+        "/js.braintreegateway"
+      ],
+      "dom": [
+        "#braintree",
+        ".braintree"
+      ],
+      "globals": [
+        "braintree"
+      ],
+      "proxy_paths": [
+        "/a/braintree"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Adyen",
+      "category": "Payment",
+      "domains": [
+        "adyen.com",
+        "checkoutshopper-live.adyen.com"
+      ],
+      "scripts": [
+        "adyen.js",
+        "adyen-checkout.js"
+      ],
+      "cdn_fingerprints": [
+        "/adyen",
+        "/adyen-checkout"
+      ],
+      "dom": [
+        ".adyen-checkout",
+        "#adyen"
+      ],
+      "globals": [
+        "Adyen"
+      ],
+      "proxy_paths": [
+        "/a/adyen"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "DataDome",
+      "category": "Security",
+      "domains": [
+        "datadome.co",
+        "js.datadome.co"
+      ],
+      "scripts": [
+        "datadome.js",
+        "datadome-protection.js"
+      ],
+      "cdn_fingerprints": [
+        "/datadome",
+        "/datadome-js"
+      ],
+      "dom": [
+        "#datadome",
+        ".datadome"
+      ],
+      "globals": [
+        "DataDome",
+        "datadome"
+      ],
+      "proxy_paths": [
+        "/a/datadome"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "PerimeterX",
+      "category": "Security",
+      "domains": [
+        "perimeterx.com",
+        "cdn.perimeterx.net"
+      ],
+      "scripts": [
+        "perimeterx.js",
+        "px.js"
+      ],
+      "cdn_fingerprints": [
+        "/perimeterx",
+        "/px-"
+      ],
+      "dom": [
+        "#perimeterx",
+        ".perimeterx"
+      ],
+      "globals": [
+        "PerimeterX",
+        "px"
+      ],
+      "proxy_paths": [
+        "/a/perimeterx"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "OneTrust",
+      "category": "Compliance",
+      "domains": [
+        "onetrust.com",
+        "cdn.cookiebot.com"
+      ],
+      "scripts": [
+        "onetrust.js",
+        "ot SDK.js"
+      ],
+      "cdn_fingerprints": [
+        "/onetrust",
+        "/onetrust-js"
+      ],
+      "dom": [
+        "#onetrust",
+        ".onetrust"
+      ],
+      "globals": [
+        "OneTrust",
+        "OnetrustActiveGroups"
+      ],
+      "proxy_paths": [
+        "/a/onetrust"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "CookieBot",
+      "category": "Compliance",
+      "domains": [
+        "cookiebot.com",
+        "consent.cookiebot.com"
+      ],
+      "scripts": [
+        "cookiebot.js",
+        "cybotcookiebot.js"
+      ],
+      "cdn_fingerprints": [
+        "/cookiebot",
+        "/cybotcookiebot"
+      ],
+      "dom": [
+        "#CybotCookiebot",
+        ".CybotCookiebot"
+      ],
+      "globals": [
+        "CookieBot",
+        "CybotCookiebot"
+      ],
+      "proxy_paths": [
+        "/a/cookiebot"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "TrustArc",
+      "category": "Compliance",
+      "domains": [
+        "trustarc.com",
+        "consent.trustarc.com"
+      ],
+      "scripts": [
+        "trustarc.js"
+      ],
+      "cdn_fingerprints": [
+        "/trustarc",
+        "/trustarc-consent"
+      ],
+      "dom": [
+        "#trustarc",
+        ".trustarc"
+      ],
+      "globals": [
+        "TrustArc"
+      ],
+      "proxy_paths": [
+        "/a/trustarc"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Printful",
+      "category": "Print on Demand",
+      "domains": [
+        "printful.com",
+        "api.printful.com"
+      ],
+      "scripts": [
+        "printful.js",
+        "printful-sync.js"
+      ],
+      "cdn_fingerprints": [
+        "/printful",
+        "/printful-js"
+      ],
+      "dom": [
+        "#printful",
+        ".printful"
+      ],
+      "globals": [
+        "Printful"
+      ],
+      "proxy_paths": [
+        "/a/printful"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Printify",
+      "category": "Print on Demand",
+      "domains": [
+        "printify.com",
+        "api.printify.com"
+      ],
+      "scripts": [
+        "printify.js"
+      ],
+      "cdn_fingerprints": [
+        "/printify",
+        "/printify-js"
+      ],
+      "dom": [
+        "#printify",
+        ".printify"
+      ],
+      "globals": [
+        "Printify"
+      ],
+      "proxy_paths": [
+        "/a/printify"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Shopify Flow",
+      "category": "Automation",
+      "domains": [
+        "shopify.com",
+        "flow.shopify.com"
+      ],
+      "scripts": [
+        "shopify-flow.js"
+      ],
+      "cdn_fingerprints": [
+        "/shopify-flow",
+        "/flow-"
+      ],
+      "dom": [
+        "#shopify-flow",
+        ".shopify-flow"
+      ],
+      "globals": [
+        "ShopifyFlow"
+      ],
+      "proxy_paths": [
+        "/apps/flow"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Zapier",
+      "category": "Automation",
+      "domains": [
+        "zapier.com",
+        "hooks.zapier.com"
+      ],
+      "scripts": [
+        "zapier.js",
+        "zapier-webhook.js"
+      ],
+      "cdn_fingerprints": [
+        "/zapier",
+        "/zapier-hooks"
+      ],
+      "dom": [
+        "#zapier",
+        ".zapier"
+      ],
+      "globals": [
+        "Zapier"
+      ],
+      "proxy_paths": [
+        "/a/zapier"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "LoyaltyLion",
+      "category": "Loyalty",
+      "domains": [
+        "loyaltylion.com",
+        "cdn.loyaltylion.com"
+      ],
+      "scripts": [
+        "loyaltylion.js"
+      ],
+      "cdn_fingerprints": [
+        "/loyaltylion",
+        "/loyaltylion-js"
+      ],
+      "dom": [
+        "#loyaltylion",
+        ".loyaltylion"
+      ],
+      "globals": [
+        "LoyaltyLion"
+      ],
+      "proxy_paths": [
+        "/apps/loyaltylion"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "ReferralCandy",
+      "category": "Referral",
+      "domains": [
+        "referralcandy.com",
+        "cdn.referralcandy.com"
+      ],
+      "scripts": [
+        "referralcandy.js"
+      ],
+      "cdn_fingerprints": [
+        "/referralcandy",
+        "/referral-candy"
+      ],
+      "dom": [
+        "#referralcandy",
+        ".referralcandy"
+      ],
+      "globals": [
+        "ReferralCandy"
+      ],
+      "proxy_paths": [
+        "/a/referralcandy"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Friendbuy",
+      "category": "Referral",
+      "domains": [
+        "friendbuy.com",
+        "cdn.friendbuy.com"
+      ],
+      "scripts": [
+        "friendbuy.js"
+      ],
+      "cdn_fingerprints": [
+        "/friendbuy",
+        "/friend-buy"
+      ],
+      "dom": [
+        "#friendbuy",
+        ".friendbuy"
+      ],
+      "globals": [
+        "friendbuy"
+      ],
+      "proxy_paths": [
+        "/a/friendbuy"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Postscript",
+      "category": "SMS Marketing",
+      "domains": [
+        "postscript.io",
+        "cdn.postscript.io"
+      ],
+      "scripts": [
+        "postscript.js",
+        "ps-sms.js"
+      ],
+      "cdn_fingerprints": [
+        "/postscript",
+        "/postscript-sms"
+      ],
+      "dom": [
+        "#postscript",
+        ".postscript"
+      ],
+      "globals": [
+        "Postscript"
+      ],
+      "proxy_paths": [
+        "/a/postscript"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Attentive",
+      "category": "SMS Marketing",
+      "domains": [
+        "attentive.com",
+        "cdn.attentive.com"
+      ],
+      "scripts": [
+        "attentive.js",
+        "attentive-sms.js"
+      ],
+      "cdn_fingerprints": [
+        "/attentive",
+        "/attentive-sms"
+      ],
+      "dom": [
+        "#attentive",
+        ".attentive"
+      ],
+      "globals": [
+        "Attentive"
+      ],
+      "proxy_paths": [
+        "/a/attentive"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Klaviyo SMS",
+      "category": "SMS Marketing",
+      "domains": [
+        "klaviyo.com",
+        "sms.klaviyo.com"
+      ],
+      "scripts": [
+        "klaviyo-sms.js"
+      ],
+      "cdn_fingerprints": [
+        "/klaviyo-sms",
+        "/sms-klaviyo"
+      ],
+      "dom": [
+        "#klaviyo-sms",
+        ".klaviyo-sms"
+      ],
+      "globals": [
+        "KlaviyoSMS"
+      ],
+      "proxy_paths": [
+        "/a/klaviyo-sms"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Twilio",
+      "category": "SMS Marketing",
+      "domains": [
+        "twilio.com",
+        "sdk.twilio.com"
+      ],
+      "scripts": [
+        "twilio.js",
+        "twilio-sdk.js"
+      ],
+      "cdn_fingerprints": [
+        "/twilio",
+        "/twilio-sdk"
+      ],
+      "dom": [
+        "#twilio",
+        ".twilio"
+      ],
+      "globals": [
+        "Twilio"
+      ],
+      "proxy_paths": [
+        "/a/twilio"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Gumroad",
+      "category": "Digital Products",
+      "domains": [
+        "gumroad.com",
+        "cdn.gumroad.com"
+      ],
+      "scripts": [
+        "gumroad.js",
+        "gumroad-overlay.js"
+      ],
+      "cdn_fingerprints": [
+        "/gumroad",
+        "/gumroad-js"
+      ],
+      "dom": [
+        ".gumroad",
+        "#gumroad"
+      ],
+      "globals": [
+        "Gumroad"
+      ],
+      "proxy_paths": [
+        "/a/gumroad"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "SendOwl",
+      "category": "Digital Products",
+      "domains": [
+        "sendowl.com",
+        "cdn.sendowl.com"
+      ],
+      "scripts": [
+        "sendowl.js"
+      ],
+      "cdn_fingerprints": [
+        "/sendowl",
+        "/sendowl-js"
+      ],
+      "dom": [
+        "#sendowl",
+        ".sendowl"
+      ],
+      "globals": [
+        "SendOwl"
+      ],
+      "proxy_paths": [
+        "/a/sendowl"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Elfsight",
+      "category": "Widgets",
+      "domains": [
+        "elfsight.com",
+        "cdn.elfsight.com"
+      ],
+      "scripts": [
+        "elfsight.js"
+      ],
+      "cdn_fingerprints": [
+        "/elfsight",
+        "/elfsight-widget"
+      ],
+      "dom": [
+        ".elfsight",
+        "#elfsight"
+      ],
+      "globals": [
+        "Elfsight"
+      ],
+      "proxy_paths": [
+        "/a/elfsight"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "POWr",
+      "category": "Widgets",
+      "domains": [
+        "powr.io",
+        "cdn.powr.io"
+      ],
+      "scripts": [
+        "powr.js",
+        "powr-widgets.js"
+      ],
+      "cdn_fingerprints": [
+        "/powr",
+        "/powr-io"
+      ],
+      "dom": [
+        ".powr",
+        "#powr"
+      ],
+      "globals": [
+        "POWr"
+      ],
+      "proxy_paths": [
+        "/a/powr"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Taggbox",
+      "category": "Widgets",
+      "domains": [
+        "taggbox.com",
+        "cdn.taggbox.com"
+      ],
+      "scripts": [
+        "taggbox.js"
+      ],
+      "cdn_fingerprints": [
+        "/taggbox",
+        "/taggbox-widget"
+      ],
+      "dom": [
+        ".taggbox",
+        "#taggbox"
+      ],
+      "globals": [
+        "Taggbox"
+      ],
+      "proxy_paths": [
+        "/a/taggbox"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Autocrat",
+      "category": "Order Management",
+      "domains": [
+        "autocrat.com",
+        "app.autocrat.io"
+      ],
+      "scripts": [
+        "autocrat.js"
+      ],
+      "cdn_fingerprints": [
+        "/autocrat",
+        "/autocrat-js"
+      ],
+      "dom": [
+        "#autocrat",
+        ".autocrat"
+      ],
+      "globals": [
+        "Autocrat"
+      ],
+      "proxy_paths": [
+        "/a/autocrat"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Order Printer",
+      "category": "Order Management",
+      "domains": [
+        "shopify.com",
+        "apps.shopify.com"
+      ],
+      "scripts": [
+        "order-printer.js"
+      ],
+      "cdn_fingerprints": [
+        "/order-printer"
+      ],
+      "dom": [
+        "#order-printer",
+        ".order-printer"
+      ],
+      "globals": [
+        "OrderPrinter"
+      ],
+      "proxy_paths": [
+        "/apps/order-printer"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Beeketing",
+      "category": "Marketing",
+      "domains": [
+        "beeketing.com",
+        "cdn.beeketing.com"
+      ],
+      "scripts": [
+        "beeketing.js"
+      ],
+      "cdn_fingerprints": [
+        "/beeketing",
+        "/beeketing-js"
+      ],
+      "dom": [
+        "#beeketing",
+        ".beeketing"
+      ],
+      "globals": [
+        "Beeketing"
+      ],
+      "proxy_paths": [
+        "/a/beeketing"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Userlike",
+      "category": "Live Chat",
+      "domains": [
+        "userlike.com",
+        "widget.userlike.com"
+      ],
+      "scripts": [
+        "userlike.js",
+        "userlike-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/userlike",
+        "/userlike-widget"
+      ],
+      "dom": [
+        "#userlike",
+        ".userlike"
+      ],
+      "globals": [
+        "Userlike"
+      ],
+      "proxy_paths": [
+        "/a/userlike"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Koko",
+      "category": "Customer Service",
+      "domains": [
+        "koko.ai",
+        "cdn.koko.ai"
+      ],
+      "scripts": [
+        "koko.js",
+        "koko-chat.js"
+      ],
+      "cdn_fingerprints": [
+        "/koko",
+        "/koko-ai"
+      ],
+      "dom": [
+        "#koko",
+        ".koko-chat"
+      ],
+      "globals": [
+        "Koko"
+      ],
+      "proxy_paths": [
+        "/a/koko"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Channel",
+      "category": "Live Chat",
+      "domains": [
+        "channel.io",
+        "channelcdn.com"
+      ],
+      "scripts": [
+        "channel.js",
+        "channel-chat.js"
+      ],
+      "cdn_fingerprints": [
+        "/channel",
+        "/channel-js"
+      ],
+      "dom": [
+        "#channel",
+        ".channel-chat"
+      ],
+      "globals": [
+        "Channel"
+      ],
+      "proxy_paths": [
+        "/a/channel"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Customerly",
+      "category": "Live Chat",
+      "domains": [
+        "customerly.io",
+        "cdn.customerly.io"
+      ],
+      "scripts": [
+        "customerly.js"
+      ],
+      "cdn_fingerprints": [
+        "/customerly",
+        "/customerly-js"
+      ],
+      "dom": [
+        "#customerly",
+        ".customerly"
+      ],
+      "globals": [
+        "customerly"
+      ],
+      "proxy_paths": [
+        "/a/customerly"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Metorik",
+      "category": "Analytics",
+      "domains": [
+        "metorik.com",
+        "cdn.metorik.com"
+      ],
+      "scripts": [
+        "metorik.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/metorik",
+        "/metorik"
+      ],
+      "dom": [
+        "#metorik",
+        ".metorik"
+      ],
+      "globals": [
+        "Metorik"
+      ],
+      "proxy_paths": [
+        "/apps/metorik"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Polar Analytics",
+      "category": "Analytics",
+      "domains": [
+        "polar-analytics.com",
+        "cdn.polaranalytics.com"
+      ],
+      "scripts": [
+        "polar.js",
+        "polar-analytics.js"
+      ],
+      "cdn_fingerprints": [
+        "/polar",
+        "/polar-analytics"
+      ],
+      "dom": [
+        "#polar",
+        ".polar"
+      ],
+      "globals": [
+        "Polar"
+      ],
+      "proxy_paths": [
+        "/a/polar"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Segmentify",
+      "category": "Personalization",
+      "domains": [
+        "segmentify.com",
+        "cdn.segmentify.com"
+      ],
+      "scripts": [
+        "segmentify.js"
+      ],
+      "cdn_fingerprints": [
+        "/segmentify",
+        "/segmentify-js"
+      ],
+      "dom": [
+        "#segmentify",
+        ".segmentify"
+      ],
+      "globals": [
+        "Segmentify"
+      ],
+      "proxy_paths": [
+        "/a/segmentify"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Convert",
+      "category": "A/B Testing",
+      "domains": [
+        "convert.com",
+        "cdn.convert.com"
+      ],
+      "scripts": [
+        "convert.js",
+        "convert-ab.js"
+      ],
+      "cdn_fingerprints": [
+        "/convert",
+        "/convert-js"
+      ],
+      "dom": [
+        "#convert"
+      ],
+      "globals": [
+        "convert"
+      ],
+      "proxy_paths": [
+        "/a/convert"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "AB Tasty",
+      "category": "A/B Testing",
+      "domains": [
+        "abtasty.com",
+        "cdn.abtasty.com"
+      ],
+      "scripts": [
+        "abtasty.js",
+        "abtasty-client.js"
+      ],
+      "cdn_fingerprints": [
+        "/abtasty",
+        "/abtasty-js"
+      ],
+      "dom": [
+        "#abtasty"
+      ],
+      "globals": [
+        "ABTasty"
+      ],
+      "proxy_paths": [
+        "/a/abtasty"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Monetate",
+      "category": "Personalization",
+      "domains": [
+        "monetate.com",
+        "cdn.monetate.net"
+      ],
+      "scripts": [
+        "monetate.js",
+        "monetate-personalization.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/monetate",
+        "/monetate"
+      ],
+      "dom": [
+        "#monetate",
+        ".monetate"
+      ],
+      "globals": [
+        "monetate"
+      ],
+      "proxy_paths": [
+        "/apps/monetate"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Qubit",
+      "category": "Personalization",
+      "domains": [
+        "qubit.com",
+        "cdn.qubit.com"
+      ],
+      "scripts": [
+        "qubit.js",
+        "qubit-experience.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/qubit",
+        "/qubit"
+      ],
+      "dom": [
+        "#qubit",
+        ".qubit"
+      ],
+      "globals": [
+        "qubit"
+      ],
+      "proxy_paths": [
+        "/apps/qubit"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Barilliance",
+      "category": "Personalization",
+      "domains": [
+        "barilliance.com",
+        "cdn.barilliance.com"
+      ],
+      "scripts": [
+        "barilliance.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/barilliance",
+        "/barilliance"
+      ],
+      "dom": [
+        "#barilliance",
+        ".barilliance"
+      ],
+      "globals": [
+        "barilliance"
+      ],
+      "proxy_paths": [
+        "/apps/barilliance"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "AWIN",
+      "category": "Affiliate",
+      "domains": [
+        "awin1.com",
+        "awin.com"
+      ],
+      "scripts": [
+        "awin.js",
+        "awin-tracking.js"
+      ],
+      "cdn_fingerprints": [
+        "/awin",
+        "/awin1"
+      ],
+      "dom": [
+        "#awin",
+        ".awin"
+      ],
+      "globals": [
+        "awin"
+      ],
+      "proxy_paths": [
+        "/a/awin"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "ShareASale",
+      "category": "Affiliate",
+      "domains": [
+        "shareasale.com",
+        "script.shareasale.com"
+      ],
+      "scripts": [
+        "shareasale.js",
+        "shareasale-tracking.js"
+      ],
+      "cdn_fingerprints": [
+        "/shareasale",
+        "/shareasale-tracking"
+      ],
+      "dom": [
+        "#shareasale",
+        ".shareasale"
+      ],
+      "globals": [
+        "shareasale"
+      ],
+      "proxy_paths": [
+        "/a/shareasale"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Post Affiliate Pro",
+      "category": "Affiliate",
+      "domains": [
+        "postaffiliatepro.com",
+        "cdn.postaffiliatepro.com"
+      ],
+      "scripts": [
+        "postaffiliatepro.js",
+        "pap-main.js"
+      ],
+      "cdn_fingerprints": [
+        "/postaffiliatepro",
+        "/pap"
+      ],
+      "dom": [
+        "#pap",
+        ".pap"
+      ],
+      "globals": [
+        "PostAffiliatePro",
+        "pap"
+      ],
+      "proxy_paths": [
+        "/a/pap"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "QuadPay",
+      "category": "Payment",
+      "domains": [
+        "quadpay.com",
+        "widget.quadpay.com"
+      ],
+      "scripts": [
+        "quadpay.js"
+      ],
+      "cdn_fingerprints": [
+        "/quadpay",
+        "/quadpay-widget"
+      ],
+      "dom": [
+        "#quadpay",
+        ".quadpay"
+      ],
+      "globals": [
+        "QuadPay"
+      ],
+      "proxy_paths": [
+        "/a/quadpay"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Laybuy",
+      "category": "Payment",
+      "domains": [
+        "laybuy.com",
+        "widget.laybuy.com"
+      ],
+      "scripts": [
+        "laybuy.js"
+      ],
+      "cdn_fingerprints": [
+        "/laybuy",
+        "/laybuy-widget"
+      ],
+      "dom": [
+        "#laybuy",
+        ".laybuy"
+      ],
+      "globals": [
+        "Laybuy"
+      ],
+      "proxy_paths": [
+        "/a/laybuy"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "LangShop",
+      "category": "International",
+      "domains": [
+        "langshop.app",
+        "cdn.langshop.app"
+      ],
+      "scripts": [
+        "langshop.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/langshop",
+        "/langshop"
+      ],
+      "dom": [
+        "#langshop",
+        ".langshop"
+      ],
+      "globals": [
+        "LangShop"
+      ],
+      "proxy_paths": [
+        "/apps/langshop"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "EasyShip",
+      "category": "Shipping",
+      "domains": [
+        "easyship.com",
+        "cdn.easyship.com"
+      ],
+      "scripts": [
+        "easyship.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/easyship",
+        "/easyship"
+      ],
+      "dom": [
+        "#easyship",
+        ".easyship"
+      ],
+      "globals": [
+        "EasyShip"
+      ],
+      "proxy_paths": [
+        "/apps/easyship"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "ShipperHQ",
+      "category": "Shipping",
+      "domains": [
+        "shipperhq.com"
+      ],
+      "scripts": [
+        "shipperhq.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/shipperhq",
+        "/shipperhq"
+      ],
+      "dom": [
+        "#shipperhq",
+        ".shipperhq"
+      ],
+      "globals": [
+        "ShipperHQ"
+      ],
+      "proxy_paths": [
+        "/apps/shipperhq"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Reviews.io",
+      "category": "Reviews",
+      "domains": [
+        "reviews.io",
+        "cdn.reviews.io"
+      ],
+      "scripts": [
+        "reviews-io.js",
+        "reviewsio-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/reviews-io",
+        "/reviews"
+      ],
+      "dom": [
+        "#reviews-io",
+        ".reviews-io"
+      ],
+      "globals": [
+        "reviewsIO"
+      ],
+      "proxy_paths": [
+        "/apps/reviews-io"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Vitals",
+      "category": "Reviews",
+      "domains": [
+        "vitals.com",
+        "cdn.vitals.com"
+      ],
+      "scripts": [
+        "vitals.js",
+        "vitals-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/vitals",
+        "/vitals"
+      ],
+      "dom": [
+        "#vitals",
+        ".vitals"
+      ],
+      "globals": [
+        "Vitals"
+      ],
+      "proxy_paths": [
+        "/apps/vitals"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "MailMunch",
+      "category": "Popups",
+      "domains": [
+        "mailmunch.com",
+        "cdn.mailmunch.com"
+      ],
+      "scripts": [
+        "mailmunch.js"
+      ],
+      "cdn_fingerprints": [
+        "/mailmunch",
+        "/mailmunch-widget"
+      ],
+      "dom": [
+        "#mailmunch",
+        ".mailmunch"
+      ],
+      "globals": [
+        "MailMunch"
+      ],
+      "proxy_paths": [
+        "/a/mailmunch"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Icegram",
+      "category": "Popups",
+      "domains": [
+        "icegram.com",
+        "cdn.icegram.com"
+      ],
+      "scripts": [
+        "icegram.js"
+      ],
+      "cdn_fingerprints": [
+        "/icegram",
+        "/icegram-messenger"
+      ],
+      "dom": [
+        "#icegram",
+        ".ig-container"
+      ],
+      "globals": [
+        "Icegram"
+      ],
+      "proxy_paths": [
+        "/a/icegram"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "JustUno",
+      "category": "Popups",
+      "domains": [
+        "justuno.com",
+        "cdn.justuno.com"
+      ],
+      "scripts": [
+        "justuno.js"
+      ],
+      "cdn_fingerprints": [
+        "/justuno",
+        "/justuno-js"
+      ],
+      "dom": [
+        "#justuno",
+        ".justuno"
+      ],
+      "globals": [
+        "justuno"
+      ],
+      "proxy_paths": [
+        "/a/justuno"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Sleeknote",
+      "category": "Popups",
+      "domains": [
+        "sleeknote.com"
+      ],
+      "scripts": [
+        "sleeknote.js"
+      ],
+      "cdn_fingerprints": [
+        "/sleeknote",
+        "/sleeknote-js"
+      ],
+      "dom": [
+        "#sleeknote",
+        ".sleeknote"
+      ],
+      "globals": [
+        "Sleeknote"
+      ],
+      "proxy_paths": [
+        "/a/sleeknote"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Triggmine",
+      "category": "Email Marketing",
+      "domains": [
+        "triggmine.com",
+        "cdn.triggmine.com"
+      ],
+      "scripts": [
+        "triggmine.js"
+      ],
+      "cdn_fingerprints": [
+        "/triggmine",
+        "/triggmine-js"
+      ],
+      "dom": [
+        "#triggmine",
+        ".triggmine"
+      ],
+      "globals": [
+        "Triggmine"
+      ],
+      "proxy_paths": [
+        "/a/triggmine"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "SmartEmailing",
+      "category": "Email Marketing",
+      "domains": [
+        "smartemailing.cz",
+        "cdn.smartemailing.cz"
+      ],
+      "scripts": [
+        "smartemailing.js"
+      ],
+      "cdn_fingerprints": [
+        "/smartemailing",
+        "/smartemailing-js"
+      ],
+      "dom": [
+        "#smartemailing",
+        ".smartemailing"
+      ],
+      "globals": [
+        "SmartEmailing"
+      ],
+      "proxy_paths": [
+        "/a/smartemailing"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Constant Contact",
+      "category": "Email Marketing",
+      "domains": [
+        "constantcontact.com",
+        "static.ctctcdn.com"
+      ],
+      "scripts": [
+        "constantcontact.js"
+      ],
+      "cdn_fingerprints": [
+        "/constantcontact",
+        "/ctct"
+      ],
+      "dom": [
+        "#constantcontact",
+        ".ctct"
+      ],
+      "globals": [
+        "CTCT"
+      ],
+      "proxy_paths": [
+        "/a/constantcontact"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Smartlook",
+      "category": "Analytics",
+      "domains": [
+        "smartlook.com",
+        "rec.smartlook.com"
+      ],
+      "scripts": [
+        "smartlook.js"
+      ],
+      "cdn_fingerprints": [
+        "/smartlook",
+        "/smartlook-rec"
+      ],
+      "dom": [
+        "#smartlook"
+      ],
+      "globals": [
+        "smartlook"
+      ],
+      "proxy_paths": [
+        "/a/smartlook"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Make (Integromat)",
+      "category": "Automation",
+      "domains": [
+        "make.com",
+        "hook.make.com"
+      ],
+      "scripts": [
+        "make.js",
+        "make-hooks.js"
+      ],
+      "cdn_fingerprints": [
+        "/make",
+        "/make-hooks"
+      ],
+      "dom": [
+        "#make",
+        ".make"
+      ],
+      "globals": [
+        "Make"
+      ],
+      "proxy_paths": [
+        "/a/make"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Workato",
+      "category": "Automation",
+      "domains": [
+        "workato.com",
+        "hooks.workato.com"
+      ],
+      "scripts": [
+        "workato.js"
+      ],
+      "cdn_fingerprints": [
+        "/workato",
+        "/workato-hooks"
+      ],
+      "dom": [
+        "#workato",
+        ".workato"
+      ],
+      "globals": [
+        "Workato"
+      ],
+      "proxy_paths": [
+        "/a/workato"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "InviteReferrals",
+      "category": "Referral",
+      "domains": [
+        "invitereferrals.com",
+        "cdn.invitereferrals.com"
+      ],
+      "scripts": [
+        "invitereferrals.js"
+      ],
+      "cdn_fingerprints": [
+        "/invitereferrals",
+        "/invite-referrals"
+      ],
+      "dom": [
+        "#invitereferrals",
+        ".invitereferrals"
+      ],
+      "globals": [
+        "InviteReferrals"
+      ],
+      "proxy_paths": [
+        "/a/invitereferrals"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "SMSBump",
+      "category": "SMS Marketing",
+      "domains": [
+        "smsbump.com",
+        "cdn.smsbump.com"
+      ],
+      "scripts": [
+        "smsbump.js"
+      ],
+      "cdn_fingerprints": [
+        "/smsbump",
+        "/sms-bump"
+      ],
+      "dom": [
+        "#smsbump",
+        ".smsbump"
+      ],
+      "globals": [
+        "SMSBump"
+      ],
+      "proxy_paths": [
+        "/a/smsbump"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "SimpleTexting",
+      "category": "SMS Marketing",
+      "domains": [
+        "simpletexting.com",
+        "app.simpletexting.com"
+      ],
+      "scripts": [
+        "simpletexting.js"
+      ],
+      "cdn_fingerprints": [
+        "/simpletexting",
+        "/st-sms"
+      ],
+      "dom": [
+        "#simpletexting",
+        ".simpletexting"
+      ],
+      "globals": [
+        "SimpleTexting"
+      ],
+      "proxy_paths": [
+        "/a/simpletexting"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Docparser",
+      "category": "Order Management",
+      "domains": [
+        "docparser.com",
+        "api.docparser.com"
+      ],
+      "scripts": [
+        "docparser.js"
+      ],
+      "cdn_fingerprints": [
+        "/docparser",
+        "/docparser-js"
+      ],
+      "dom": [
+        "#docparser",
+        ".docparser"
+      ],
+      "globals": [
+        "DocParser"
+      ],
+      "proxy_paths": [
+        "/a/docparser"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Orderdesk",
+      "category": "Order Management",
+      "domains": [
+        "orderdesk.com",
+        "app.orderdesk.com"
+      ],
+      "scripts": [
+        "orderdesk.js"
+      ],
+      "cdn_fingerprints": [
+        "/orderdesk",
+        "/orderdesk-js"
+      ],
+      "dom": [
+        "#orderdesk",
+        ".orderdesk"
+      ],
+      "globals": [
+        "OrderDesk"
+      ],
+      "proxy_paths": [
+        "/a/orderdesk"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Gooten",
+      "category": "Print on Demand",
+      "domains": [
+        "gooten.com",
+        "api.gooten.com"
+      ],
+      "scripts": [
+        "gooten.js"
+      ],
+      "cdn_fingerprints": [
+        "/gooten",
+        "/gooten-js"
+      ],
+      "dom": [
+        "#gooten",
+        ".gooten"
+      ],
+      "globals": [
+        "Gooten"
+      ],
+      "proxy_paths": [
+        "/a/gooten"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Inkthreadable",
+      "category": "Print on Demand",
+      "domains": [
+        "inkthreadable.com",
+        "api.inkthreadable.com"
+      ],
+      "scripts": [
+        "inkthreadable.js"
+      ],
+      "cdn_fingerprints": [
+        "/inkthreadable",
+        "/ink-threadable"
+      ],
+      "dom": [
+        "#inkthreadable",
+        ".inkthreadable"
+      ],
+      "globals": [
+        "InkThreadable"
+      ],
+      "proxy_paths": [
+        "/a/inkthreadable"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "CrowdControl",
+      "category": "Social Proof",
+      "domains": [
+        "crowdcontrol.works",
+        "cdn.crowdcontrol.works"
+      ],
+      "scripts": [
+        "crowdcontrol.js"
+      ],
+      "cdn_fingerprints": [
+        "/crowdcontrol",
+        "/crowd-control"
+      ],
+      "dom": [
+        "#crowdcontrol",
+        ".crowdcontrol"
+      ],
+      "globals": [
+        "CrowdControl"
+      ],
+      "proxy_paths": [
+        "/a/crowdcontrol"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Search IQ",
+      "category": "Search",
+      "domains": [
+        "searchiq.co",
+        "cdn.searchiq.co"
+      ],
+      "scripts": [
+        "searchiq.js"
+      ],
+      "cdn_fingerprints": [
+        "/searchiq",
+        "/searchiq-js"
+      ],
+      "dom": [
+        "#searchiq",
+        ".searchiq"
+      ],
+      "globals": [
+        "SearchIQ"
+      ],
+      "proxy_paths": [
+        "/a/searchiq"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Better Search",
+      "category": "Search",
+      "domains": [
+        "searchspring.com"
+      ],
+      "scripts": [
+        "better-search.js"
+      ],
+      "cdn_fingerprints": [
+        "/better-search",
+        "/better-search-suggest"
+      ],
+      "dom": [
+        "#better-search",
+        ".better-search"
+      ],
+      "globals": [
+        "BetterSearch"
+      ],
+      "proxy_paths": [
+        "/a/better-search"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "PushEngage",
+      "category": "Push Notifications",
+      "domains": [
+        "pushengage.com",
+        "cdn.pushengage.com"
+      ],
+      "scripts": [
+        "pushengage.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/pushengage",
+        "/pushengage"
+      ],
+      "dom": [
+        "#pushengage",
+        ".pushengage"
+      ],
+      "globals": [
+        "PushEngage"
+      ],
+      "proxy_paths": [
+        "/apps/pushengage"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "Perfalytics",
+      "category": "Analytics",
+      "domains": [
+        "perfalytics.com",
+        "cdn.perfalytics.com"
+      ],
+      "scripts": [
+        "perfalytics.js"
+      ],
+      "cdn_fingerprints": [
+        "/perfalytics",
+        "/perfalytics-js"
+      ],
+      "dom": [
+        "#perfalytics",
+        ".perfalytics"
+      ],
+      "globals": [
+        "Perfalytics"
+      ],
+      "proxy_paths": [
+        "/a/perfalytics"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Stack Analytics",
+      "category": "Analytics",
+      "domains": [
+        "stack-a.io",
+        "analytics.stacknine.co"
+      ],
+      "scripts": [
+        "stack-analytics.js"
+      ],
+      "cdn_fingerprints": [
+        "/stack",
+        "/stack-analytics"
+      ],
+      "dom": [
+        "#stack-analytics"
+      ],
+      "globals": [
+        "StackAnalytics"
+      ],
+      "proxy_paths": [
+        "/a/stack"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "HealCode",
+      "category": "Analytics",
+      "domains": [
+        "healcode.com",
+        "cdn.healcode.com"
+      ],
+      "scripts": [
+        "healcode.js"
+      ],
+      "cdn_fingerprints": [
+        "/healcode",
+        "/healcode-analytics"
+      ],
+      "dom": [
+        "#healcode",
+        ".healcode"
+      ],
+      "globals": [
+        "HealCode"
+      ],
+      "proxy_paths": [
+        "/a/healcode"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Naviplus",
+      "category": "Personalization",
+      "domains": [
+        "naviplus.net",
+        "cdn.naviplus.co.jp"
+      ],
+      "scripts": [
+        "naviplus.js"
+      ],
+      "cdn_fingerprints": [
+        "/naviplus",
+        "/naviplus-js"
+      ],
+      "dom": [
+        "#naviplus",
+        ".naviplus"
+      ],
+      "globals": [
+        "NaviPlus"
+      ],
+      "proxy_paths": [
+        "/a/naviplus"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Perzonalization",
+      "category": "Personalization",
+      "domains": [
+        "perzonalization.com",
+        "cdn.perzonalization.com"
+      ],
+      "scripts": [
+        "perzonalization.js"
+      ],
+      "cdn_fingerprints": [
+        "/perzonalization",
+        "/perzonalization-js"
+      ],
+      "dom": [
+        "#perzonalization",
+        ".perzonalization"
+      ],
+      "globals": [
+        "Perzonalization"
+      ],
+      "proxy_paths": [
+        "/a/perzonalization"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Worldpay",
+      "category": "Payment",
+      "domains": [
+        "worldpay.com",
+        "api.worldpay.com"
+      ],
+      "scripts": [
+        "worldpay.js"
+      ],
+      "cdn_fingerprints": [
+        "/worldpay",
+        "/worldpay-checkout"
+      ],
+      "dom": [
+        "#worldpay",
+        ".worldpay"
+      ],
+      "globals": [
+        "Worldpay"
+      ],
+      "proxy_paths": [
+        "/a/worldpay"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Cybersource",
+      "category": "Payment",
+      "domains": [
+        "cybersource.com",
+        "ics.cybersource.com"
+      ],
+      "scripts": [
+        "cybersource.js"
+      ],
+      "cdn_fingerprints": [
+        "/cybersource",
+        "/cybersource-checkout"
+      ],
+      "dom": [
+        "#cybersource",
+        ".cybersource"
+      ],
+      "globals": [
+        "Cybersource"
+      ],
+      "proxy_paths": [
+        "/a/cybersource"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Marqeta",
+      "category": "Payment",
+      "domains": [
+        "marqeta.com",
+        "cdn.marqeta.com"
+      ],
+      "scripts": [
+        "marqeta.js"
+      ],
+      "cdn_fingerprints": [
+        "/marqeta",
+        "/marqeta-js"
+      ],
+      "dom": [
+        "#marqeta",
+        ".marqeta"
+      ],
+      "globals": [
+        "Marqeta"
+      ],
+      "proxy_paths": [
+        "/a/marqeta"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Verifone",
+      "category": "Payment",
+      "domains": [
+        "verifone.com",
+        "api.verifone.com"
+      ],
+      "scripts": [
+        "verifone.js"
+      ],
+      "cdn_fingerprints": [
+        "/verifone",
+        "/verifone-checkout"
+      ],
+      "dom": [
+        "#verifone",
+        ".verifone"
+      ],
+      "globals": [
+        "Verifone"
+      ],
+      "proxy_paths": [
+        "/a/verifone"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "First Data",
+      "category": "Payment",
+      "domains": [
+        "firstdata.com",
+        "api._firstdata.com"
+      ],
+      "scripts": [
+        "firstdata.js"
+      ],
+      "cdn_fingerprints": [
+        "/firstdata",
+        "/firstdata-checkout"
+      ],
+      "dom": [
+        "#firstdata",
+        ".firstdata"
+      ],
+      "globals": [
+        "FirstData"
+      ],
+      "proxy_paths": [
+        "/a/firstdata"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Sucuri",
+      "category": "Security",
+      "domains": [
+        "sucuri.net",
+        "cdn.sucuri.net"
+      ],
+      "scripts": [
+        "sucuri.js"
+      ],
+      "cdn_fingerprints": [
+        "/sucuri",
+        "/sucuri-security"
+      ],
+      "dom": [
+        "#sucuri",
+        ".sucuri"
+      ],
+      "globals": [
+        "Sucuri"
+      ],
+      "proxy_paths": [
+        "/a/sucuri"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Trustbadge",
+      "category": "Trust Badges",
+      "domains": [
+        "trustbadge.com",
+        "cdn.trustbadge.com"
+      ],
+      "scripts": [
+        "trustbadge.js"
+      ],
+      "cdn_fingerprints": [
+        "/trustbadge",
+        "/trustbadge-js"
+      ],
+      "dom": [
+        ".trustbadge",
+        "#trustbadge"
+      ],
+      "globals": [
+        "Trustbadge"
+      ],
+      "proxy_paths": [
+        "/a/trustbadge"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "TrustedSite",
+      "category": "Trust Badges",
+      "domains": [
+        "trustedsite.com",
+        "cdn.trustedsite.com"
+      ],
+      "scripts": [
+        "trustedsite.js"
+      ],
+      "cdn_fingerprints": [
+        "/trustedsite",
+        "/trustedsite-js"
+      ],
+      "dom": [
+        ".trustedsite",
+        "#trustedsite"
+      ],
+      "globals": [
+        "TrustedSite"
+      ],
+      "proxy_paths": [
+        "/a/trustedsite"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Quantcast Choice",
+      "category": "Compliance",
+      "domains": [
+        "quantcast.com",
+        "consent.quantcast.com"
+      ],
+      "scripts": [
+        "quantcast.js",
+        "quantcast-choice.js"
+      ],
+      "cdn_fingerprints": [
+        "/quantcast",
+        "/quantcast-choice"
+      ],
+      "dom": [
+        "#qc-cmp",
+        ".qc-cmp"
+      ],
+      "globals": [
+        "Quantcast"
+      ],
+      "proxy_paths": [
+        "/a/quantcast"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Civic",
+      "category": "Compliance",
+      "domains": [
+        "civic.com",
+        "civic-ipfs.s3.amazonaws.com"
+      ],
+      "scripts": [
+        "civic.js"
+      ],
+      "cdn_fingerprints": [
+        "/civic",
+        "/civic-consent"
+      ],
+      "dom": [
+        "#civic",
+        ".civic"
+      ],
+      "globals": [
+        "Civic"
+      ],
+      "proxy_paths": [
+        "/a/civic"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "AgeVerify",
+      "category": "Compliance",
+      "domains": [
+        "ageverify.com"
+      ],
+      "scripts": [
+        "ageverify.js"
+      ],
+      "cdn_fingerprints": [
+        "/ageverify",
+        "/age-verify"
+      ],
+      "dom": [
+        "#ageverify",
+        ".ageverify"
+      ],
+      "globals": [
+        "AgeVerify"
+      ],
+      "proxy_paths": [
+        "/a/ageverify"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Product Recommendations",
+      "category": "Recommendations",
+      "domains": [
+        "productrecommendations.io",
+        "cdn.productrecommendations.io"
+      ],
+      "scripts": [
+        "product-recommendations.js"
+      ],
+      "cdn_fingerprints": [
+        "/product-recommendations",
+        "/pr-js"
+      ],
+      "dom": [
+        "#product-recommendations",
+        ".pr-widget"
+      ],
+      "globals": [
+        "ProductRecs"
+      ],
+      "proxy_paths": [
+        "/a/productrecs"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "limeSpot",
+      "category": "Recommendations",
+      "domains": [
+        "limespot.com",
+        "cdn.limespot.com"
+      ],
+      "scripts": [
+        "limespot.js"
+      ],
+      "cdn_fingerprints": [
+        "/limespot",
+        "/limespot-recommender"
+      ],
+      "dom": [
+        "#limespot",
+        ".ls-recommender"
+      ],
+      "globals": [
+        "LimeSpot"
+      ],
+      "proxy_paths": [
+        "/a/limespot"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Nosto Auto",
+      "category": "Recommendations",
+      "domains": [
+        "nosto.com",
+        "connect.nosto.com"
+      ],
+      "scripts": [
+        "nosto-auto.js",
+        "nosto-auto-recommend.js"
+      ],
+      "cdn_fingerprints": [
+        "/nosto-auto",
+        "/nosto-auto-recommend"
+      ],
+      "dom": [
+        ".nosto-auto",
+        "#nosto-auto"
+      ],
+      "globals": [
+        "NostoAuto"
+      ],
+      "proxy_paths": [
+        "/a/nosto-auto"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Instagram Feed",
+      "category": "Social",
+      "domains": [
+        "snapwidget.com",
+        "cdn.snapwidget.com"
+      ],
+      "scripts": [
+        "snapwidget.js"
+      ],
+      "cdn_fingerprints": [
+        "/snapwidget",
+        "/snap-instagram"
+      ],
+      "dom": [
+        ".snapwidget",
+        "#snap-widget"
+      ],
+      "globals": [
+        "SnapWidget"
+      ],
+      "proxy_paths": [
+        "/a/snapwidget"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Plobal Apps",
+      "category": "Mobile App",
+      "domains": [
+        "plobalapps.com",
+        "cdn.plobalapps.com"
+      ],
+      "scripts": [
+        "plobalapps.js"
+      ],
+      "cdn_fingerprints": [
+        "/plobalapps",
+        "/mobile-app"
+      ],
+      "dom": [
+        "#plobalapps",
+        ".plobalapps"
+      ],
+      "globals": [
+        "PlobalApps"
+      ],
+      "proxy_paths": [
+        "/a/plobalapps"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Mobiloud",
+      "category": "Mobile App",
+      "domains": [
+        "mobiloud.com",
+        "cdn.mobiloud.com"
+      ],
+      "scripts": [
+        "mobiloud.js"
+      ],
+      "cdn_fingerprints": [
+        "/mobiloud",
+        "/mobiloud-app"
+      ],
+      "dom": [
+        "#mobiloud",
+        ".mobiloud"
+      ],
+      "globals": [
+        "Mobiloud"
+      ],
+      "proxy_paths": [
+        "/a/mobiloud"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "AppMySite",
+      "category": "Mobile App",
+      "domains": [
+        "appmysite.com",
+        "cdn.appmysite.com"
+      ],
+      "scripts": [
+        "appmysite.js"
+      ],
+      "cdn_fingerprints": [
+        "/appmysite",
+        "/app-my-site"
+      ],
+      "dom": [
+        "#appmysite",
+        ".appmysite"
+      ],
+      "globals": [
+        "AppMySite"
+      ],
+      "proxy_paths": [
+        "/a/appmysite"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Yapp",
+      "category": "Mobile App",
+      "domains": [
+        "yapphq.com",
+        "cdn.yapphq.com"
+      ],
+      "scripts": [
+        "yapp.js"
+      ],
+      "cdn_fingerprints": [
+        "/yapp",
+        "/yapp-mobile"
+      ],
+      "dom": [
+        "#yapp",
+        ".yapp"
+      ],
+      "globals": [
+        "Yapp"
+      ],
+      "proxy_paths": [
+        "/a/yapp"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "SocialSnow",
+      "category": "Social Proof",
+      "domains": [
+        "socialsnow.io",
+        "cdn.socialsnow.io"
+      ],
+      "scripts": [
+        "socialsnow.js"
+      ],
+      "cdn_fingerprints": [
+        "/socialsnow",
+        "/social-snow"
+      ],
+      "dom": [
+        "#socialsnow",
+        ".socialsnow"
+      ],
+      "globals": [
+        "SocialSnow"
+      ],
+      "proxy_paths": [
+        "/a/socialsnow"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Upright",
+      "category": "Social Proof",
+      "domains": [
+        "getupright.com",
+        "cdn.getupright.com"
+      ],
+      "scripts": [
+        "upright.js"
+      ],
+      "cdn_fingerprints": [
+        "/upright",
+        "/upright-social"
+      ],
+      "dom": [
+        "#upright",
+        ".upright"
+      ],
+      "globals": [
+        "Upright"
+      ],
+      "proxy_paths": [
+        "/a/upright"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Translate",
+      "category": "International",
+      "domains": [
+        "translate.com",
+        "cdn.translate.com"
+      ],
+      "scripts": [
+        "translate.js"
+      ],
+      "cdn_fingerprints": [
+        "/translate",
+        "/translate-js"
+      ],
+      "dom": [
+        "#translate",
+        ".translate"
+      ],
+      "globals": [
+        "Translate"
+      ],
+      "proxy_paths": [
+        "/a/translate"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Rates",
+      "category": "Shipping",
+      "domains": [
+        "rates.io",
+        "api.rates.io"
+      ],
+      "scripts": [
+        "rates.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/rates",
+        "/rates"
+      ],
+      "dom": [
+        "#rates",
+        ".rates"
+      ],
+      "globals": [
+        "Rates"
+      ],
+      "proxy_paths": [
+        "/apps/rates"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Packlink",
+      "category": "Shipping",
+      "domains": [
+        "packlink.com",
+        "cdn.packlink.com"
+      ],
+      "scripts": [
+        "packlink.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/packlink",
+        "/packlink"
+      ],
+      "dom": [
+        "#packlink",
+        ".packlink"
+      ],
+      "globals": [
+        "Packlink"
+      ],
+      "proxy_paths": [
+        "/apps/packlink"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Recs by Skeu",
+      "category": "Recommendations",
+      "domains": [
+        "recs.skeu.io",
+        "cdn.recs.skeu.io"
+      ],
+      "scripts": [
+        "recs.js"
+      ],
+      "cdn_fingerprints": [
+        "/recs-skeu",
+        "/recs-js"
+      ],
+      "dom": [
+        "#recs-skeu",
+        ".recs-widget"
+      ],
+      "globals": [
+        "SkeuRecs"
+      ],
+      "proxy_paths": [
+        "/a/skeurecs"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Recart",
+      "category": "Messenger Marketing",
+      "domains": [
+        "recart.com",
+        "cdn.recart.com"
+      ],
+      "scripts": [
+        "recart.js",
+        "recart-facebook.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/recart",
+        "/recart"
+      ],
+      "dom": [
+        "#recart",
+        ".recart"
+      ],
+      "globals": [
+        "Recart"
+      ],
+      "proxy_paths": [
+        "/apps/recart"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "name": "EasyDigitalDownloads",
+      "category": "Digital Products",
+      "domains": [
+        "easydigitaldownloads.com",
+        "cdn.easydigitaldownloads.com"
+      ],
+      "scripts": [
+        "edd.js",
+        "easydigitaldownloads.js"
+      ],
+      "cdn_fingerprints": [
+        "/edd",
+        "/easydigitaldownloads"
+      ],
+      "dom": [
+        ".edd",
+        "#edd"
+      ],
+      "globals": [
+        "edd",
+        "EDD"
+      ],
+      "proxy_paths": [
+        "/a/edd"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "FetchApp",
+      "category": "Digital Products",
+      "domains": [
+        "fetchapp.com",
+        "cdn.fetchapp.com"
+      ],
+      "scripts": [
+        "fetchapp.js"
+      ],
+      "cdn_fingerprints": [
+        "/fetchapp",
+        "/fetch-app"
+      ],
+      "dom": [
+        "#fetchapp",
+        ".fetchapp"
+      ],
+      "globals": [
+        "FetchApp"
+      ],
+      "proxy_paths": [
+        "/a/fetchapp"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Sky-Portal",
+      "category": "Digital Products",
+      "domains": [
+        "sky-portal.com",
+        "cdn.sky-portal.com"
+      ],
+      "scripts": [
+        "skyportal.js"
+      ],
+      "cdn_fingerprints": [
+        "/skyportal",
+        "/sky-portal"
+      ],
+      "dom": [
+        "#skyportal",
+        ".skyportal"
+      ],
+      "globals": [
+        "SkyPortal"
+      ],
+      "proxy_paths": [
+        "/a/skyportal"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Teespring",
+      "category": "Print on Demand",
+      "domains": [
+        "teespring.com",
+        "teeshopper.com"
+      ],
+      "scripts": [
+        "teespring.js"
+      ],
+      "cdn_fingerprints": [
+        "/teespring",
+        "/tee-spring"
+      ],
+      "dom": [
+        "#teespring",
+        ".teespring"
+      ],
+      "globals": [
+        "TeeSpring"
+      ],
+      "proxy_paths": [
+        "/a/teespring"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Redbubble",
+      "category": "Print on Demand",
+      "domains": [
+        "redbubble.com",
+        "www.redbubble.com"
+      ],
+      "scripts": [
+        "redbubble.js"
+      ],
+      "cdn_fingerprints": [
+        "/redbubble",
+        "/redbubble-widget"
+      ],
+      "dom": [
+        "#redbubble",
+        ".redbubble"
+      ],
+      "globals": [
+        "Redbubble"
+      ],
+      "proxy_paths": [
+        "/a/redbubble"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Zazzle",
+      "category": "Print on Demand",
+      "domains": [
+        "zazzle.com",
+        "www.zazzle.com"
+      ],
+      "scripts": [
+        "zazzle.js"
+      ],
+      "cdn_fingerprints": [
+        "/zazzle",
+        "/zazzle-widget"
+      ],
+      "dom": [
+        "#zazzle",
+        ".zazzle"
+      ],
+      "globals": [
+        "Zazzle"
+      ],
+      "proxy_paths": [
+        "/a/zazzle"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Kamo",
+      "category": "Affiliate",
+      "domains": [
+        "kamo.co",
+        "cdn.kamo.co"
+      ],
+      "scripts": [
+        "kamo.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/kamo",
+        "/kamo"
+      ],
+      "dom": [
+        "#kamo",
+        ".kamo"
+      ],
+      "globals": [
+        "Kamo"
+      ],
+      "proxy_paths": [
+        "/apps/kamo"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "CJ Affiliate",
+      "category": "Affiliate",
+      "domains": [
+        "cj.com",
+        "www.cj.com"
+      ],
+      "scripts": [
+        "cj-affiliate.js"
+      ],
+      "cdn_fingerprints": [
+        "/cj",
+        "/cj-affiliate"
+      ],
+      "dom": [
+        "#cj",
+        ".cj-affiliate"
+      ],
+      "globals": [
+        "cj"
+      ],
+      "proxy_paths": [
+        "/a/cj"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "NEX",
+      "category": "Analytics",
+      "domains": [
+        "nex.com",
+        "cdn.nex.com"
+      ],
+      "scripts": [
+        "nex.js"
+      ],
+      "cdn_fingerprints": [
+        "/nex",
+        "/nex-analytics"
+      ],
+      "dom": [
+        "#nex",
+        ".nex"
+      ],
+      "globals": [
+        "NEX"
+      ],
+      "proxy_paths": [
+        "/a/nex"
+      ],
+      "confidence": 0.75
+    },
+    {
+      "name": "DynaPictures",
+      "category": "Personalization",
+      "domains": [
+        "dynapictures.com",
+        "cdn.dynapictures.com"
+      ],
+      "scripts": [
+        "dynapictures.js"
+      ],
+      "cdn_fingerprints": [
+        "/dynapictures",
+        "/dyna-pictures"
+      ],
+      "dom": [
+        "#dynapictures",
+        ".dynapictures"
+      ],
+      "globals": [
+        "DynaPictures"
+      ],
+      "proxy_paths": [
+        "/a/dynapictures"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Voxpop",
+      "category": "Social",
+      "domains": [
+        "voxpop.com",
+        "cdn.voxpop.com"
+      ],
+      "scripts": [
+        "voxpop.js"
+      ],
+      "cdn_fingerprints": [
+        "/voxpop",
+        "/vox-pop"
+      ],
+      "dom": [
+        "#voxpop",
+        ".voxpop"
+      ],
+      "globals": [
+        "VoxPop"
+      ],
+      "proxy_paths": [
+        "/a/voxpop"
+      ],
+      "confidence": 0.75
+    },
+    {
+      "name": "Yotpo Social",
+      "category": "Social",
+      "domains": [
+        "yotpo.com",
+        "yotpo-social.yotpo.com"
+      ],
+      "scripts": [
+        "yotpo-social.js"
+      ],
+      "cdn_fingerprints": [
+        "/yotpo-social",
+        "/yotpo-social-viz"
+      ],
+      "dom": [
+        ".yotpo-social",
+        "#yotpo-social"
+      ],
+      "globals": [
+        "YotpoSocial"
+      ],
+      "proxy_paths": [
+        "/a/yotpo-social"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Stelace",
+      "category": "Automation",
+      "domains": [
+        "stelace.com",
+        "api.stelace.com"
+      ],
+      "scripts": [
+        "stelace.js"
+      ],
+      "cdn_fingerprints": [
+        "/stelace",
+        "/stelace-js"
+      ],
+      "dom": [
+        "#stelace",
+        ".stelace"
+      ],
+      "globals": [
+        "Stelace"
+      ],
+      "proxy_paths": [
+        "/a/stelace"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Y圈淘金",
+      "category": "Loyalty",
+      "domains": [
+        "yoyo.com",
+        "cdn.yoyo.com"
+      ],
+      "scripts": [
+        "yoyo.js"
+      ],
+      "cdn_fingerprints": [
+        "/yoyo",
+        "/yoyo-loyalty"
+      ],
+      "dom": [
+        "#yoyo",
+        ".yoyo"
+      ],
+      "globals": [
+        "YoYo"
+      ],
+      "proxy_paths": [
+        "/a/yoyo"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Amasty Reward Points",
+      "category": "Loyalty",
+      "domains": [
+        "amasty.com"
+      ],
+      "scripts": [
+        "amasty-reward.js"
+      ],
+      "cdn_fingerprints": [
+        "/amasty-reward",
+        "/amasty-reward-points"
+      ],
+      "dom": [
+        "#amasty-reward",
+        ".amasty-reward"
+      ],
+      "globals": [
+        "AmastyReward"
+      ],
+      "proxy_paths": [
+        "/a/amasty-reward"
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": " Referral SaaSquatch",
+      "category": "Referral",
+      "domains": [
+        "saasquatch.com",
+        "cdn.saasquatch.com"
+      ],
+      "scripts": [
+        "saasquatch.js"
+      ],
+      "cdn_fingerprints": [
+        "/saasquatch",
+        "/squatch"
+      ],
+      "dom": [
+        "#saasquatch",
+        ".saasquatch"
+      ],
+      "globals": [
+        "squatch"
+      ],
+      "proxy_paths": [
+        "/a/saasquatch"
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Barilliance Recs",
+      "category": "Recommendations",
+      "domains": [
+        "barilliance.com",
+        "recommendations.barilliance.com"
+      ],
+      "scripts": [
+        "barilliance-recs.js"
+      ],
+      "cdn_fingerprints": [
+        "/barilliance-recs",
+        "/barilliance-recommendations"
+      ],
+      "dom": [
+        ".barilliance-recs",
+        "#barilliance-recs"
+      ],
+      "globals": [
+        "BarillianceRecs"
+      ],
+      "proxy_paths": [
+        "/a/barilliance-recs"
+      ],
+      "confidence": 0.8
+    }
+  ]
+}

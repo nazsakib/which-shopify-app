@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "Shopify App Intelligence Detector",
+  "version": "1.1.1",
+  "description": "Detect Shopify apps with 99% accuracy using multi-layer intelligence.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "fingerprint-engine.js",
+        "mutation-detector.js",
+        "detector-engine.js",
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "devtools_page": "devtools.html",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "app-shield.svg"
+  },
+  "icons": {
+    "16": "app-shield.svg",
+    "32": "app-shield.svg",
+    "48": "app-shield.svg",
+    "128": "app-shield.svg"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["apps-database.json", "injected.js", "app-shield.svg"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
