@@ -162,10 +162,61 @@
       margin: 15px 20px 0 20px;
       box-shadow: 0 4px 12px rgba(0,128,96,0.2);
     }
-  </style>
-</head>
-<body>
-  <header>
+
+    /* Restricted State Styles - FULL SCREEN BLUR */
+    .restricted-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 999999;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      display: none; /* Controlled by JS */
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .restricted-message {
+      padding: 30px;
+      max-width: 80%;
+    }
+
+    .restricted-icon {
+      font-size: 40px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .restricted-title {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .restricted-text {
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+    </style>
+    </head>
+    <body>
+    <div id="restricted-ui" class="restricted-overlay">
+    <div class="restricted-message">
+      <span class="restricted-icon">🔒</span>
+      <div class="restricted-title">Not a Shopify Store</div>
+      <p class="restricted-text">This extension only provides intelligence for Shopify storefronts.</p>
+    </div>
+    </div>
+
+    <header>
+
     <h1>Shopify Intelligence Dashboard</h1>
     <div class="store-url" id="store-domain">analyzing node...</div>
     <div id="myshopify-container" style="margin-top:12px; display:none; align-items:center; justify-content:center; gap:8px; background:#F4F6F8; padding:6px 14px; border-radius:20px; border:1px solid #E1E3E5;">
