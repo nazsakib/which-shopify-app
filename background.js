@@ -16,20 +16,36 @@ async function handleDetectionUpdate(data, tab) {
   if (!tab || !tab.url) return;
   
   const domain = new URL(tab.url).hostname;
-  
+  const storageKey = `results_${tab.id}`;
+  const domainKey = `results_${domain}`;
+
+  // Spy Feature: Get previous data to find changes
+  const prevData = await chrome.storage.local.get([domainKey]);
+  const prevResults = prevData[domainKey]?.results?.active || [];
+  const currentResults = data.results?.active || [];
+
+  const added = currentResults.filter(c => !prevResults.some(p => p.name === c.name));
+  const removed = prevResults.filter(p => !currentResults.some(c => c.name === p.name));
+
   const resultsToStore = {
     results: data.results,
     storeInfo: data.storeInfo,
-    timestamp: data.timestamp
+    timestamp: data.timestamp,
+    changes: { added, removed }
   };
   
   await chrome.storage.local.set({
-    [`results_${tab.id}`]: resultsToStore,
-    [`results_${domain}`]: resultsToStore 
+    [storageKey]: resultsToStore,
+    [domainKey]: resultsToStore 
   });
   
-  const activeCount = (data.results && data.results.active) ? data.results.active.length : 0;
-  updateBadge(tab, activeCount);
+  // Fix: Show TOTAL number of unique findings across all categories
+  const activeCount = Array.isArray(data.results?.active) ? data.results.active.length : 0;
+  const scriptsCount = Array.isArray(data.results?.scripts) ? data.results.scripts.length : 0;
+  const ghostsCount = Array.isArray(data.results?.ghosts) ? data.results.ghosts.length : 0;
+  
+  const totalCount = activeCount + scriptsCount + ghostsCount;
+  updateBadge(tab, totalCount);
 }
 
 function updateBadge(tab, count) {

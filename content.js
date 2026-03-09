@@ -13,7 +13,8 @@
       const response = await fetch(appsUrl);
       const data = await response.json();
       
-      await detectorEngine.init(data.apps || []);
+      // ENSURE DATABASE IS RESTORED
+      await detectorEngine.init(data.apps || []); 
       
       setupMessageListener();
       injectGlobalsScript();
@@ -38,7 +39,6 @@
       if (event.source !== window) return;
       const data = event.data;
       
-      // Guard against invalid payloads
       if (!data || typeof data !== "object") return;
       
       if (data.type === 'SHOPIFY_APP_GLOBALS') {
@@ -50,28 +50,28 @@
 
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (!message || typeof message !== 'object') {
-        sendResponse({ success: false });
+        if (sendResponse) sendResponse({ success: false });
         return false;
       }
       
       if (message.type === 'NETWORK_REQUEST' && message.url) {
         detectorEngine.checkNetwork(message.url);
         sendResults(detectorEngine.getResults());
-        sendResponse({ success: true });
+        if (sendResponse) sendResponse({ success: true });
         return false;
       }
       
       if (message.type === 'SCAN_REQUEST') {
         detectorEngine.startFullScan().then(results => {
           sendResults(results);
-          sendResponse({ success: true, results });
+          if (sendResponse) sendResponse({ success: true, results });
         }).catch(err => {
-          sendResponse({ success: false, error: err.toString() });
+          if (sendResponse) sendResponse({ success: false, error: err.toString() });
         });
-        return true; // Indicates asynchronous response
+        return true; 
       }
       
-      sendResponse({ success: false });
+      if (sendResponse) sendResponse({ success: false });
       return false;
     });
   }
@@ -79,14 +79,11 @@
   function sendResults(results) {
     if (!results || typeof results !== 'object') return;
     
-    // Check if we have any findings across all categories safely
     const activeCount = Array.isArray(results.active) ? results.active.length : 0;
     const scriptsCount = Array.isArray(results.scripts) ? results.scripts.length : 0;
     const ghostsCount = Array.isArray(results.ghosts) ? results.ghosts.length : 0;
     
     if (activeCount === 0 && scriptsCount === 0 && ghostsCount === 0) return;
-    
-    // Check if the content script is orphaned
     if (!chrome.runtime?.id) return;
     
     chrome.runtime.sendMessage({
@@ -98,9 +95,7 @@
         performanceWarning: detectorEngine.getPerformanceWarning(results)
       }
     }, (response) => {
-      // Unchecked runtime.lastError fix
       if (chrome.runtime.lastError) {
-        // Stop the detector if we can no longer talk to background
         detectorEngine.reset();
       }
     });

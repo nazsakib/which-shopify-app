@@ -21,6 +21,7 @@ class DetectorEngine {
     this.apps = [];
     this.globalsChecked = false;
     this.themeInfo = { name: 'Unknown' };
+    this.shopDomain = '';
     this.scriptWeight = 0;
   }
 
@@ -35,6 +36,7 @@ class DetectorEngine {
     this.isScanning = false;
     this.globalsChecked = false;
     this.scriptWeight = 0;
+    this.shopDomain = '';
   }
 
   async startFullScan() {
@@ -76,7 +78,7 @@ class DetectorEngine {
   }
 
   scanAppBlocks() {
-    // 1. Priority: HTML Comment Scanner (Greedy Detection)
+    // Universal Comment Scanner - Highest Precision
     try {
       const iterator = document.createNodeIterator(document, NodeFilter.SHOW_COMMENT, null, false);
       let node;
@@ -84,6 +86,7 @@ class DetectorEngine {
         const comment = node.nodeValue;
         if (!comment) continue;
         
+        // Capture ANY app block, snippet, or embed path
         const blockMatch = comment.match(/BEGIN app (?:block|snippet|embed):\s*(?:shopify:\/\/apps\/)?([a-z0-9-_.]+)/i);
         if (blockMatch && blockMatch[1]) {
           const handle = blockMatch[1].split('/')[0];
@@ -92,41 +95,13 @@ class DetectorEngine {
       }
     } catch (e) {}
 
-    // 2. DOM Attributes & Script IDs
+    // DOM Attribute Scanner
     try {
-      // Extended to include script tags with data-app-id or data-handle
       const elements = document.querySelectorAll('[data-shopify-app-block], [id^="shopify-block-"], [class*="shopify-app-block"], script[data-app-id], script[data-handle]');
       elements.forEach(el => {
         const appId = el.getAttribute('data-app-id') || el.getAttribute('data-handle') || el.getAttribute('data-shopify-app-block') || '';
         if (appId) {
           this.processExtractedHandle(appId, 'App Block');
-        }
-      });
-    } catch (e) {}
-
-    // 3. Universal CDN Parser
-    try {
-      const assets = document.querySelectorAll('script[src], link[rel="stylesheet"][href]');
-      assets.forEach(asset => {
-        const url = asset.src || asset.href;
-        if (!url) return;
-
-        const patterns = [
-          /\/extensions\/[a-f0-9-]+\/([a-z0-9-_.]+)\//i, // Added underscore/dot support
-          /\/apps\/([a-z0-9-_.]+)\//i,
-          /\/shopifycloud\/([a-z0-9-_.]+)\//i,
-          /cdn\.shopify\.com\/s\/files\/.*\/apps\/([a-z0-9-_.]+)/i,
-          /cdn-([a-z0-9-]+)\.com/i, 
-          /([a-z0-9-]+)cdn\.com/i    
-        ];
-
-        for (const pattern of patterns) {
-          const match = url.match(pattern);
-          if (match && match[1]) {
-            const handle = match[1].split('/')[0];
-            this.processExtractedHandle(handle, 'App CDN', url);
-            break;
-          }
         }
       });
     } catch (e) {}
@@ -208,7 +183,6 @@ class DetectorEngine {
     }
   }
 
-  // ... rest of implementation (scanScripts, scanInlineScripts, etc.)
   scanScripts() {
     try {
       const scripts = document.querySelectorAll('script[src]');
@@ -228,6 +202,10 @@ class DetectorEngine {
   matchScript(app, url) {
     if (!url) return false;
     const urlLower = url.toLowerCase();
+    
+    // Signature Hardening: Ignore generic keywords in common paths
+    const genericKeywords = ['analytics', 'theme', 'common', 'jquery', 'widget', 'loader', 'main', 'app'];
+    
     if (Array.isArray(app.domains)) {
       for (const domain of app.domains) {
         if (domain && urlLower.includes(domain.toLowerCase())) return true;
@@ -235,7 +213,13 @@ class DetectorEngine {
     }
     if (Array.isArray(app.scripts)) {
       for (const script of app.scripts) {
-        if (script && urlLower.includes(script.toLowerCase())) return true;
+        if (!script) continue;
+        const scriptLower = script.toLowerCase();
+        // Skip generic scripts unless we have a domain match already
+        if (genericKeywords.includes(scriptLower.replace(/\.js$/, '')) && !urlLower.includes(app.name.toLowerCase())) {
+          continue;
+        }
+        if (urlLower.includes(scriptLower)) return true;
       }
     }
     return false;
@@ -344,15 +328,29 @@ class DetectorEngine {
   handleGlobals(globalsList, shopifyObject) {
     if (this.globalsChecked) return;
     this.globalsChecked = true;
-    if (shopifyObject && shopifyObject.theme) {
-      this.themeInfo.name = shopifyObject.theme.name || this.themeInfo.name;
+    
+    if (shopifyObject) {
+      if (shopifyObject.theme) {
+        this.themeInfo.name = shopifyObject.theme.name || this.themeInfo.name;
+      }
+      if (shopifyObject.shop) {
+        this.shopDomain = shopifyObject.shop;
+      }
     }
+
     if (!Array.isArray(globalsList)) return;
     const globalsSet = new Set(globalsList);
+    
+    // Signature Hardening: Ignore common globals
+    const commonGlobals = ['analytics', 'dataLayer', 'google_tag_manager', 'Shopify'];
+
     this.apps.forEach(app => {
       if (!app || !Array.isArray(app.globals)) return;
       app.globals.forEach(global => {
-        if (globalsSet.has(global.split('.')[0])) {
+        const topLevel = global.split('.')[0];
+        if (commonGlobals.includes(topLevel)) return;
+        
+        if (globalsSet.has(topLevel)) {
           this.recordDetection(app.name, 'global', this.confidenceWeights.global, { variable: global });
         }
       });
@@ -361,22 +359,64 @@ class DetectorEngine {
 
   getResults() {
     const active = [], scripts = [], ghosts = [];
+    
     this.detectedApps.forEach((app, name) => {
+      if (!name || name.length < 3) return;
+      
       const methods = app.methods.map(m => m.method);
-      const res = { name, category: app.appData?.category || 'Ecommerce', methods };
-      if (methods.includes('App Block') || methods.includes('App Snippet') || (methods.length >= 2 && methods.includes('dom'))) {
+      const appData = app.appData || {};
+      const category = appData.category || 'Ecommerce';
+      const score = app.totalScore;
+      
+      const res = { 
+        name, 
+        category, 
+        methods,
+        alternative: this.getAlternative(name)
+      };
+
+      // --- MULTI-SIGNAL VERIFICATION LOGIC ---
+      const hasDirectEvidence = methods.includes('App Block') || 
+                                methods.includes('App Snippet') || 
+                                methods.includes('App Config');
+
+      const hasStrongProof = methods.length >= 3;
+
+      if (hasDirectEvidence || (hasStrongProof && methods.includes('dom'))) {
         active.push(res);
-      } else if (methods.includes('script') && !methods.includes('dom')) {
-        ghosts.push(res);
-      } else {
+      } else if (methods.includes('App CDN') || (methods.includes('script') && score > 0.8)) {
         scripts.push(res);
+      } else {
+        ghosts.push(res);
       }
     });
+
+    const activeApps = active.sort((a,b) => a.name.localeCompare(b.name));
+    
+    // GROWTH STACK LOGIC
+    const names = activeApps.map(a => a.name.toLowerCase());
+    let stack = "Standard Stack";
+    if (names.includes('klaviyo') && (names.includes('loox') || names.includes('judgeme'))) stack = "High-Conversion Stack";
+    if (names.includes('recharge') || names.includes('bold')) stack = "Subscription Stack";
+
     return {
-      active: active.sort((a,b) => a.name.localeCompare(b.name)),
+      active: activeApps,
       scripts: scripts.sort((a,b) => a.name.localeCompare(b.name)),
-      ghosts: ghosts.sort((a,b) => a.name.localeCompare(b.name))
+      ghosts: ghosts.sort((a,b) => a.name.localeCompare(b.name)),
+      growthStack: stack
     };
+  }
+
+  getAlternative(appName) {
+    const alternatives = {
+      'Yotpo': { name: 'Judge.me', reason: 'Faster & lower cost' },
+      'Loox': { name: 'Okendo', reason: 'Better for high-volume stores' },
+      'Klaviyo': { name: 'Omnisend', reason: 'Simplified automation workflow' },
+      'PageFly': { name: 'Instant Page', reason: 'Modern OS 2.0 optimized' },
+      'Privy': { name: 'Seguno', reason: 'Native Shopify experience' },
+      'Zendesk': { name: 'Gorgias', reason: 'Shopify-first helpdesk' }
+    };
+    return alternatives[appName] || null;
   }
 
   getStoreInfo() {
@@ -385,13 +425,12 @@ class DetectorEngine {
       url: window.location.href,
       timestamp: new Date().toISOString(),
       theme: this.themeInfo.name,
+      shop: this.shopDomain,
       scriptWeight: this.scriptWeight
     };
   }
 
-  getPerformanceWarning(results) {
-    return null;
-  }
+  getPerformanceWarning(results) { return null; }
 }
 
 if (typeof module !== 'undefined' && module.exports) {
