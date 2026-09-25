@@ -1,6 +1,6 @@
 /**
  * Which Shopify App — Popup Controller (Manifest V3)
- * High-performance, single-pass scan with zero background card reloading
+ * High-performance, single-pass scan with pinned headers and zero card reloading
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const myshopifyUrlEl = document.getElementById('myshopify-url');
   const copyMyshopifyBtn = document.getElementById('copy-myshopify');
   const quickExportBtn = document.getElementById('quick-export-btn');
+  const popoutBtn = document.getElementById('popout-btn');
 
   const scanProgress = document.getElementById('scan-progress');
   const activeCountEl = document.getElementById('active-count');
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const tabScriptsCount = document.getElementById('tab-scripts-count');
   const tabGhostsCount = document.getElementById('tab-ghosts-count');
 
+  const triageHeaderBar = document.getElementById('triage-header-bar');
   const triageGrid = document.getElementById('triage-grid');
   const listActive = document.getElementById('list-active');
   const listScripts = document.getElementById('list-scripts');
@@ -60,12 +62,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, 2200);
   }
 
+  // --- Target Tab Resolution (Supports both extension popup and popout window) ---
+  async function resolveTargetTab() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramTabId = urlParams.get('tabId');
+    if (paramTabId) {
+      try {
+        const t = await chrome.tabs.get(parseInt(paramTabId, 10));
+        if (t) return t;
+      } catch (e) {}
+    }
+    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    return activeTab || null;
+  }
+
   // --- Single-Pass Scan Lifecycle (Runs once on popup open or manual rescan) ---
   async function performSingleScan() {
     if (isScanning) return;
     isScanning = true;
 
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const tab = await resolveTargetTab();
     if (!tab || !tab.id || !tab.url || tab.url.startsWith('chrome://')) {
       isScanning = false;
       showRestrictedState();
@@ -194,7 +210,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (tabScriptsCount) tabScriptsCount.textContent = filteredScripts.length;
     if (tabGhostsCount) tabGhostsCount.textContent = filteredGhosts.length;
 
-    // Update Column Header Badges
+    // Update Column Header Badges (Inside Pinned Header Bar)
     if (badgeActive) badgeActive.textContent = filteredActive.length;
     if (badgeScripts) badgeScripts.textContent = filteredScripts.length;
     if (badgeGhosts) badgeGhosts.textContent = filteredGhosts.length;
@@ -396,6 +412,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // --- Expand / Popout in Full Window ---
+  if (popoutBtn) {
+    popoutBtn.addEventListener('click', async () => {
+      const tab = await resolveTargetTab();
+      const targetTabId = tab ? tab.id : '';
+      chrome.windows.create({
+        url: chrome.runtime.getURL(`src/popup/popup.html?tabId=${targetTabId}`),
+        type: 'popup',
+        width: 1080,
+        height: 760
+      });
+    });
+  }
+
   // --- Search Input Handlers ---
   if (appSearchInput) {
     appSearchInput.addEventListener('input', (e) => {
@@ -419,7 +449,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // --- Filter Tabs Handlers ---
+  // --- Filter Tabs Handlers (Synchronizes Header Bar & Card Lists) ---
   filterTabs.forEach(tab => {
     tab.addEventListener('click', () => {
       filterTabs.forEach(t => t.classList.remove('active'));
@@ -427,11 +457,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       activeTabFilter = tab.getAttribute('data-tab');
 
+      const focusClass = activeTabFilter === 'active' ? 'focus-active'
+        : activeTabFilter === 'scripts' ? 'focus-scripts'
+        : activeTabFilter === 'ghosts' ? 'focus-ghosts' : '';
+
       if (triageGrid) {
         triageGrid.classList.remove('focus-active', 'focus-scripts', 'focus-ghosts');
-        if (activeTabFilter === 'active') triageGrid.classList.add('focus-active');
-        else if (activeTabFilter === 'scripts') triageGrid.classList.add('focus-scripts');
-        else if (activeTabFilter === 'ghosts') triageGrid.classList.add('focus-ghosts');
+        if (focusClass) triageGrid.classList.add(focusClass);
+      }
+      if (triageHeaderBar) {
+        triageHeaderBar.classList.remove('focus-active', 'focus-scripts', 'focus-ghosts');
+        if (focusClass) triageHeaderBar.classList.add(focusClass);
       }
     });
   });

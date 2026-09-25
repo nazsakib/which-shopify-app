@@ -1,6 +1,6 @@
 /* ==========================================================================
    Which Shopify App — Modern Polaris / SaaS Design System (Manifest V3)
-   Large, high-contrast, professional readable UI
+   Fixed Pinned Headers, Zero Floating Elements, Max Dimensions 800x600
    ========================================================================== */
 
 :root {
@@ -53,16 +53,30 @@
   --transition-normal: 220ms var(--ease-spring);
 }
 
-/* Base Reset & Fixed Max Popup Shell */
+/* Base Reset & Strictly Enforced Max Popup Shell */
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-html, body {
+html {
   width: 800px;
   height: 600px;
-  max-height: 600px;
+  min-width: 800px;
   min-height: 600px;
+  max-width: 800px;
+  max-height: 600px;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 800px;
+  height: 600px;
+  min-width: 800px;
+  min-height: 600px;
+  max-width: 800px;
+  max-height: 600px;
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -75,6 +89,18 @@ html, body {
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Support for expanded popout window */
+@media (min-width: 801px) {
+  html, body {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
 }
 
 /* Custom Scrollbar */
@@ -101,7 +127,7 @@ html, body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--surface-border);
-  padding: 11px 20px 9px 20px;
+  padding: 10px 20px 8px 20px;
   flex-shrink: 0;
   z-index: 50;
 }
@@ -164,8 +190,8 @@ html, body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 11px;
-  font-size: 12.5px;
+  padding: 5px 10px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
   background: var(--surface-primary);
@@ -186,7 +212,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 7px;
+  margin-top: 6px;
 }
 
 .store-identity {
@@ -270,20 +296,20 @@ html, body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 9px;
-  padding: 9px 20px;
+  padding: 8px 20px;
   background: var(--surface-primary);
   border-bottom: 1px solid var(--surface-border);
   flex-shrink: 0;
 }
 
 .metric-card {
-  padding: 9px 12px;
+  padding: 8px 12px;
   background: var(--surface-subdued);
   border: 1px solid var(--surface-border-subtle);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   transition: border-color var(--transition-fast);
 }
 
@@ -323,7 +349,7 @@ html, body {
 }
 
 .metric-val {
-  font-size: 23px;
+  font-size: 22px;
   font-weight: 800;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
@@ -336,7 +362,7 @@ html, body {
 .theme-metric .metric-val { color: var(--purple-base); }
 
 .theme-val {
-  font-size: 13.5px;
+  font-size: 13px;
   max-width: 115px;
   white-space: nowrap;
   overflow: hidden;
@@ -475,62 +501,27 @@ html, body {
   color: white;
   font-size: 12px;
   font-weight: 600;
-  padding: 9px 14px;
+  padding: 8px 14px;
   border-radius: 7px;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 7px;
   box-shadow: 0 2px 8px rgba(0, 128, 96, 0.2);
 }
 
 /* ==========================================================================
-   5. Main Scrollable Content: 3-Column Triage Grid
+   5. Pinned Column Header Bar (FIXED — NEVER FLOATS OVER CARDS)
    ========================================================================== */
-.content-scrollable {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 13px 20px 16px 20px;
-}
-
-.triage-grid {
+.triage-header-bar {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 13px;
-  align-items: start;
-}
-
-/* Focused Views */
-.triage-grid.focus-active #col-scripts,
-.triage-grid.focus-active #col-ghosts {
-  display: none;
-}
-.triage-grid.focus-active {
-  grid-template-columns: 1fr;
-}
-
-.triage-grid.focus-scripts #col-active,
-.triage-grid.focus-scripts #col-ghosts {
-  display: none;
-}
-.triage-grid.focus-scripts {
-  grid-template-columns: 1fr;
-}
-
-.triage-grid.focus-ghosts #col-active,
-.triage-grid.focus-ghosts #col-scripts {
-  display: none;
-}
-.triage-grid.focus-ghosts {
-  grid-template-columns: 1fr;
-}
-
-/* Column Themes */
-.triage-col {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  padding: 8px 20px 7px 20px;
+  background: var(--surface-primary);
+  border-bottom: 1px solid var(--surface-border);
+  flex-shrink: 0;
+  z-index: 20;
 }
 
 .active-theme {
@@ -554,34 +545,30 @@ html, body {
   --col-text: var(--amber-text);
 }
 
-/* Column Header */
-.col-header {
+.header-anchor {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 7px 11px;
   background: var(--col-bg);
   border: 1px solid var(--col-border);
   border-radius: 8px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
 }
 
-.col-title {
+.header-anchor .col-title {
   display: flex;
   align-items: center;
   gap: 7px;
 }
 
-.header-indicator {
+.header-anchor .header-indicator {
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: var(--col-accent);
 }
 
-.col-title h2 {
+.header-anchor .col-title h2 {
   margin: 0;
   font-size: 12px;
   font-weight: 800;
@@ -590,7 +577,7 @@ html, body {
   color: var(--col-text);
 }
 
-.col-count {
+.header-anchor .col-count {
   font-size: 11px;
   font-weight: 800;
   background: var(--surface-primary);
@@ -598,6 +585,57 @@ html, body {
   padding: 2px 7px;
   border-radius: 10px;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+/* ==========================================================================
+   6. Main Scrollable Content: 3-Column Triage Grid of Cards
+   ========================================================================== */
+.content-scrollable {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px 20px 16px 20px;
+}
+
+.triage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 13px;
+  align-items: start;
+}
+
+/* Focused Views for Tab Filters (Both Header and Cards adapt synchronously) */
+.triage-header-bar.focus-active #anchor-scripts,
+.triage-header-bar.focus-active #anchor-ghosts,
+.triage-grid.focus-active #list-scripts,
+.triage-grid.focus-active #list-ghosts {
+  display: none !important;
+}
+.triage-header-bar.focus-active,
+.triage-grid.focus-active {
+  grid-template-columns: 1fr;
+}
+
+.triage-header-bar.focus-scripts #anchor-active,
+.triage-header-bar.focus-scripts #anchor-ghosts,
+.triage-grid.focus-scripts #list-active,
+.triage-grid.focus-scripts #list-ghosts {
+  display: none !important;
+}
+.triage-header-bar.focus-scripts,
+.triage-grid.focus-scripts {
+  grid-template-columns: 1fr;
+}
+
+.triage-header-bar.focus-ghosts #anchor-active,
+.triage-header-bar.focus-ghosts #anchor-scripts,
+.triage-grid.focus-ghosts #list-active,
+.triage-grid.focus-ghosts #list-scripts {
+  display: none !important;
+}
+.triage-header-bar.focus-ghosts,
+.triage-grid.focus-ghosts {
+  grid-template-columns: 1fr;
 }
 
 /* App List & Cards */
@@ -617,12 +655,6 @@ html, body {
   gap: 7px;
   box-shadow: var(--shadow-xs);
   transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
-  animation: cardFadeIn 0.2s ease-out forwards;
-}
-
-@keyframes cardFadeIn {
-  from { opacity: 0.6; }
-  to { opacity: 1; }
 }
 
 .app-card:hover {
@@ -774,7 +806,7 @@ html, body {
 }
 
 /* ==========================================================================
-   6. Sticky Footer
+   7. Sticky Footer
    ========================================================================== */
 .app-footer {
   background: var(--surface-primary);
@@ -844,7 +876,7 @@ html, body {
 }
 
 /* ==========================================================================
-   7. Toast Notification
+   8. Toast Notification
    ========================================================================== */
 .toast {
   position: fixed;
@@ -870,7 +902,7 @@ html, body {
 }
 
 /* ==========================================================================
-   8. Non-Shopify Gateway Overlay (Full Screen Blur)
+   9. Non-Shopify Gateway Overlay (Full Screen Blur)
    ========================================================================== */
 .restricted-overlay {
   position: fixed;

@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Which Shopify App</title>
   <link rel="stylesheet" href="popup.css">
 </head>
@@ -42,8 +41,18 @@
       </div>
 
       <div class="header-actions">
+        <button id="popout-btn" class="icon-action-btn" title="Open in Expanded Full Window">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 3 21 3 21 9"/>
+            <polyline points="9 21 3 21 3 15"/>
+            <line x1="21" y1="3" x2="14" y2="10"/>
+            <line x1="3" y1="21" x2="10" y2="14"/>
+          </svg>
+          <span>Expand</span>
+        </button>
+
         <button id="quick-export-btn" class="icon-action-btn" title="Copy Markdown Audit to Clipboard">
-          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
             <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
           </svg>
@@ -157,44 +166,44 @@
   <!-- Alert Banner Area -->
   <div id="spy-alerts" class="alerts-container"></div>
 
-  <!-- Main Scrollable Body: 3-Column Triage Grid -->
+  <!-- Pinned Column Header Bar (Fixed, never floats over cards) -->
+  <div class="triage-header-bar" id="triage-header-bar">
+    <div class="header-anchor active-theme" id="anchor-active">
+      <div class="col-title">
+        <span class="header-indicator"></span>
+        <h2>Active Apps</h2>
+      </div>
+      <span class="col-count" id="badge-active">0</span>
+    </div>
+
+    <div class="header-anchor script-theme" id="anchor-scripts">
+      <div class="col-title">
+        <span class="header-indicator"></span>
+        <h2>Apps using scripts</h2>
+      </div>
+      <span class="col-count" id="badge-scripts">0</span>
+    </div>
+
+    <div class="header-anchor residual-theme" id="anchor-ghosts">
+      <div class="col-title">
+        <span class="header-indicator"></span>
+        <h2>Residual App Code</h2>
+      </div>
+      <span class="col-count" id="badge-ghosts">0</span>
+    </div>
+  </div>
+
+  <!-- Main Scrollable Body: 3-Column Triage Grid of Cards -->
   <main class="content-scrollable">
     <div class="triage-grid" id="triage-grid">
-      <!-- Column 1: Active Apps -->
-      <section class="triage-col active-theme" id="col-active">
-        <div class="col-header">
-          <div class="col-title">
-            <span class="header-indicator"></span>
-            <h2>Active Apps</h2>
-          </div>
-          <span class="col-count" id="badge-active">0</span>
-        </div>
-        <div class="app-list" id="list-active"></div>
-      </section>
+      <!-- Column 1 Cards -->
+      <div class="app-list active-theme" id="list-active"></div>
 
-      <!-- Column 2: Apps Using Scripts -->
-      <section class="triage-col script-theme" id="col-scripts">
-        <div class="col-header">
-          <div class="col-title">
-            <span class="header-indicator"></span>
-            <h2>Apps using scripts</h2>
-          </div>
-          <span class="col-count" id="badge-scripts">0</span>
-        </div>
-        <div class="app-list" id="list-scripts"></div>
-      </section>
+      <!-- Column 2 Cards -->
+      <div class="app-list script-theme" id="list-scripts"></div>
 
-      <!-- Column 3: Residual App Code (Ghosts) -->
-      <section class="triage-col residual-theme" id="col-ghosts">
-        <div class="col-header">
-          <div class="col-title">
-            <span class="header-indicator"></span>
-            <h2>Residual App Code</h2>
-          </div>
-          <span class="col-count" id="badge-ghosts">0</span>
-        </div>
-        <div class="app-list" id="list-ghosts"></div>
-      </section>
+      <!-- Column 3 Cards -->
+      <div class="app-list residual-theme" id="list-ghosts"></div>
     </div>
   </main>
 
