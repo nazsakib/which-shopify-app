@@ -85,25 +85,54 @@ The official production extension distributed on the Chrome Web Store bundles de
 
 ## 🛠️ How It Works
 
-```mermaid
-flowchart TD
-    Store["Live Shopify Storefront"] --> DOM["DOM & Theme Inspection"]
-    Store --> Network["Network & CDN Interceptor"]
-    Store --> Mutation["Mutation Observer (Dynamic Scripts)"]
-    Store --> Bridge["Main-World JS Bridge (Globals)"]
-
-    DOM --> Engine["Multi-Signal Verification Engine"]
-    Network --> Engine
-    Mutation --> Engine
-    Bridge --> Engine
-
-    Engine --> DB[("27,000+ App Signatures Database")]
-    DB --> Engine
-
-    Engine --> C1["Column 1: Active Apps (Theme App Blocks)"]
-    Engine --> C2["Column 2: Apps Using Scripts (CDN / Network)"]
-    Engine --> C3["Column 3: Residual App Code (Ghost Leftovers)"]
+```text
+                  ┌─────────────────────────────────────────┐
+                  │         Live Shopify Storefront         │
+                  └────────────────────┬────────────────────┘
+                                       │
+        ┌───────────────────┬──────────┴──────────┬───────────────────┐
+        ▼                   ▼                     ▼                   ▼
+ ┌──────────────┐    ┌──────────────┐      ┌──────────────┐    ┌──────────────┐
+ │  Theme & DOM │    │ Network & CDN│      │   Mutation   │    │  Main-World  │
+ │  App Blocks  │    │ Script Tags  │      │   Observer   │    │  JS Bridge   │
+ └──────┬───────┘    └──────┬───────┘      └──────┬───────┘    └──────┬───────┘
+        │                   │                     │                   │
+        └───────────────────┼─────────────────────┴───────────────────┘
+                            ▼
+              ┌───────────────────────────┐
+              │  Multi-Signal Verifier    │◄──────┐
+              │  • Exact slug resolution  │       │
+              │  • Signal corroboration   │       ▼
+              │  • Ghost code isolation   │  ┌────────────────────────┐
+              └─────────────┬─────────────┘  │ 27,000+ App Signatures │
+                            │                │ Local In-Memory Index  │
+                            │                └────────────────────────┘
+        ┌───────────────────┼───────────────────┐
+        ▼                   ▼                   ▼
+┌───────────────┐   ┌───────────────┐   ┌───────────────┐
+│  ACTIVE APPS  │   │ APPS W/SCRIPT │   │ RESIDUAL CODE │
+│ Verified live │   │ Third-party   │   │ Dead snippets │
+│ OS 2.0 blocks │   │ runtime CDNs  │   │ & ghost divs  │
+└───────────────┘   └───────────────┘   └───────────────┘
 ```
+
+The detection process executes across three robust stages:
+
+1. **Signal Interception (4 Concurrent Probes)**:
+   - **Theme & DOM Inspector**: Identifies official Shopify OS 2.0 Theme App Extensions (`shopify://apps/...`) and section blocks embedded in the HTML tree.
+   - **Network & CDN Interceptor**: Matches external script sources, vendor hostnames, and proxy endpoints (`/apps/*`, `/a/*`).
+   - **Mutation Observer**: Monitors asynchronously injected widgets, customer portal frames, and late-loading tracking pixels.
+   - **Main-World Bridge**: Reads sanitized page-level runtime variables (e.g. `window.Shopify`, app instances) via an isolated script bridge.
+
+2. **Signature Resolution**:
+   - Extracted slugs and asset paths are cross-referenced in-memory against the catalog of **27,000+ registered Shopify applications**.
+   - Applies strict length-guarded canonical slug matching to prevent false positives.
+
+3. **Multi-Signal Classification**:
+   - **Active Apps**: Verified live installations with confirmed DOM blocks or active widgets.
+   - **Apps Using Scripts**: Background scripts, tracking pixels, and CDN assets executing without block containers.
+   - **Residual App Code**: Orphaned Liquid snippets and abandoned container tags from previously uninstalled apps.
+
 
 ---
 
