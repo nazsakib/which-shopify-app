@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Which Shopify App — App & Theme Detector",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Detect Shopify apps with 99% accuracy using multi-layer intelligence.",
   "permissions": [
     "activeTab",
@@ -29,13 +29,18 @@
   "devtools_page": "src/devtools/devtools.html",
   "action": {
     "default_popup": "src/popup/popup.html",
-    "default_icon": "assets/icons/app-shield.svg"
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "32": "assets/icons/icon32.png",
+      "48": "assets/icons/icon48.png",
+      "128": "assets/icons/icon128.png"
+    }
   },
   "icons": {
-    "16": "assets/icons/app-shield.svg",
-    "32": "assets/icons/app-shield.svg",
-    "48": "assets/icons/app-shield.svg",
-    "128": "assets/icons/app-shield.svg"
+    "16": "assets/icons/icon16.png",
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
   },
   "web_accessible_resources": [
     {
@@ -43,6 +48,10 @@
         "src/data/apps-database.json",
         "src/data/apps-database.sample.json",
         "src/content/injected.js",
+        "assets/icons/icon16.png",
+        "assets/icons/icon32.png",
+        "assets/icons/icon48.png",
+        "assets/icons/icon128.png",
         "assets/icons/app-shield.svg"
       ],
       "matches": ["<all_urls>"]
