@@ -359,7 +359,7 @@ class DetectorEngine {
     const active = [], scripts = [], ghosts = [];
     this.detectedApps.forEach((app, name) => {
       const methods = app.methods.map(m => m.method);
-      const res = { name, category: app.appData?.category || 'Ecommerce', methods, alternative: this.getAlternative(name) };
+      const res = { name, slug: app.appData?.slug || null, category: app.appData?.category || 'Ecommerce', methods, alternative: this.getAlternative(name) };
       const hasDirectEvidence = methods.includes('App Block') || methods.includes('App Snippet') || methods.includes('App Config');
       const hasStrongProof = methods.length >= 3;
       if (hasDirectEvidence || (hasStrongProof && methods.includes('dom'))) active.push(res);
