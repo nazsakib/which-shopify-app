@@ -74,7 +74,7 @@
       if (message.type === 'SCAN_REQUEST') {
         detectorEngine.startFullScan().then(results => {
           sendResults(results);
-          if (sendResponse) sendResponse({ success: true, results });
+          if (sendResponse) sendResponse({ success: true, results, storeInfo: detectorEngine.getStoreInfo() });
         }).catch(err => {
           if (sendResponse) sendResponse({ success: false, error: err.toString() });
         });

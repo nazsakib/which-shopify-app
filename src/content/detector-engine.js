@@ -70,7 +70,7 @@ class DetectorEngine {
         setTimeout(() => {
           this.isScanning = false;
           resolve(this.getResults());
-        }, 6000);
+        }, 450);
       } catch (err) {
         this.isScanning = false;
         resolve(this.getResults());

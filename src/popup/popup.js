@@ -1,6 +1,6 @@
 /**
  * Which Shopify App — Popup Controller (Manifest V3)
- * Modern Shopify Polaris / SaaS aesthetic with real-time multi-signal filtering
+ * High-performance, single-pass scan with zero background card reloading
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const copyMyshopifyBtn = document.getElementById('copy-myshopify');
   const quickExportBtn = document.getElementById('quick-export-btn');
 
+  const scanProgress = document.getElementById('scan-progress');
   const activeCountEl = document.getElementById('active-count');
   const scriptsCountEl = document.getElementById('scripts-count');
   const ghostsCountEl = document.getElementById('ghosts-count');
@@ -36,7 +37,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const spyContainer = document.getElementById('spy-alerts');
   const footerStatus = document.getElementById('footer-status');
   const rescanBtn = document.getElementById('rescan-btn');
-  const rescanIcon = document.getElementById('rescan-icon');
   const restrictedUi = document.getElementById('restricted-ui');
   const restrictedRetryBtn = document.getElementById('restricted-retry-btn');
   const toastEl = document.getElementById('toast');
@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   let activeTabFilter = 'all';
   let searchQuery = '';
   let toastTimeout = null;
+  let isScanning = false;
+  let lastRenderFingerprint = '';
 
   // --- Toast Notification ---
   function showToast(msg) {
@@ -58,56 +60,56 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, 2200);
   }
 
-  // --- Force Fresh Scan ---
-  async function forceFreshScan() {
+  // --- Single-Pass Scan Lifecycle (Runs once on popup open or manual rescan) ---
+  async function performSingleScan() {
+    if (isScanning) return;
+    isScanning = true;
+
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (!tab || !tab.id || tab.url.startsWith('chrome://')) {
+    if (!tab || !tab.id || !tab.url || tab.url.startsWith('chrome://')) {
+      isScanning = false;
       showRestrictedState();
       return;
     }
-
-    // Check fast cache
-    const data = await chrome.storage.local.get([`results_${tab.id}`]);
-    const existing = data[`results_${tab.id}`];
-
-    if (existing && existing.results && existing.results.isShopify === false) {
-      showRestrictedState();
-      return;
-    }
-
-    setLoadingState(true);
-
-    chrome.tabs.sendMessage(tab.id, { type: 'SCAN_REQUEST' }, (response) => {
-      if (chrome.runtime.lastError || !response) {
-        setLoadingState(false);
-        loadResults(); // fallback
-        return;
-      }
-      setTimeout(loadResults, 600);
-    });
-  }
-
-  // --- Load Results from Local Storage ---
-  async function loadResults() {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (!tab || !tab.id) return;
 
     try {
       const url = new URL(tab.url);
-      storeDomainEl.textContent = url.hostname;
+      if (storeDomainEl) storeDomainEl.textContent = url.hostname;
     } catch (e) {
-      storeDomainEl.textContent = 'Storefront';
+      if (storeDomainEl) storeDomainEl.textContent = 'Storefront';
     }
 
-    const data = await chrome.storage.local.get([`results_${tab.id}`]);
-    const resultsData = data[`results_${tab.id}`];
+    // Show initial scanning indicator
+    setLoadingState(true);
 
-    setLoadingState(false);
+    // Send single scan request directly to the page content script
+    chrome.tabs.sendMessage(tab.id, { type: 'SCAN_REQUEST' }, async (response) => {
+      isScanning = false;
+      setLoadingState(false);
 
-    if (resultsData) {
-      rawData = resultsData;
-      renderAll();
-    }
+      if (!chrome.runtime.lastError && response && response.results) {
+        rawData = {
+          results: response.results,
+          storeInfo: response.storeInfo || {}
+        };
+        renderAll();
+        return;
+      }
+
+      // Fallback: Check local storage for cached results if content script response was missed
+      try {
+        const data = await chrome.storage.local.get([`results_${tab.id}`]);
+        const cached = data[`results_${tab.id}`];
+        if (cached && cached.results) {
+          rawData = cached;
+          renderAll();
+          return;
+        }
+      } catch (err) {}
+
+      // If no valid Shopify data could be retrieved, show restricted state
+      showRestrictedState();
+    });
   }
 
   // --- Render All Sections ---
@@ -172,6 +174,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const totalFiltered = filteredActive.length + filteredScripts.length + filteredGhosts.length;
     const totalAll = active.length + scripts.length + ghosts.length;
 
+    // Deduplication Fingerprint: Prevent unnecessary DOM re-creation
+    const currentFingerprint = JSON.stringify({
+      fa: filteredActive.length,
+      fs: filteredScripts.length,
+      fg: filteredGhosts.length,
+      theme: storeInfo.theme,
+      q,
+      tab: activeTabFilter
+    });
+    if (currentFingerprint === lastRenderFingerprint && document.querySelector('.app-card')) {
+      return;
+    }
+    lastRenderFingerprint = currentFingerprint;
+
     // Update Tab Badges
     if (tabAllCount) tabAllCount.textContent = totalFiltered;
     if (tabActiveCount) tabActiveCount.textContent = filteredActive.length;
@@ -187,7 +203,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (footerStatus) {
       footerStatus.textContent = q
         ? `${totalFiltered} of ${totalAll} apps matching "${q}"`
-        : `${totalAll} apps analyzed • Verified`;
+        : `${totalAll} apps analyzed • 100% Client-Side`;
     }
 
     // Render Lists
@@ -201,9 +217,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!container) return;
 
     if (!apps || apps.length === 0) {
-      const emptyLabel = type === 'active' ? 'No active app blocks found'
-        : type === 'script' ? 'No external script dependencies'
-        : 'Storefront clean — no ghost snippets';
+      const emptyLabel = type === 'active' ? 'No active theme app blocks'
+        : type === 'script' ? 'No background script dependencies'
+        : 'Clean storefront — no residual ghost snippets';
       const emptyIcon = type === 'active' ? '📦' : type === 'script' ? '⚡' : '✨';
       container.innerHTML = `
         <div class="empty-box">
@@ -213,12 +229,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    container.innerHTML = apps.map((app, index) => {
+    container.innerHTML = apps.map((app) => {
       const name = app.name || 'Unknown App';
       const initial = name.charAt(0).toUpperCase();
       const isNew = addedApps.some(a => a.name === name);
 
-      let signalText = 'Active Block';
+      let signalText = 'Confirmed';
       if (type === 'active') signalText = isNew ? 'NEW' : 'Confirmed';
       else if (type === 'script') signalText = 'Script / CDN';
       else signalText = 'Ghost Snippet';
@@ -238,7 +254,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>` : '';
 
       return `
-        <div class="app-card" style="animation-delay: ${Math.min(index * 0.04, 0.4)}s;">
+        <div class="app-card">
           <div class="card-top">
             <div class="app-main">
               <div class="app-avatar">${initial}</div>
@@ -247,7 +263,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               </div>
             </div>
             <a href="${storeUrl}" target="_blank" rel="noopener noreferrer" class="store-link-btn" title="View on Shopify App Store">
-              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                 <polyline points="15 3 21 3 21 9"/>
                 <line x1="10" y1="14" x2="21" y2="3"/>
@@ -265,8 +281,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }).join('');
   }
 
-  // --- Loading Skeleton UI ---
+  // --- Loading Skeleton & Progress Bar State ---
   function setLoadingState(loading) {
+    if (scanProgress) {
+      scanProgress.style.display = loading ? 'block' : 'none';
+    }
+
     if (rescanBtn) {
       if (loading) {
         rescanBtn.classList.add('spinning');
@@ -417,15 +437,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // --- Action Buttons ---
-  if (rescanBtn) rescanBtn.addEventListener('click', forceFreshScan);
-  if (restrictedRetryBtn) restrictedRetryBtn.addEventListener('click', forceFreshScan);
+  if (rescanBtn) rescanBtn.addEventListener('click', performSingleScan);
+  if (restrictedRetryBtn) restrictedRetryBtn.addEventListener('click', performSingleScan);
   if (quickExportBtn) quickExportBtn.addEventListener('click', copyMarkdownAudit);
 
   // --- Keyboard Shortcuts ---
   document.addEventListener('keydown', (e) => {
     // Press 'R' to rescan (when not typing in search)
     if (e.key === 'r' && document.activeElement !== appSearchInput) {
-      forceFreshScan();
+      performSingleScan();
     }
     // Press '/' to focus search
     if (e.key === '/' && document.activeElement !== appSearchInput) {
@@ -445,7 +465,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       .replace(/'/g, '&#39;');
   }
 
-  // --- Initial Trigger & Event Listener ---
-  forceFreshScan();
-  chrome.storage.onChanged.addListener(loadResults);
+  // --- Initial Single Scan Trigger ---
+  // Runs ONCE on popup launch to scan the storefront cleanly. No continuous re-triggers.
+  performSingleScan();
 });
