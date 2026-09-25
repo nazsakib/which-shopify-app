@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Which Shopify App — App & Theme Detector",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Detect Shopify apps with 99% accuracy using multi-layer intelligence.",
   "permissions": [
     "activeTab",
@@ -30,10 +30,10 @@
   "action": {
     "default_popup": "src/popup/popup.html",
     "default_icon": {
-      "16": "assets/icons/icon16.png",
-      "32": "assets/icons/icon32.png",
-      "48": "assets/icons/icon48.png",
-      "128": "assets/icons/icon128.png"
+      "16": "assets/icons/action16.png",
+      "32": "assets/icons/action32.png",
+      "48": "assets/icons/action48.png",
+      "128": "assets/icons/action128.png"
     }
   },
   "icons": {
@@ -52,6 +52,10 @@
         "assets/icons/icon32.png",
         "assets/icons/icon48.png",
         "assets/icons/icon128.png",
+        "assets/icons/action16.png",
+        "assets/icons/action32.png",
+        "assets/icons/action48.png",
+        "assets/icons/action128.png",
         "assets/icons/app-shield.svg"
       ],
       "matches": ["<all_urls>"]
