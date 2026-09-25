@@ -9,11 +9,21 @@
     isInitialized = true;
     
     try {
-      const appsUrl = chrome.runtime.getURL('apps-database.json');
-      const response = await fetch(appsUrl);
-      const data = await response.json();
+      let data = { apps: [] };
+      try {
+        const appsUrl = chrome.runtime.getURL('apps-database.json');
+        const response = await fetch(appsUrl);
+        if (response.ok) {
+          data = await response.json();
+        }
+      } catch (e) {
+        try {
+          const sampleUrl = chrome.runtime.getURL('apps-database.sample.json');
+          const sampleRes = await fetch(sampleUrl);
+          if (sampleRes.ok) data = await sampleRes.json();
+        } catch (err) {}
+      }
       
-      // ENSURE DATABASE IS RESTORED
       await detectorEngine.init(data.apps || []); 
       
       setupMessageListener();

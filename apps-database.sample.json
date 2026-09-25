@@ -1,0 +1,93 @@
+{
+  "apps": [
+    {
+      "name": "Klaviyo",
+      "category": "Email Marketing",
+      "domains": [
+        "klaviyo.com",
+        "static.klaviyo.com",
+        "a.klaviyo.com"
+      ],
+      "scripts": [
+        "klaviyo.js",
+        "k.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/klaviyo",
+        "/klaviyo"
+      ],
+      "dom": [
+        "data-klaviyo",
+        ".klaviyo"
+      ],
+      "globals": [
+        "klaviyo",
+        "Klaviyo"
+      ],
+      "proxy_paths": [
+        "/apps/klaviyo"
+      ],
+      "confidence": 0.95,
+      "webhook_patterns": [
+        "webhooks/klaviyo"
+      ]
+    },
+    {
+      "name": "Loox",
+      "category": "Reviews",
+      "domains": [
+        "loox.io",
+        "widget.loox.io"
+      ],
+      "scripts": [
+        "loox.js",
+        "loox-widget.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/loox",
+        "/loox"
+      ],
+      "dom": [
+        "#looxReviews",
+        ".loox-reviews"
+      ],
+      "globals": [
+        "Loox",
+        "looxWidget"
+      ],
+      "proxy_paths": [
+        "/apps/loox"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "name": "Judge.me",
+      "category": "Reviews",
+      "domains": [
+        "judge.me",
+        "cdn.judge.me",
+        "widget.judge.me"
+      ],
+      "scripts": [
+        "judgeme.js",
+        "judge.me.js"
+      ],
+      "cdn_fingerprints": [
+        "/apps/judgeme",
+        "/judgeme"
+      ],
+      "dom": [
+        "#judgeme_product_reviews",
+        ".judgeme"
+      ],
+      "globals": [
+        "judgeme",
+        "JudgeMe"
+      ],
+      "proxy_paths": [
+        "/apps/judgeme"
+      ],
+      "confidence": 0.95
+    }
+  ]
+}

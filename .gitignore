@@ -1,0 +1,12 @@
+# Dependencies & caches
+.aider*
+node_modules/
+*.log
+*.tmp
+
+# Private App Intelligence Database
+apps-database.json
+
+# Builds & Packages
+*.zip
+*.crx

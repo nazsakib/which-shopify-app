@@ -40,7 +40,11 @@ class DetectorEngine {
     
     this.detectedApps.clear();
     if (!this.isShopify) {
-      return this.getResults(); // Return early with isShopify: false
+      this.scanCDNFingerprints();
+      this.scanInlineScripts();
+      const results = this.getResults();
+      results.isShopify = this.isShopify;
+      return results;
     }
 
     this.isScanning = true;
@@ -66,7 +70,7 @@ class DetectorEngine {
         setTimeout(() => {
           this.isScanning = false;
           resolve(this.getResults());
-        }, 1500);
+        }, 6000);
       } catch (err) {
         this.isScanning = false;
         resolve(this.getResults());
@@ -107,12 +111,13 @@ class DetectorEngine {
   processExtractedHandle(handle, method, url = '') {
     if (!handle) return;
     let cleanHandle = handle.toLowerCase().replace(/[0-9]/g, '').replace(/-app$/, '').replace(/[^a-z-_]/g, '').replace(/[-_]+$/, '').trim();
-    const systemBlacklist = ['assets', 'scripts', 'files', 'shop', 'storefront', 'perf', 'monorail', 'site-declaration', 'shopify-pay', 'shopify-cloud', 'app-bridge', 'jquery', 'analytics', 'vitals'];
-    if (cleanHandle.length < 3 || systemBlacklist.some(b => cleanHandle.includes(b))) return;
+    const exactBlacklist = ['assets', 'scripts', 'files', 'shop', 'storefront', 'perf', 'monorail', 'site-declaration', 'shopify-pay', 'shopify-cloud', 'app-bridge', 'jquery', 'analytics', 'vitals'];
+    if (cleanHandle.length < 3 || exactBlacklist.includes(cleanHandle)) return;
 
     const brandMap = {
       'cart-drawer-cart-upsell': 'Boostly', 'zepto-product-personalizer': 'Zepto Product Personalizer',
       'zeptoapps': 'Zepto Product Personalizer', 'pplr-common': 'Zepto Product Personalizer',
+      'zepto-common': 'Zepto Product Personalizer',
       'tinyseo': 'Tiny: SEO Image Optimizer', 'infinseo-seo-image-optimizer': 'InfinSEO',
       'avada': 'Avada', 'popman-popups-social': 'Popman', 'blockify-fraud-filter': 'Blockify Fraud Filter',
       'seoant': 'SEO Ant'
@@ -120,21 +125,42 @@ class DetectorEngine {
     
     let finalName = brandMap[cleanHandle] || '';
     if (!finalName) {
+      // 1. Direct slug match (100% precision)
+      const foundBySlug = this.apps.find(a => a.slug && a.slug.toLowerCase() === cleanHandle);
+      if (foundBySlug) finalName = foundBySlug.name;
+    }
+
+    if (!finalName) {
       const searchHandle = cleanHandle.replace(/[-_.]/g, '');
-      const foundApp = this.apps.find(app => {
+      // 2. Exact normalized handle match
+      let foundApp = this.apps.find(app => {
         if (!app || !app.name) return false;
         const dbHandle = app.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-        return dbHandle.includes(searchHandle) || searchHandle.includes(dbHandle);
+        return dbHandle === searchHandle;
       });
+
+      // 3. High-confidence prefix match (minimum 4 characters, max 4 character length diff)
+      if (!foundApp && searchHandle.length >= 4) {
+        foundApp = this.apps.find(app => {
+          if (!app || !app.name) return false;
+          const dbHandle = app.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+          if (dbHandle.length < 4) return false;
+          return (dbHandle.startsWith(searchHandle) || searchHandle.startsWith(dbHandle)) && 
+                 Math.abs(dbHandle.length - searchHandle.length) <= 4;
+        });
+      }
       if (foundApp) finalName = foundApp.name;
     }
     if (!finalName) finalName = cleanHandle.split(/[-_]/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
     let existingMaster = null;
     for (let [name, data] of this.detectedApps) {
-      const n1 = name.toLowerCase().replace(/[^a-z]/g, '');
-      const n2 = finalName.toLowerCase().replace(/[^a-z]/g, '');
-      if (n1.includes(n2) || n2.includes(n1)) { existingMaster = name; break; }
+      const n1 = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const n2 = finalName.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (n1 === n2 || (n1.length >= 5 && n2.length >= 5 && Math.abs(n1.length - n2.length) <= 3 && (n1.includes(n2) || n2.includes(n1)))) {
+        existingMaster = name;
+        break;
+      }
     }
 
     if (existingMaster) {
@@ -187,6 +213,59 @@ class DetectorEngine {
     } catch (e) {}
   }
 
+  checkNetwork(url) {
+    if (!url || !this.isShopify) return;
+    const urlLower = url.toLowerCase();
+    this.apps.forEach(app => {
+      if (!app) return;
+      
+      if (Array.isArray(app.cdn_fingerprints)) {
+        for (const fp of app.cdn_fingerprints) {
+          if (fp && urlLower.includes(fp.toLowerCase())) {
+            this.recordDetection(app.name, 'network', this.confidenceWeights.network, { url });
+            return;
+          }
+        }
+      }
+      
+      if (Array.isArray(app.proxy_paths)) {
+        for (const path of app.proxy_paths) {
+          if (path && urlLower.includes(path.toLowerCase())) {
+            this.recordDetection(app.name, 'network', this.confidenceWeights.proxy, { url });
+            return;
+          }
+        }
+      }
+      
+      if (Array.isArray(app.webhook_patterns)) {
+        for (const pattern of app.webhook_patterns) {
+          if (pattern && urlLower.includes(pattern.toLowerCase())) {
+            this.recordDetection(app.name, 'network', this.confidenceWeights.webhook, { url });
+            return;
+          }
+        }
+      }
+      
+      if (Array.isArray(app.domains)) {
+        for (const domain of app.domains) {
+          if (domain && urlLower.includes(domain.toLowerCase())) {
+            this.recordDetection(app.name, 'network', this.confidenceWeights.network, { url });
+            return;
+          }
+        }
+      }
+      
+      if (Array.isArray(app.scripts)) {
+        for (const script of app.scripts) {
+          if (script && urlLower.includes(script.toLowerCase())) {
+            this.recordDetection(app.name, 'network', this.confidenceWeights.script, { url });
+            return;
+          }
+        }
+      }
+    });
+  }
+
   scanScripts() {
     const scripts = document.querySelectorAll('script[src]');
     scripts.forEach(script => {
@@ -197,12 +276,10 @@ class DetectorEngine {
   matchScript(app, url) {
     if (!url) return false;
     const urlLower = url.toLowerCase();
-    const genericKeywords = ['analytics', 'theme', 'common', 'jquery', 'widget', 'loader', 'main', 'app'];
     if (Array.isArray(app.domains)) for (const domain of app.domains) if (domain && urlLower.includes(domain.toLowerCase())) return true;
     if (Array.isArray(app.scripts)) for (const script of app.scripts) {
       if (!script) continue;
       const scriptLower = script.toLowerCase();
-      if (genericKeywords.includes(scriptLower.replace(/\.js$/, '')) && !urlLower.includes(app.name.toLowerCase())) continue;
       if (urlLower.includes(scriptLower)) return true;
     }
     return false;
@@ -255,7 +332,7 @@ class DetectorEngine {
 
   recordDetection(appName, method, baseConfidence, data = {}) {
     if (!appName) return;
-    if (!this.detectedApps.has(appName)) this.detectedApps.set(appName, { name: appName, methods: [], totalScore: 0, appData: this.apps.find(a => a && a.name === appName) || null });
+    if (!this.detectedApps.has(appName)) this.detectedApps.set(appName, { name: appName, methods: [], totalScore: 0, appData: this.apps.find(a => a && a.name.toLowerCase() === appName.toLowerCase()) || null });
     const app = this.detectedApps.get(appName);
     if (!app.methods.find(m => m.method === method)) { app.methods.push({ method, confidence: baseConfidence, data }); app.totalScore += baseConfidence; }
   }

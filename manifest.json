@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Shopify App Intelligence Detector",
+  "name": "Which Shopify App — App & Theme Detector",
   "version": "1.1.1",
   "description": "Detect Shopify apps with 99% accuracy using multi-layer intelligence.",
   "permissions": [
@@ -39,7 +39,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["apps-database.json", "injected.js", "app-shield.svg"],
+      "resources": ["apps-database.json", "apps-database.sample.json", "injected.js", "app-shield.svg"],
       "matches": ["<all_urls>"]
     }
   ]
