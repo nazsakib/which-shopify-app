@@ -12,34 +12,39 @@
     "<all_urls>"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background/background.js"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": [
-        "fingerprint-engine.js",
-        "mutation-detector.js",
-        "detector-engine.js",
-        "content.js"
+        "src/content/fingerprint-engine.js",
+        "src/content/mutation-detector.js",
+        "src/content/detector-engine.js",
+        "src/content/content.js"
       ],
       "run_at": "document_idle"
     }
   ],
-  "devtools_page": "devtools.html",
+  "devtools_page": "src/devtools/devtools.html",
   "action": {
-    "default_popup": "popup.html",
-    "default_icon": "app-shield.svg"
+    "default_popup": "src/popup/popup.html",
+    "default_icon": "assets/icons/app-shield.svg"
   },
   "icons": {
-    "16": "app-shield.svg",
-    "32": "app-shield.svg",
-    "48": "app-shield.svg",
-    "128": "app-shield.svg"
+    "16": "assets/icons/app-shield.svg",
+    "32": "assets/icons/app-shield.svg",
+    "48": "assets/icons/app-shield.svg",
+    "128": "assets/icons/app-shield.svg"
   },
   "web_accessible_resources": [
     {
-      "resources": ["apps-database.json", "apps-database.sample.json", "injected.js", "app-shield.svg"],
+      "resources": [
+        "src/data/apps-database.json",
+        "src/data/apps-database.sample.json",
+        "src/content/injected.js",
+        "assets/icons/app-shield.svg"
+      ],
       "matches": ["<all_urls>"]
     }
   ]

@@ -11,14 +11,14 @@
     try {
       let data = { apps: [] };
       try {
-        const appsUrl = chrome.runtime.getURL('apps-database.json');
+        const appsUrl = chrome.runtime.getURL('src/data/apps-database.json');
         const response = await fetch(appsUrl);
         if (response.ok) {
           data = await response.json();
         }
       } catch (e) {
         try {
-          const sampleUrl = chrome.runtime.getURL('apps-database.sample.json');
+          const sampleUrl = chrome.runtime.getURL('src/data/apps-database.sample.json');
           const sampleRes = await fetch(sampleUrl);
           if (sampleRes.ok) data = await sampleRes.json();
         } catch (err) {}
@@ -33,13 +33,13 @@
       sendResults(results);
       
     } catch (error) {
-      console.error('[Shopify App Intelligence] Initialization error:', error);
+      console.error('[Which Shopify App] Initialization error:', error);
     }
   }
 
   function injectGlobalsScript() {
     const script = document.createElement('script');
-    script.src = chrome.runtime.getURL('injected.js');
+    script.src = chrome.runtime.getURL('src/content/injected.js');
     (document.head || document.documentElement).appendChild(script);
     script.onload = () => script.remove();
   }

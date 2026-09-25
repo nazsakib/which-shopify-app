@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Which Shopify App</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="restricted-ui" class="restricted-overlay">
+    <div class="restricted-message">
+      <span class="restricted-icon">🔒</span>
+      <div class="restricted-title">Not a Shopify Store</div>
+      <p class="restricted-text">This extension only provides intelligence for Shopify storefronts.</p>
+    </div>
+  </div>
+
+  <header>
+    <h1>Which Shopify App</h1>
+    <div class="store-url" id="store-domain">analyzing node...</div>
+    <div id="myshopify-container" style="margin-top:12px; display:none; align-items:center; justify-content:center; gap:8px; background:#F4F6F8; padding:6px 14px; border-radius:20px; border:1px solid #E1E3E5;">
+      <span id="myshopify-url" style="font-size:11px; font-weight:700; color:#008060;"></span>
+      <div style="display:flex; align-items:center; position:relative;">
+        <button id="copy-myshopify" style="background:none; border:none; padding:0; cursor:pointer; font-size:12px; color:#6D7175; display:flex; align-items:center;" title="Copy MyShopify URL">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        </button>
+        <span id="copy-feedback" style="position:absolute; left:20px; font-size:9px; font-weight:900; color:#008060; opacity:0; transition:0.2s; white-space:nowrap;">COPIED!</span>
+      </div>
+    </div>
+  </header>
+  
+  <div class="summary-grid">
+    <div class="sum-item">
+      <span class="sum-val" id="active-count">0</span>
+      <span class="sum-label">Active Intelligence</span>
+    </div>
+    <div class="sum-item">
+      <span class="sum-val" id="theme-name" style="color: #005BD3;">...</span>
+      <span class="sum-label" id="growth-stack">Architecture</span>
+    </div>
+  </div>
+
+  <div id="spy-alerts"></div>
+
+  <div class="container">
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start;">
+      <!-- Column 1: Active Apps -->
+      <div class="active-theme">
+        <div class="col-header">
+          <span>Active Apps</span>
+          <span class="badge-count" id="badge-active">0</span>
+        </div>
+        <div class="app-list" id="list-active"></div>
+      </div>
+
+      <!-- Column 2: Apps Using Scripts -->
+      <div class="script-theme">
+        <div class="col-header">
+          <span>Apps using scripts</span>
+          <span class="badge-count" id="badge-scripts">0</span>
+        </div>
+        <div class="app-list" id="list-scripts"></div>
+      </div>
+
+      <!-- Column 3: Residual App Code (Ghosts) -->
+      <div class="residual-theme">
+        <div class="col-header">
+          <span>Residual App Code</span>
+          <span class="badge-count" id="badge-ghosts">0</span>
+        </div>
+        <div class="app-list" id="list-ghosts"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button id="rescan-btn">Re-initialize Precision Scan</button>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

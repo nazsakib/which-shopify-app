@@ -5,6 +5,7 @@ node_modules/
 *.tmp
 
 # Private App Intelligence Database
+src/data/apps-database.json
 apps-database.json
 
 # Builds & Packages
