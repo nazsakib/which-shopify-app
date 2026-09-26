@@ -52,6 +52,15 @@ const GENERIC_PLATFORM_DOMAINS = new Set([
   'shopify.com', 'myshopify.com', 'shopifycdn.net', 'shopifycloud.com', 'shopifysvc.com'
 ]);
 
+const DEFAULT_APP_ALTERNATIVES = {
+  'Yotpo': { name: 'Judge.me', reason: 'Faster & lower cost' },
+  'Loox': { name: 'Okendo', reason: 'Better for high-volume stores' },
+  'Klaviyo': { name: 'Omnisend', reason: 'Simplified automation workflow' },
+  'PageFly': { name: 'Instant Page', reason: 'Modern OS 2.0 optimized' },
+  'Privy': { name: 'Seguno', reason: 'Native Shopify experience' },
+  'Zendesk': { name: 'Gorgias', reason: 'Shopify-first helpdesk' }
+};
+
 class DetectorEngine {
   constructor() {
     this.detectedApps = new Map();
@@ -109,13 +118,13 @@ class DetectorEngine {
       }
       if (Array.isArray(app.scripts)) {
         for (let j = 0; j < app.scripts.length; j++) {
-          const s = app.scripts[j];
-          if (s) {
-            const sLower = s.toLowerCase();
-            if (!this.scriptIndex.has(sLower)) {
-              this.scriptIndex.set(sLower, []);
+          const scriptPattern = app.scripts[j];
+          if (scriptPattern) {
+            const scriptPatternLower = scriptPattern.toLowerCase();
+            if (!this.scriptIndex.has(scriptPatternLower)) {
+              this.scriptIndex.set(scriptPatternLower, []);
             }
-            this.scriptIndex.get(sLower).push(app);
+            this.scriptIndex.get(scriptPatternLower).push(app);
           }
         }
       }
@@ -222,21 +231,21 @@ class DetectorEngine {
     if (clean.length < 3) return null;
 
     // 1. Exact slug match
-    const foundBySlug = this.apps.find(a => a && a.slug && a.slug.toLowerCase() === clean);
+    const foundBySlug = this.apps.find(app => app && app.slug && app.slug.toLowerCase() === clean);
     if (foundBySlug) return foundBySlug;
 
     // 2. Exact normalized name match
     const norm = clean.replace(/[-_.]/g, '');
-    const foundByNorm = this.apps.find(a => {
-      if (!a || !a.name) return false;
-      return a.name.toLowerCase().replace(/[^a-z0-9]/g, '') === norm;
+    const foundByNorm = this.apps.find(app => {
+      if (!app || !app.name) return false;
+      return app.name.toLowerCase().replace(/[^a-z0-9]/g, '') === norm;
     });
     if (foundByNorm) return foundByNorm;
 
     // 3. Domain match
-    const foundByDomain = this.apps.find(a => {
-      if (!a || !Array.isArray(a.domains)) return false;
-      return a.domains.some(d => d && d.toLowerCase().replace(/[^a-z0-9]/g, '') === norm);
+    const foundByDomain = this.apps.find(app => {
+      if (!app || !Array.isArray(app.domains)) return false;
+      return app.domains.some(domain => domain && domain.toLowerCase().replace(/[^a-z0-9]/g, '') === norm);
     });
     if (foundByDomain) return foundByDomain;
 
@@ -244,21 +253,21 @@ class DetectorEngine {
     if (clean.includes('-')) {
       const prefix = clean.split('-')[0];
       if (prefix.length >= 4) {
-        const foundByPrefix = this.apps.find(a => a && a.slug && a.slug.toLowerCase() === prefix);
+        const foundByPrefix = this.apps.find(app => app && app.slug && app.slug.toLowerCase() === prefix);
         if (foundByPrefix) return foundByPrefix;
       }
     }
 
     // 5. Suffix match if separated by hyphen (e.g. "sign-customizer" matching "neon-sign-customizer")
     if (clean.includes('-') && clean.length >= 6) {
-      const foundBySuffix = this.apps.find(a => a && a.slug && a.slug.toLowerCase().endsWith('-' + clean));
+      const foundBySuffix = this.apps.find(app => app && app.slug && app.slug.toLowerCase().endsWith('-' + clean));
       if (foundBySuffix) return foundBySuffix;
     }
 
     return null;
   }
 
-  isGibberish(str) {
+  isGeneratedHash(str) {
     if (!str || typeof str !== 'string') return true;
     const clean = str.toLowerCase().replace(/[^a-z]/g, '');
     if (clean.length < 3) return false;
@@ -272,6 +281,10 @@ class DetectorEngine {
       if (vowels / clean.length < 0.2) return true;
     }
     return false;
+  }
+
+  isGibberish(str) {
+    return this.isGeneratedHash(str);
   }
 
   isThemeOrPlatformAsset(url = '', name = '') {
@@ -372,7 +385,7 @@ class DetectorEngine {
     if (matchedApp) {
       this.recordDetection(matchedApp, 'App Block', 0.95);
       if (tokens.length > matchedTokensCount) {
-        const remaining = tokens.slice(matchedTokensCount).filter(t => t.length > 2 && !this.isGibberish(t)).join('-');
+        const remaining = tokens.slice(matchedTokensCount).filter(token => token.length > 2 && !this.isGeneratedHash(token)).join('-');
         if (remaining && !GENERIC_BLOCK_NAMES.has(remaining) && !this.isThemeOrPlatformAsset('', remaining)) {
           const app = this.detectedApps.get(matchedApp);
           if (app) {
@@ -407,19 +420,19 @@ class DetectorEngine {
       } else if (normApp.includes('zepto') && (urlLower.includes('zepto') || urlLower.includes('pplr') || normHandle.includes('pplr') || normHandle.includes('zepto') || normHandle.includes('personalizer'))) {
         matches = true;
       } else if (app.appData && Array.isArray(app.appData.domains)) {
-        if (app.appData.domains.some(d => d && !GENERIC_PLATFORM_DOMAINS.has(d.toLowerCase()) && urlLower.includes(d.toLowerCase()))) {
+        if (app.appData.domains.some(domain => domain && !GENERIC_PLATFORM_DOMAINS.has(domain.toLowerCase()) && urlLower.includes(domain.toLowerCase()))) {
           matches = true;
         }
       }
 
       if (matches) {
         if (!app.components) app.components = new Set();
-        if (pending.handle && !GENERIC_BLOCK_NAMES.has(pending.handle.toLowerCase()) && !this.isGibberish(pending.handle)) {
+        if (pending.handle && !GENERIC_BLOCK_NAMES.has(pending.handle.toLowerCase()) && !this.isGeneratedHash(pending.handle)) {
           app.components.add(pending.handle);
         }
         if (pending.url) {
           const comp = this.extractComponentName(pending.url);
-          if (comp && !this.isThemeOrPlatformAsset(comp) && !this.isGibberish(comp)) {
+          if (comp && !this.isThemeOrPlatformAsset(comp) && !this.isGeneratedHash(comp)) {
             app.components.add(comp);
           }
         }
@@ -434,15 +447,15 @@ class DetectorEngine {
     let cleanHandle = handle.toLowerCase().replace(/[0-9]/g, '').replace(/-app$/, '').replace(/[^a-z-_]/g, '').replace(/[-_]+$/, '').trim();
     if (cleanHandle.length < 3) return;
 
-    // Reject gibberish / random hashes
-    if (this.isGibberish(cleanHandle)) return;
+    // Discard generated hashes or anomalous strings
+    if (this.isGeneratedHash(cleanHandle)) return;
 
     // Never process theme or platform assets
     if (this.isThemeOrPlatformAsset(url, cleanHandle)) return;
 
     const normalized = cleanHandle.replace(/[-_.]/g, '');
 
-    // Step 1: Blacklist generic block and script handles
+    // Discard or defer generic platform handles as child components
     if (GENERIC_BLOCK_NAMES.has(cleanHandle) || GENERIC_BLOCK_NAMES.has(normalized)) {
       if (!this.isThemeOrPlatformAsset(url, cleanHandle)) {
         const pendingItem = { handle: cleanHandle, method, url };
@@ -452,7 +465,7 @@ class DetectorEngine {
       return;
     }
 
-    // Step 3: Canonical alias mapping
+    // Resolve vendor alias to canonical application name
     let finalName = this.resolveCanonicalName(cleanHandle);
 
     if (!finalName) {
@@ -460,8 +473,7 @@ class DetectorEngine {
       if (found) finalName = found.name;
     }
 
-    // STRICT PROFESSIONAL GUARD:
-    // If not found in database and not in canonical aliases, DO NOT INVENT AN APP!
+    // Require a verified database match or registered canonical alias before recording
     if (!finalName) {
       return;
     }
@@ -502,7 +514,7 @@ class DetectorEngine {
             const afterDouble = blockId.split('__')[1] || '';
             if (afterDouble) this.extractAppFromOS2Block(afterDouble);
           }
-          // If no "__", it is a native theme block. Skip!
+          // Skip native theme blocks lacking double underscore separator
           return;
         }
 
@@ -550,9 +562,9 @@ class DetectorEngine {
       for (let j = 0; j < app.domains.length; j++) {
         const domain = app.domains[j];
         if (!domain) continue;
-        const dLower = domain.toLowerCase();
-        if (GENERIC_PLATFORM_DOMAINS.has(dLower)) continue;
-        if (urlLower.includes(dLower)) {
+        const domainLower = domain.toLowerCase();
+        if (GENERIC_PLATFORM_DOMAINS.has(domainLower)) continue;
+        if (urlLower.includes(domainLower)) {
           this.recordDetection(app.name, 'network', this.confidenceWeights.network, { url });
           return;
         }
@@ -613,9 +625,9 @@ class DetectorEngine {
         for (let j = 0; j < app.domains.length; j++) {
           const domain = app.domains[j];
           if (!domain) continue;
-          const dLower = domain.toLowerCase();
-          if (GENERIC_PLATFORM_DOMAINS.has(dLower)) continue;
-          if (urlLower.includes(dLower)) {
+          const domainLower = domain.toLowerCase();
+          if (GENERIC_PLATFORM_DOMAINS.has(domainLower)) continue;
+          if (urlLower.includes(domainLower)) {
             this.recordDetection(app.name, 'script', this.confidenceWeights.script, { url: src });
             break;
           }
@@ -640,9 +652,9 @@ class DetectorEngine {
     if (Array.isArray(app.domains)) {
       for (const domain of app.domains) {
         if (!domain) continue;
-        const dLower = domain.toLowerCase();
-        if (GENERIC_PLATFORM_DOMAINS.has(dLower)) continue;
-        if (urlLower.includes(dLower)) return true;
+        const domainLower = domain.toLowerCase();
+        if (GENERIC_PLATFORM_DOMAINS.has(domainLower)) continue;
+        if (urlLower.includes(domainLower)) return true;
       }
     }
     if (Array.isArray(app.scripts)) {
@@ -719,15 +731,19 @@ class DetectorEngine {
   calculateScriptWeight() {
     try {
       let totalBytes = 0;
-      performance.getEntriesByType('resource').forEach(r => { if (r.initiatorType === 'script' || r.name.endsWith('.js')) totalBytes += (r.encodedBodySize || r.transferSize || 0); });
+      performance.getEntriesByType('resource').forEach(resourceEntry => {
+        if (resourceEntry.initiatorType === 'script' || resourceEntry.name.endsWith('.js')) {
+          totalBytes += (resourceEntry.encodedBodySize || resourceEntry.transferSize || 0);
+        }
+      });
       this.scriptWeight = totalBytes;
     } catch (e) {}
   }
 
   recordDetection(appName, method, baseConfidence, data = {}) {
-    if (!appName || this.isGibberish(appName)) return;
+    if (!appName || this.isGeneratedHash(appName)) return;
     if (!this.detectedApps.has(appName)) {
-      let appData = this.apps.find(a => a && a.name && a.name.toLowerCase() === appName.toLowerCase()) || null;
+      let appData = this.apps.find(app => app && app.name && app.name.toLowerCase() === appName.toLowerCase()) || null;
       if (!appData && data.handle) {
         appData = this.findAppInDatabase(data.handle);
       }
@@ -744,17 +760,17 @@ class DetectorEngine {
     if (!app.components) app.components = new Set();
     if (!app.extensionIds) app.extensionIds = new Set();
 
-    if (data.handle && !GENERIC_BLOCK_NAMES.has(data.handle.toLowerCase()) && !this.isGibberish(data.handle) && !this.isThemeOrPlatformAsset('', data.handle)) {
+    if (data.handle && !GENERIC_BLOCK_NAMES.has(data.handle.toLowerCase()) && !this.isGeneratedHash(data.handle) && !this.isThemeOrPlatformAsset('', data.handle)) {
       app.components.add(data.handle);
     }
-    if (data.component && !this.isGibberish(data.component) && !this.isThemeOrPlatformAsset('', data.component)) {
+    if (data.component && !this.isGeneratedHash(data.component) && !this.isThemeOrPlatformAsset('', data.component)) {
       app.components.add(data.component);
     }
     if (data.url && !this.isThemeOrPlatformAsset(data.url)) {
       const extId = this.extractExtensionId(data.url);
       if (extId) app.extensionIds.add(extId);
       const comp = this.extractComponentName(data.url);
-      if (comp && !this.isThemeOrPlatformAsset(comp) && !this.isGibberish(comp)) {
+      if (comp && !this.isThemeOrPlatformAsset(comp) && !this.isGeneratedHash(comp)) {
         app.components.add(comp);
       }
     }
@@ -762,7 +778,7 @@ class DetectorEngine {
       app.components.add(data.variable);
     }
 
-    if (!app.methods.find(m => m.method === method)) {
+    if (!app.methods.find(methodEntry => methodEntry.method === method)) {
       app.methods.push({ method, confidence: baseConfidence, data });
       app.totalScore += baseConfidence;
     }
@@ -771,57 +787,57 @@ class DetectorEngine {
   shouldSubsume(nameA, nameB) {
     if (nameA === nameB) return null;
 
-    const normA = nameA.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const normB = nameB.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const normalizedFirstAppName = nameA.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const normalizedSecondAppName = nameB.toLowerCase().replace(/[^a-z0-9]/g, '');
 
     // Canonical alias check
-    const canA = this.resolveCanonicalName(normA);
-    const canB = this.resolveCanonicalName(normB);
-    if (canA && canA === nameB) return { master: nameB, child: nameA };
-    if (canB && canB === nameA) return { master: nameA, child: nameB };
+    const canonicalFirstName = this.resolveCanonicalName(normalizedFirstAppName);
+    const canonicalSecondName = this.resolveCanonicalName(normalizedSecondAppName);
+    if (canonicalFirstName && canonicalFirstName === nameB) return { master: nameB, child: nameA };
+    if (canonicalSecondName && canonicalSecondName === nameA) return { master: nameA, child: nameB };
 
     // Database-backed app priority check
     const appA = this.detectedApps.get(nameA);
     const appB = this.detectedApps.get(nameB);
-    const hasDbA = !!(appA && appA.appData);
-    const hasDbB = !!(appB && appB.appData);
+    const isFirstAppInDatabase = !!(appA && appA.appData);
+    const isSecondAppInDatabase = !!(appB && appB.appData);
 
     // Subphrase check (e.g. "Product Personalizer" inside "Zepto Product Personalizer")
-    if (normA.length >= 5 && normB.length >= 5) {
-      if (normB.includes(normA) && normB.length > normA.length) {
-        if (hasDbA && !hasDbB) return { master: nameA, child: nameB };
+    if (normalizedFirstAppName.length >= 5 && normalizedSecondAppName.length >= 5) {
+      if (normalizedSecondAppName.includes(normalizedFirstAppName) && normalizedSecondAppName.length > normalizedFirstAppName.length) {
+        if (isFirstAppInDatabase && !isSecondAppInDatabase) return { master: nameA, child: nameB };
         return { master: nameB, child: nameA };
       }
-      if (normA.includes(normB) && normA.length > normB.length) {
-        if (hasDbB && !hasDbA) return { master: nameB, child: nameA };
+      if (normalizedFirstAppName.includes(normalizedSecondAppName) && normalizedFirstAppName.length > normalizedSecondAppName.length) {
+        if (isSecondAppInDatabase && !isFirstAppInDatabase) return { master: nameA, child: nameB };
         return { master: nameA, child: nameB };
       }
     }
 
     // Brand root with generic suffix check (e.g. "Zepto Common" vs "Zepto Product Personalizer")
-    const wordsA = nameA.toLowerCase().split(/[\s-_]+/);
-    const wordsB = nameB.toLowerCase().split(/[\s-_]+/);
+    const firstAppTokens = nameA.toLowerCase().split(/[\s-_]+/);
+    const secondAppTokens = nameB.toLowerCase().split(/[\s-_]+/);
     const genericSuffixes = new Set([
       'common', 'core', 'embed', 'runtime', 'main', 'loader', 'widget',
       'helper', 'script', 'base', 'sdk', 'bundle', 'api', 'tools', 'app'
     ]);
 
-    if (wordsA.length >= 2 && wordsB.length >= 2 && wordsA[0] === wordsB[0]) {
-      const isAGeneric = wordsA.slice(1).every(w => genericSuffixes.has(w));
-      const isBGeneric = wordsB.slice(1).every(w => genericSuffixes.has(w));
-      if (isAGeneric && !isBGeneric) {
+    if (firstAppTokens.length >= 2 && secondAppTokens.length >= 2 && firstAppTokens[0] === secondAppTokens[0]) {
+      const hasGenericSuffixFirst = firstAppTokens.slice(1).every(token => genericSuffixes.has(token));
+      const hasGenericSuffixSecond = secondAppTokens.slice(1).every(token => genericSuffixes.has(token));
+      if (hasGenericSuffixFirst && !hasGenericSuffixSecond) {
         return { master: nameB, child: nameA };
       }
-      if (isBGeneric && !isAGeneric) {
+      if (hasGenericSuffixSecond && !hasGenericSuffixFirst) {
         return { master: nameA, child: nameB };
       }
     }
 
     // Generic name check
-    if (GENERIC_BLOCK_NAMES.has(normA) && !GENERIC_BLOCK_NAMES.has(normB)) {
+    if (GENERIC_BLOCK_NAMES.has(normalizedFirstAppName) && !GENERIC_BLOCK_NAMES.has(normalizedSecondAppName)) {
       return { master: nameB, child: nameA };
     }
-    if (GENERIC_BLOCK_NAMES.has(normB) && !GENERIC_BLOCK_NAMES.has(normA)) {
+    if (GENERIC_BLOCK_NAMES.has(normalizedSecondAppName) && !GENERIC_BLOCK_NAMES.has(normalizedFirstAppName)) {
       return { master: nameA, child: nameB };
     }
 
@@ -837,24 +853,24 @@ class DetectorEngine {
     if (!masterApp.components) masterApp.components = new Set();
     if (!childApp.components) childApp.components = new Set();
 
-    // 1. Move child's name into components of master
+    // Move child's name into components of master
     if (childName !== masterName) {
       masterApp.components.add(childName);
     }
 
-    // 2. Transfer child's components into master
-    childApp.components.forEach(c => masterApp.components.add(c));
+    // Transfer child's components into master
+    childApp.components.forEach(componentName => masterApp.components.add(componentName));
 
-    // 3. Transfer detection methods and confidence scores
-    for (const m of childApp.methods) {
-      if (!masterApp.methods.some(existing => existing.method === m.method)) {
-        masterApp.methods.push(m);
+    // Transfer detection methods and confidence scores
+    for (const methodEntry of childApp.methods) {
+      if (!masterApp.methods.some(existing => existing.method === methodEntry.method)) {
+        masterApp.methods.push(methodEntry);
       }
-      if (m.data?.handle) masterApp.components.add(m.data.handle);
-      if (m.data?.url) {
-        const comp = this.extractComponentName(m.data.url);
+      if (methodEntry.data?.handle) masterApp.components.add(methodEntry.data.handle);
+      if (methodEntry.data?.url) {
+        const comp = this.extractComponentName(methodEntry.data.url);
         if (comp) masterApp.components.add(comp);
-        const extId = this.extractExtensionId(m.data.url);
+        const extId = this.extractExtensionId(methodEntry.data.url);
         if (extId) {
           if (!masterApp.extensionIds) masterApp.extensionIds = new Set();
           masterApp.extensionIds.add(extId);
@@ -863,12 +879,12 @@ class DetectorEngine {
     }
     masterApp.totalScore = Math.max(masterApp.totalScore, childApp.totalScore) + 0.1;
 
-    // 4. Inherit metadata if master is missing it
+    // Inherit metadata if master is missing it
     if (!masterApp.appData && childApp.appData) {
       masterApp.appData = childApp.appData;
     }
 
-    // 5. Delete child from detected apps
+    // Remove child entry from detected applications
     this.detectedApps.delete(childName);
   }
 
@@ -948,38 +964,38 @@ class DetectorEngine {
 
     const active = [], scripts = [], ghosts = [];
     this.detectedApps.forEach((app, name) => {
-      // Professional sanity check: filter out gibberish or generic names
-      if (this.isGibberish(name)) return;
+      // Filter out anomalous hashes or reserved platform names
+      if (this.isGeneratedHash(name)) return;
       const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
       if (GENERIC_BLOCK_NAMES.has(cleanName) || GENERIC_BLOCK_NAMES.has(name.toLowerCase())) {
         return;
       }
 
-      // App MUST either have verified appData from database OR match CANONICAL_ALIASES
+      // Require a verified database match or registered canonical alias before recording
       const isVerified = (app.appData && app.appData.name) || this.resolveCanonicalName(cleanName) || this.resolveCanonicalName(name);
       if (!isVerified) {
         return;
       }
 
-      const methods = app.methods.map(m => m.method);
-      const components = Array.from(app.components || []).filter(c => {
-        if (!c) return false;
-        const cLower = c.toLowerCase().trim();
-        if (cLower === name.toLowerCase()) return false;
-        if (this.isGibberish(cLower)) return false;
-        if (this.isThemeOrPlatformAsset('', cLower)) return false;
-        if (GENERIC_BLOCK_NAMES.has(cLower) || GENERIC_BLOCK_NAMES.has(cLower.replace(/[-_]/g, ''))) return false;
+      const methods = app.methods.map(methodEntry => methodEntry.method);
+      const components = Array.from(app.components || []).filter(componentName => {
+        if (!componentName) return false;
+        const componentLower = componentName.toLowerCase().trim();
+        if (componentLower === name.toLowerCase()) return false;
+        if (this.isGeneratedHash(componentLower)) return false;
+        if (this.isThemeOrPlatformAsset('', componentLower)) return false;
+        if (GENERIC_BLOCK_NAMES.has(componentLower) || GENERIC_BLOCK_NAMES.has(componentLower.replace(/[-_]/g, ''))) return false;
         // Filter out redundant name variations that match the app name
-        const normC = cLower.replace(/[^a-z0-9]/g, '');
+        const normalizedComponent = componentLower.replace(/[^a-z0-9]/g, '');
         const normName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-        if (normC === normName || normName === 'zepto' + normC || normName === normC + 'zepto') return false;
+        if (normalizedComponent === normName || normName === 'zepto' + normalizedComponent || normName === normalizedComponent + 'zepto') return false;
         return true;
-      }).map(c => {
+      }).map(componentName => {
         // Strip trailing random Shopify block template instance hashes like "-vyhp"
-        return c.replace(/[-_][a-z0-9]{4,6}$/i, '');
-      }).filter((c, idx, arr) => arr.indexOf(c) === idx);
+        return componentName.replace(/[-_][a-z0-9]{4,6}$/i, '');
+      }).filter((componentName, index, componentsList) => componentsList.indexOf(componentName) === index);
 
-      const dbApp = app.appData || this.findAppInDatabase(name) || this.apps.find(a => a && a.name && a.name.toLowerCase() === name.toLowerCase());
+      const dbApp = app.appData || this.findAppInDatabase(name) || this.apps.find(appEntry => appEntry && appEntry.name && appEntry.name.toLowerCase() === name.toLowerCase());
       const res = {
         name,
         slug: dbApp?.slug || null,
@@ -995,24 +1011,42 @@ class DetectorEngine {
       else if (methods.includes('App CDN') || (methods.includes('script') && app.totalScore > 0.8)) scripts.push(res);
       else ghosts.push(res);
     });
-    const activeApps = active.sort((a,b) => a.name.localeCompare(b.name));
-    const names = activeApps.map(a => a.name.toLowerCase());
+    const activeApps = active.sort((firstApp, secondApp) => firstApp.name.localeCompare(secondApp.name));
+    const names = activeApps.map(app => app.name.toLowerCase());
     let stack = "Standard Stack";
     if (names.includes('klaviyo') && (names.includes('loox') || names.includes('judgeme'))) stack = "High-Conversion Stack";
     if (names.includes('recharge') || names.includes('bold')) stack = "Subscription Stack";
-    return { active: activeApps, scripts: scripts.sort((a,b) => a.name.localeCompare(b.name)), ghosts: ghosts.sort((a,b) => a.name.localeCompare(b.name)), growthStack: stack, isShopify: this.isShopify };
+    return {
+      active: activeApps,
+      scripts: scripts.sort((firstApp, secondApp) => firstApp.name.localeCompare(secondApp.name)),
+      ghosts: ghosts.sort((firstApp, secondApp) => firstApp.name.localeCompare(secondApp.name)),
+      growthStack: stack,
+      isShopify: this.isShopify
+    };
   }
 
   getAlternative(appName) {
-    const alternatives = { 'Yotpo': { name: 'Judge.me', reason: 'Faster & lower cost' }, 'Loox': { name: 'Okendo', reason: 'Better for high-volume stores' }, 'Klaviyo': { name: 'Omnisend', reason: 'Simplified automation workflow' }, 'PageFly': { name: 'Instant Page', reason: 'Modern OS 2.0 optimized' }, 'Privy': { name: 'Seguno', reason: 'Native Shopify experience' }, 'Zendesk': { name: 'Gorgias', reason: 'Shopify-first helpdesk' } };
-    return alternatives[appName] || null;
+    return DEFAULT_APP_ALTERNATIVES[appName] || null;
   }
 
   getStoreInfo() {
     return { domain: window.location.hostname, url: window.location.href, timestamp: new Date().toISOString(), theme: this.themeInfo.name, shop: this.shopDomain, isShopify: this.isShopify, scriptWeight: this.scriptWeight };
   }
 
-  getPerformanceWarning(results) { return null; }
+  /**
+   * Evaluates storefront script weight and returns performance advisory warnings.
+   * @param {Object} results
+   * @returns {Object|null}
+   */
+  getPerformanceWarning(results) {
+    if (this.scriptWeight > 2500000) {
+      return {
+        level: 'warning',
+        message: `High script payload detected (${Math.round(this.scriptWeight / 1024)} KB). Consider auditing unused app scripts.`
+      };
+    }
+    return null;
+  }
 }
 
 if (typeof module !== 'undefined' && module.exports) {

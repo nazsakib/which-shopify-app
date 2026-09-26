@@ -34,23 +34,24 @@
       "Zoho", "trustpilot", "Okendo", "looxWidget", "Loox", "JudgeMe"
     ];
 
+    // Extract known global app handles without deep proxy traversal
     const activeGlobals = [];
-    for (const g of knownGlobals) {
-      if (window[g] !== undefined) {
-        activeGlobals.push(g);
+    for (const globalIdentifier of knownGlobals) {
+      if (window[globalIdentifier] !== undefined) {
+        activeGlobals.push(globalIdentifier);
       }
     }
 
-    // 3. Construct a strictly sanitized object (primitives and arrays of strings only)
-    const sanitized = {
+    // Construct a sanitized payload containing only primitives and string arrays
+    const sanitizedPayload = {
       type: 'SHOPIFY_APP_GLOBALS',
       globals: activeGlobals,
       shopify: shopifyData
     };
 
-    // Send safely without any functions, DOM nodes, or circular references
-    window.postMessage(sanitized, '*');
-  } catch (err) {
-    // Silent fail to prevent site disruption
+    // Safely dispatch to content script
+    window.postMessage(sanitizedPayload, '*');
+  } catch (error) {
+    // Suppress errors to avoid interfering with storefront execution
   }
 })();

@@ -28,19 +28,23 @@ async function handleDetectionUpdate(data, tab) {
   const storageKey = `results_${tab.id}`;
   const domainKey = `results_${domain}`;
 
-  // Spy Feature: Get previous data to find changes
-  const prevData = await chrome.storage.local.get([domainKey]);
-  const prevResults = prevData[domainKey]?.results?.active || [];
-  const currentResults = data.results?.active || [];
+  // Compute differential between previous and current storefront scans
+  const previousScanData = await chrome.storage.local.get([domainKey]);
+  const previousActiveApps = previousScanData[domainKey]?.results?.active || [];
+  const currentActiveApps = data.results?.active || [];
 
-  const added = currentResults.filter(c => !prevResults.some(p => p.name === c.name));
-  const removed = prevResults.filter(p => !currentResults.some(c => c.name === p.name));
+  const addedApps = currentActiveApps.filter(currentApp => 
+    !previousActiveApps.some(previousApp => previousApp.name === currentApp.name)
+  );
+  const removedApps = previousActiveApps.filter(previousApp => 
+    !currentActiveApps.some(currentApp => currentApp.name === previousApp.name)
+  );
 
   const resultsToStore = {
     results: data.results,
     storeInfo: data.storeInfo,
     timestamp: data.timestamp,
-    changes: { added, removed }
+    changes: { added: addedApps, removed: removedApps }
   };
   
   await chrome.storage.local.set({
@@ -48,13 +52,13 @@ async function handleDetectionUpdate(data, tab) {
     [domainKey]: resultsToStore 
   });
   
-  // Fix: Show TOTAL number of unique findings across all categories
+  // Aggregate badge count across all active detection categories
   const activeCount = Array.isArray(data.results?.active) ? data.results.active.length : 0;
   const scriptsCount = Array.isArray(data.results?.scripts) ? data.results.scripts.length : 0;
   const ghostsCount = Array.isArray(data.results?.ghosts) ? data.results.ghosts.length : 0;
   
-  const totalCount = activeCount + scriptsCount + ghostsCount;
-  updateBadge(tab, totalCount);
+  const totalFindingsCount = activeCount + scriptsCount + ghostsCount;
+  updateBadge(tab, totalFindingsCount);
 }
 
 function updateBadge(tab, count) {
@@ -63,7 +67,7 @@ function updateBadge(tab, count) {
   chrome.action.setBadgeBackgroundColor({ color: '#15C15D', tabId: tab.id });
 }
 
-// AUTO-SCAN ON REFRESH
+// Auto-scan storefront on page load completion
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete' && tab.url && !tab.url.startsWith('chrome://')) {
     chrome.tabs.sendMessage(tabId, { type: 'SCAN_REQUEST' }).catch(() => {});

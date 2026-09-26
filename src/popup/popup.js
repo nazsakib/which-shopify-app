@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const sidebarItems = document.querySelectorAll('.sidebar-item');
 
-  const spyContainer = document.getElementById('spy-alerts');
+  const alertsContainer = document.getElementById('store-change-alerts') || document.getElementById('spy-alerts');
   const footerStatus = document.getElementById('footer-status');
   const rescanBtn = document.getElementById('rescan-btn');
   const restrictedUi = document.getElementById('restricted-ui');
@@ -52,9 +52,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   // --- Toast Notification ---
-  function showToast(msg) {
+  function showToast(message) {
     if (!toastEl) return;
-    toastEl.textContent = msg;
+    toastEl.textContent = message;
     toastEl.classList.add('show');
     clearTimeout(toastTimeout);
     toastTimeout = setTimeout(() => {
@@ -68,9 +68,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const paramTabId = urlParams.get('tabId');
     if (paramTabId) {
       try {
-        const t = await chrome.tabs.get(parseInt(paramTabId, 10));
-        if (t) return t;
-      } catch (e) {}
+        const targetTab = await chrome.tabs.get(parseInt(paramTabId, 10));
+        if (targetTab) return targetTab;
+      } catch (error) {}
     }
     const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
     return activeTab || null;
@@ -104,8 +104,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  // --- Instant Load & Scan Lifecycle ---
-  async function performSingleScan(forceRescan = false) {
+  // --- Storefront Audit Lifecycle ---
+  async function loadOrScanStorefront(forceRefresh = false) {
     if (isScanning) return;
 
     const tab = await resolveTargetTab();
@@ -120,33 +120,32 @@ document.addEventListener('DOMContentLoaded', async () => {
       const url = new URL(tab.url);
       tabHostname = url.hostname;
       if (storeDomainEl) storeDomainEl.textContent = tabHostname;
-    } catch (e) {
+    } catch (error) {
       if (storeDomainEl) storeDomainEl.textContent = 'Storefront';
     }
 
     const storageKey = `results_${tab.id}`;
     const domainKey = tabHostname ? `results_${tabHostname}` : '';
 
-    // 1. FAST PATH (Instant Load): If not forced rescan, check cache first!
-    // Shows loading only once per page; closing & reopening loads instantly with 0ms delay!
-    if (!forceRescan) {
+    // Fast path: Return cached audit results immediately if available for this storefront
+    if (!forceRefresh) {
       try {
         const cacheData = await chrome.storage.local.get([storageKey, domainKey].filter(Boolean));
         const cached = cacheData[storageKey] || (domainKey ? cacheData[domainKey] : null);
         if (cached && cached.results) {
           rawData = cached;
           renderAll();
-          return; // Instant render, zero loading screens!
+          return;
         }
-      } catch (err) {}
+      } catch (error) {}
     }
 
-    // 2. SLOW/INITIAL PATH: Run scan only when cache is missing or explicitly re-scanning
+    // Trigger a fresh storefront audit when cache is absent or explicitly requested
     isScanning = true;
     setLoadingState(true);
 
     // Send scan request directly to the page content script
-    chrome.tabs.sendMessage(tab.id, { type: 'SCAN_REQUEST', force: forceRescan }, async (response) => {
+    chrome.tabs.sendMessage(tab.id, { type: 'SCAN_REQUEST', force: forceRefresh }, async (response) => {
       isScanning = false;
       setLoadingState(false);
 
@@ -168,7 +167,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           renderAll();
           return;
         }
-      } catch (err) {}
+      } catch (error) {}
 
       // If no valid Shopify data could be retrieved, show restricted state
       showRestrictedState();
@@ -199,12 +198,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (themeNameEl) themeNameEl.textContent = storeInfo.theme || 'Custom Theme';
     if (growthStackEl) growthStackEl.textContent = growthStack || 'Standard Stack';
 
-    // Alerts
-    if (spyContainer) {
-      spyContainer.innerHTML = '';
+    // Check previous audit results to highlight newly detected apps
+    if (alertsContainer) {
+      alertsContainer.innerHTML = '';
       if (changes.added && changes.added.length > 0) {
-        const names = changes.added.map(a => a.name).join(', ');
-        spyContainer.innerHTML = `
+        const names = changes.added.map(addedApp => addedApp.name).join(', ');
+        alertsContainer.innerHTML = `
           <div class="alert-banner">
             <span>🚀</span>
             <span><strong>New Apps Detected:</strong> ${escapeHtml(names)}</span>
@@ -213,54 +212,54 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Filter by Search Query
-    const q = searchQuery.toLowerCase().trim();
+    const searchFilterQuery = searchQuery.toLowerCase().trim();
     const filterFn = (app) => {
-      if (!q) return true;
-      const nameMatch = (app.name || '').toLowerCase().includes(q);
-      const catMatch = (app.category || '').toLowerCase().includes(q);
-      const methodMatch = Array.isArray(app.methods) && app.methods.some(m => (m || '').toLowerCase().includes(q));
-      const compMatch = Array.isArray(app.components) && app.components.some(c => (c || '').toLowerCase().includes(q));
-      return nameMatch || catMatch || methodMatch || compMatch;
+      if (!searchFilterQuery) return true;
+      const nameMatch = (app.name || '').toLowerCase().includes(searchFilterQuery);
+      const categoryMatch = (app.category || '').toLowerCase().includes(searchFilterQuery);
+      const methodMatch = Array.isArray(app.methods) && app.methods.some(method => (method || '').toLowerCase().includes(searchFilterQuery));
+      const componentMatch = Array.isArray(app.components) && app.components.some(component => (component || '').toLowerCase().includes(searchFilterQuery));
+      return nameMatch || categoryMatch || methodMatch || componentMatch;
     };
 
-    const filteredActive = active.filter(filterFn);
-    const filteredScripts = scripts.filter(filterFn);
-    const filteredGhosts = ghosts.filter(filterFn);
+    const filteredActiveApps = active.filter(filterFn);
+    const filteredScriptApps = scripts.filter(filterFn);
+    const filteredGhostApps = ghosts.filter(filterFn);
 
-    const totalFiltered = filteredActive.length + filteredScripts.length + filteredGhosts.length;
+    const totalFiltered = filteredActiveApps.length + filteredScriptApps.length + filteredGhostApps.length;
     const totalAll = active.length + scripts.length + ghosts.length;
 
     // Deduplication Fingerprint
-    const currentFingerprint = JSON.stringify({
-      fa: filteredActive.length,
-      fs: filteredScripts.length,
-      fg: filteredGhosts.length,
-      theme: storeInfo.theme,
-      q,
-      cat: activeCategory
+    const renderStateFingerprint = JSON.stringify({
+      activeCount: filteredActiveApps.length,
+      scriptCount: filteredScriptApps.length,
+      ghostCount: filteredGhostApps.length,
+      activeTheme: storeInfo.theme,
+      searchQuery: searchFilterQuery,
+      selectedCategory: activeCategory
     });
-    if (currentFingerprint === lastRenderFingerprint && document.querySelector('.app-card')) {
+    if (renderStateFingerprint === lastRenderFingerprint && document.querySelector('.app-card')) {
       return;
     }
-    lastRenderFingerprint = currentFingerprint;
+    lastRenderFingerprint = renderStateFingerprint;
 
     // Update Sidebar Counts
-    if (sidebarActiveCount) sidebarActiveCount.textContent = filteredActive.length;
-    if (sidebarScriptsCount) sidebarScriptsCount.textContent = filteredScripts.length;
-    if (sidebarGhostsCount) sidebarGhostsCount.textContent = filteredGhosts.length;
+    if (sidebarActiveCount) sidebarActiveCount.textContent = filteredActiveApps.length;
+    if (sidebarScriptsCount) sidebarScriptsCount.textContent = filteredScriptApps.length;
+    if (sidebarGhostsCount) sidebarGhostsCount.textContent = filteredGhostApps.length;
     if (totalAppsCount) totalAppsCount.textContent = totalFiltered;
 
     // Update Footer Status
     if (footerStatus) {
-      footerStatus.textContent = q
-        ? `${totalFiltered} of ${totalAll} apps matching "${q}"`
+      footerStatus.textContent = searchFilterQuery
+        ? `${totalFiltered} of ${totalAll} apps matching "${searchFilterQuery}"`
         : `${totalAll} apps analyzed • 100% Client-Side`;
     }
 
     // Render Lists
-    renderAppList(listActive, filteredActive, 'active', changes.added || []);
-    renderAppList(listScripts, filteredScripts, 'script', []);
-    renderAppList(listGhosts, filteredGhosts, 'ghost', []);
+    renderAppList(listActive, filteredActiveApps, 'active', changes.added || []);
+    renderAppList(listScripts, filteredScriptApps, 'script', []);
+    renderAppList(listGhosts, filteredGhostApps, 'ghost', []);
 
     // Ensure correct panel is visible
     switchCategory(activeCategory);
@@ -286,7 +285,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     container.innerHTML = apps.map((app) => {
       const name = app.name || 'Unknown App';
       const initial = name.charAt(0).toUpperCase();
-      const isNew = addedApps.some(a => a.name === name);
+      const isNew = addedApps.some(addedApp => addedApp.name === name);
       const icon = app.icon || null;
       const slug = app.slug || '';
 
@@ -313,7 +312,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const componentsHtml = (Array.isArray(app.components) && app.components.length > 0) ? `
         <div class="components-row" title="Detected Components & Scripts">
           <span class="components-label">Scripts:</span>
-          ${app.components.map(c => `<span class="component-pill" title="${escapeHtml(c)}">${escapeHtml(c)}</span>`).join('')}
+          ${app.components.map(componentName => `<span class="component-pill" title="${escapeHtml(componentName)}">${escapeHtml(componentName)}</span>`).join('')}
         </div>` : '';
 
       return `
@@ -357,34 +356,34 @@ document.addEventListener('DOMContentLoaded', async () => {
   // --- Dynamic On-Demand Logo Loader ---
   function loadMissingAppIcons(container) {
     if (!container) return;
-    const avatars = container.querySelectorAll('.app-avatar[data-slug]:not([data-icon-loaded])');
-    avatars.forEach(avatar => {
-      const slug = avatar.getAttribute('data-slug');
-      const name = avatar.getAttribute('data-name');
-      if (!slug || avatar.querySelector('img.app-logo-img')) return;
-      avatar.setAttribute('data-icon-loaded', 'pending');
+    const avatarElements = container.querySelectorAll('.app-avatar[data-slug]:not([data-icon-loaded])');
+    avatarElements.forEach(avatarElement => {
+      const appSlug = avatarElement.getAttribute('data-slug');
+      const appName = avatarElement.getAttribute('data-name');
+      if (!appSlug || avatarElement.querySelector('img.app-logo-img')) return;
+      avatarElement.setAttribute('data-icon-loaded', 'pending');
       try {
-        chrome.runtime.sendMessage({ type: 'GET_APP_ICON', slug, name }, (response) => {
+        chrome.runtime.sendMessage({ type: 'GET_APP_ICON', slug: appSlug, name: appName }, (response) => {
           if (chrome.runtime.lastError || !response || !response.success || !response.icon) {
-            avatar.setAttribute('data-icon-loaded', 'failed');
+            avatarElement.setAttribute('data-icon-loaded', 'failed');
             return;
           }
-          avatar.setAttribute('data-icon-loaded', 'true');
-          const fallback = avatar.querySelector('.app-avatar-fallback');
-          const img = document.createElement('img');
-          img.className = 'app-logo-img';
-          img.alt = name || '';
-          img.loading = 'lazy';
-          img.src = response.icon;
-          img.onerror = () => {
-            img.style.display = 'none';
-            if (fallback) fallback.style.display = 'flex';
+          avatarElement.setAttribute('data-icon-loaded', 'true');
+          const fallbackElement = avatarElement.querySelector('.app-avatar-fallback');
+          const logoImage = document.createElement('img');
+          logoImage.className = 'app-logo-img';
+          logoImage.alt = appName || '';
+          logoImage.loading = 'lazy';
+          logoImage.src = response.icon;
+          logoImage.onerror = () => {
+            logoImage.style.display = 'none';
+            if (fallbackElement) fallbackElement.style.display = 'flex';
           };
-          if (fallback) fallback.style.display = 'none';
-          avatar.prepend(img);
+          if (fallbackElement) fallbackElement.style.display = 'none';
+          avatarElement.prepend(logoImage);
         });
-      } catch (e) {
-        avatar.setAttribute('data-icon-loaded', 'failed');
+      } catch (error) {
+        avatarElement.setAttribute('data-icon-loaded', 'failed');
       }
     });
   }
@@ -458,9 +457,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     md += `## 1. Confirmed Active Apps (${active.length})\n`;
     if (active.length > 0) {
-      active.forEach(a => {
-        const comps = (Array.isArray(a.components) && a.components.length > 0) ? ` | Scripts: ${a.components.join(', ')}` : '';
-        md += `- **${a.name}** (${a.category || 'Ecommerce'}) — Signal: ${(a.methods || []).join(', ')}${comps}\n`;
+      active.forEach(activeApp => {
+        const componentsText = (Array.isArray(activeApp.components) && activeApp.components.length > 0) ? ` | Scripts: ${activeApp.components.join(', ')}` : '';
+        md += `- **${activeApp.name}** (${activeApp.category || 'Ecommerce'}) — Signal: ${(activeApp.methods || []).join(', ')}${componentsText}\n`;
       });
     } else {
       md += `*None detected.*\n`;
@@ -468,8 +467,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     md += `\n## 2. Apps Using Scripts / CDNs (${scripts.length})\n`;
     if (scripts.length > 0) {
-      scripts.forEach(s => {
-        md += `- **${s.name}** (${s.category || 'Ecommerce'}) — Signal: ${(s.methods || []).join(', ')}\n`;
+      scripts.forEach(scriptApp => {
+        md += `- **${scriptApp.name}** (${scriptApp.category || 'Ecommerce'}) — Signal: ${(scriptApp.methods || []).join(', ')}\n`;
       });
     } else {
       md += `*None detected.*\n`;
@@ -477,8 +476,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     md += `\n## 3. Residual App Code (Ghost Remnants) (${ghosts.length})\n`;
     if (ghosts.length > 0) {
-      ghosts.forEach(g => {
-        md += `- **${g.name}** (${g.category || 'Ecommerce'}) — Orphaned snippet or container\n`;
+      ghosts.forEach(ghostApp => {
+        md += `- **${ghostApp.name}** (${ghostApp.category || 'Ecommerce'}) — Orphaned snippet or container\n`;
       });
     } else {
       md += `*No residual code found. Clean storefront!*\n`;
@@ -495,8 +494,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // --- Copy MyShopify Handle ---
   if (copyMyshopifyBtn) {
-    copyMyshopifyBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
+    copyMyshopifyBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
       const text = myshopifyUrlEl ? myshopifyUrlEl.textContent : '';
       if (text && text !== '—') {
         navigator.clipboard.writeText(text).then(() => {
@@ -508,8 +507,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // --- Search Input Handlers ---
   if (appSearchInput) {
-    appSearchInput.addEventListener('input', (e) => {
-      searchQuery = e.target.value;
+    appSearchInput.addEventListener('input', (event) => {
+      searchQuery = event.target.value;
       if (clearSearchBtn) {
         clearSearchBtn.style.display = searchQuery ? 'block' : 'none';
       }
@@ -532,19 +531,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // --- Action Buttons ---
-  if (rescanBtn) rescanBtn.addEventListener('click', () => performSingleScan(true));
-  if (restrictedRetryBtn) restrictedRetryBtn.addEventListener('click', () => performSingleScan(true));
+  if (rescanBtn) rescanBtn.addEventListener('click', () => loadOrScanStorefront(true));
+  if (restrictedRetryBtn) restrictedRetryBtn.addEventListener('click', () => loadOrScanStorefront(true));
   if (quickExportBtn) quickExportBtn.addEventListener('click', copyMarkdownAudit);
 
   // --- Keyboard Shortcuts ---
-  document.addEventListener('keydown', (e) => {
+  document.addEventListener('keydown', (event) => {
     // Press 'R' to rescan (when not typing in search)
-    if (e.key === 'r' && document.activeElement !== appSearchInput) {
-      performSingleScan(true);
+    if (event.key === 'r' && document.activeElement !== appSearchInput) {
+      loadOrScanStorefront(true);
     }
     // Press '/' to focus search
-    if (e.key === '/' && document.activeElement !== appSearchInput) {
-      e.preventDefault();
+    if (event.key === '/' && document.activeElement !== appSearchInput) {
+      event.preventDefault();
       if (appSearchInput) appSearchInput.focus();
     }
   });
@@ -560,6 +559,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       .replace(/'/g, '&#39;');
   }
 
-  // --- Initial Launch: Instant Cache Load (0ms wait, no loading screen) ---
-  performSingleScan(false);
+  // Initial audit load (prefers cached results if available)
+  loadOrScanStorefront(false);
 });
