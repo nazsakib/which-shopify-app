@@ -612,13 +612,17 @@ class DetectorEngine {
   recordDetection(appName, method, baseConfidence, data = {}) {
     if (!appName || this.isGibberish(appName)) return;
     if (!this.detectedApps.has(appName)) {
+      let appData = this.apps.find(a => a && a.name && a.name.toLowerCase() === appName.toLowerCase()) || null;
+      if (!appData && data.handle) {
+        appData = this.findAppInDatabase(data.handle);
+      }
       this.detectedApps.set(appName, {
         name: appName,
         methods: [],
         totalScore: 0,
         components: new Set(),
         extensionIds: new Set(),
-        appData: this.apps.find(a => a && a.name.toLowerCase() === appName.toLowerCase()) || null
+        appData
       });
     }
     const app = this.detectedApps.get(appName);
@@ -860,10 +864,12 @@ class DetectorEngine {
         return c.replace(/[-_][a-z0-9]{4,6}$/i, '');
       }).filter((c, idx, arr) => arr.indexOf(c) === idx);
 
+      const dbApp = app.appData || this.findAppInDatabase(name) || this.apps.find(a => a && a.name && a.name.toLowerCase() === name.toLowerCase());
       const res = {
         name,
-        slug: app.appData?.slug || null,
-        category: app.appData?.category || 'Ecommerce',
+        slug: dbApp?.slug || null,
+        icon: dbApp?.icon || null,
+        category: dbApp?.category || 'Ecommerce',
         methods,
         components,
         alternative: this.getAlternative(name)

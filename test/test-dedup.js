@@ -477,6 +477,26 @@ async function runAllTests() {
   });
 
   // -----------------------------------------------------------
+  // Suite 9: Official App Store Logos & Pre-populated Database
+  // -----------------------------------------------------------
+  suite('Suite 9: Official App Store Logos & Pre-populated Database');
+
+  test('At least 5,000 apps are pre-populated with official CDN logos in database', () => {
+    const appsWithIcons = apps.filter(a => a && a.icon && a.icon.startsWith('https://cdn.shopify.com/app-store/listing_images/'));
+    console.log(`    Total apps with official Shopify CDN logos: ${appsWithIcons.length}`);
+    assert(appsWithIcons.length >= 5000, `Expected at least 5000 apps with logos, found ${appsWithIcons.length}`);
+
+    // Verify key popular apps have their official logo
+    const verifyApps = ['Klaviyo', 'Loox', 'Judge.me', 'PageFly', 'Zepto Product Personalizer', 'Neon Sign Customizer'];
+    for (const appName of verifyApps) {
+      const found = apps.find(a => a.name.toLowerCase() === appName.toLowerCase());
+      assert(found, `App '${appName}' must exist in database`);
+      assert(found.icon, `App '${appName}' must have an icon`);
+      assert(found.icon.includes('cdn.shopify.com/app-store/listing_images/'), `App '${appName}' icon must be an official Shopify CDN listing image, got ${found.icon}`);
+    }
+  });
+
+  // -----------------------------------------------------------
   // Summary Report
   // -----------------------------------------------------------
   console.log('\n=============================================');

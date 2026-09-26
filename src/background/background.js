@@ -7,6 +7,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
     return true; 
   }
+
+  if (message.type === 'GET_APP_ICON') {
+    handleGetAppIcon(message.slug, message.name).then(icon => {
+      sendResponse({ success: true, icon });
+    }).catch(err => {
+      sendResponse({ success: false, error: err.toString() });
+    });
+    return true;
+  }
   
   sendResponse({ success: false });
   return false;
@@ -60,3 +69,37 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     chrome.tabs.sendMessage(tabId, { type: 'SCAN_REQUEST' }).catch(() => {});
   }
 });
+
+// Dynamic On-Demand App Icon Resolver & Storage Cache
+async function handleGetAppIcon(slug, name) {
+  if (!slug && !name) return null;
+  const target = (slug || name).toLowerCase().trim().replace(/[^a-z0-9_-]/g, '');
+  if (!target) return null;
+  const cacheKey = `app_icon_${target}`;
+
+  // 1. Check Chrome Storage local cache
+  try {
+    const cached = await chrome.storage.local.get([cacheKey]);
+    if (cached && cached[cacheKey]) {
+      return cached[cacheKey];
+    }
+  } catch (e) {}
+
+  // 2. Fetch from Shopify App Store listing
+  try {
+    const res = await fetch(`https://apps.shopify.com/${encodeURIComponent(target)}`, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+    const match = html.match(/data-icon-url="([^"]+)"/) || html.match(/data-app-card-icon-url-value="([^"]+)"/);
+    if (match && match[1]) {
+      const iconUrl = match[1];
+      await chrome.storage.local.set({ [cacheKey]: iconUrl });
+      return iconUrl;
+    }
+  } catch (e) {}
+
+  return null;
+}
+

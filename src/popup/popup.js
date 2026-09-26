@@ -250,6 +250,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const name = app.name || 'Unknown App';
       const initial = name.charAt(0).toUpperCase();
       const isNew = addedApps.some(a => a.name === name);
+      const icon = app.icon || null;
+      const slug = app.slug || '';
 
       let signalText = 'Confirmed';
       if (type === 'active') signalText = isNew ? 'NEW' : 'Confirmed';
@@ -281,7 +283,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="app-card">
           <div class="card-top">
             <div class="app-main">
-              <div class="app-avatar">${initial}</div>
+              <div class="app-avatar" data-slug="${escapeHtml(slug)}" data-name="${escapeHtml(name)}">
+                ${icon ? `
+                  <img src="${escapeHtml(icon)}" class="app-logo-img" alt="${escapeHtml(name)}" loading="lazy" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';" />
+                  <span class="app-avatar-fallback" style="display:none;">${initial}</span>
+                ` : `
+                  <span class="app-avatar-fallback">${initial}</span>
+                `}
+              </div>
               <div class="app-name-wrap">
                 <span class="app-name" title="${escapeHtml(name)}">${escapeHtml(name)}</span>
               </div>
@@ -304,6 +313,43 @@ document.addEventListener('DOMContentLoaded', async () => {
           ${altHtml}
         </div>`;
     }).join('');
+
+    loadMissingAppIcons(container);
+  }
+
+  // --- Dynamic On-Demand Logo Loader (Option B Dynamic Fallback) ---
+  function loadMissingAppIcons(container) {
+    if (!container) return;
+    const avatars = container.querySelectorAll('.app-avatar[data-slug]:not([data-icon-loaded])');
+    avatars.forEach(avatar => {
+      const slug = avatar.getAttribute('data-slug');
+      const name = avatar.getAttribute('data-name');
+      if (!slug || avatar.querySelector('img.app-logo-img')) return;
+      avatar.setAttribute('data-icon-loaded', 'pending');
+      try {
+        chrome.runtime.sendMessage({ type: 'GET_APP_ICON', slug, name }, (response) => {
+          if (chrome.runtime.lastError || !response || !response.success || !response.icon) {
+            avatar.setAttribute('data-icon-loaded', 'failed');
+            return;
+          }
+          avatar.setAttribute('data-icon-loaded', 'true');
+          const fallback = avatar.querySelector('.app-avatar-fallback');
+          const img = document.createElement('img');
+          img.className = 'app-logo-img';
+          img.alt = name || '';
+          img.loading = 'lazy';
+          img.src = response.icon;
+          img.onerror = () => {
+            img.style.display = 'none';
+            if (fallback) fallback.style.display = 'flex';
+          };
+          if (fallback) fallback.style.display = 'none';
+          avatar.prepend(img);
+        });
+      } catch (e) {
+        avatar.setAttribute('data-icon-loaded', 'failed');
+      }
+    });
   }
 
   // --- Loading Skeleton & Progress Bar State ---
