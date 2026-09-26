@@ -1,6 +1,40 @@
-/**
- * Shopify App Intelligence - Detector Engine
- */
+const GENERIC_BLOCK_NAMES = new Set([
+  'assets', 'scripts', 'files', 'shop', 'storefront', 'perf', 'monorail',
+  'site-declaration', 'shopify-pay', 'shopify-cloud', 'app-bridge', 'jquery',
+  'analytics', 'vitals', 'embed-common', 'embed_common', 'embedcommon',
+  'common', 'core', 'runtime', 'main', 'bundle', 'loader', 'vendor', 'vendors',
+  'app-block', 'app-embed', 'helper', 'helpers', 'theme-extension', 'theme-app-extension',
+  'theme-app-embed', 'chunk', 'chunks', 'snippet', 'snippets', 'client', 'init',
+  'widget', 'widgets', 'tracking', 'tracker', 'utils', 'util', 'block', 'blocks',
+  'embed', 'common-script', 'common-scripts', 'embed-script', 'section', 'sections'
+]);
+
+const CANONICAL_ALIASES = {
+  'pplr': 'Zepto Product Personalizer',
+  'pplr-common': 'Zepto Product Personalizer',
+  'pplrcommon': 'Zepto Product Personalizer',
+  'zepto': 'Zepto Product Personalizer',
+  'zeptoapps': 'Zepto Product Personalizer',
+  'zepto-common': 'Zepto Product Personalizer',
+  'zepto_common': 'Zepto Product Personalizer',
+  'zeptocommon': 'Zepto Product Personalizer',
+  'zepto-product-personalizer': 'Zepto Product Personalizer',
+  'zeptoproductpersonalizer': 'Zepto Product Personalizer',
+  'product-personalizer': 'Zepto Product Personalizer',
+  'productpersonalizer': 'Zepto Product Personalizer',
+  'cart-drawer-cart-upsell': 'Boostly',
+  'cartdrawercartupsell': 'Boostly',
+  'tinyseo': 'Tiny: SEO Image Optimizer',
+  'infinseo-seo-image-optimizer': 'InfinSEO',
+  'infinseoseoimageoptimizer': 'InfinSEO',
+  'avada': 'Avada',
+  'popman-popups-social': 'Popman',
+  'popmanpopupssocial': 'Popman',
+  'blockify-fraud-filter': 'Blockify Fraud Filter',
+  'blockifyfraudfilter': 'Blockify Fraud Filter',
+  'seoant': 'SEO Ant'
+};
+
 class DetectorEngine {
   constructor() {
     this.detectedApps = new Map();
@@ -16,6 +50,7 @@ class DetectorEngine {
     this.shopDomain = '';
     this.isShopify = false;
     this.scriptWeight = 0;
+    this.pendingComponents = [];
   }
 
   async init(appsData) {
@@ -28,6 +63,7 @@ class DetectorEngine {
 
   reset() {
     this.detectedApps.clear();
+    this.pendingComponents = [];
     this.isScanning = false;
     this.globalsChecked = false;
     this.isShopify = false;
@@ -108,22 +144,86 @@ class DetectorEngine {
     }
   }
 
+  resolveCanonicalName(handle) {
+    if (!handle) return '';
+    const cleanHandle = handle.toLowerCase().replace(/[0-9]/g, '').replace(/-app$/, '').replace(/[^a-z-_]/g, '').replace(/[-_]+$/, '').trim();
+    const searchHandle = cleanHandle.replace(/[-_.]/g, '');
+    return CANONICAL_ALIASES[cleanHandle] || CANONICAL_ALIASES[searchHandle] || '';
+  }
+
+  extractComponentName(url) {
+    if (!url || typeof url !== 'string') return '';
+    try {
+      const cleanUrl = url.split('?')[0].split('#')[0];
+      const parts = cleanUrl.split('/').filter(Boolean);
+      if (parts.length === 0) return '';
+      const filename = parts[parts.length - 1];
+      if (filename.endsWith('.js') || filename.endsWith('.css')) {
+        return filename;
+      }
+      return parts[parts.length - 1] || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  extractExtensionId(url) {
+    if (!url || typeof url !== 'string') return '';
+    const match = url.match(/\/extensions\/([a-z0-9-]+)\//i);
+    return match ? match[1] : '';
+  }
+
+  attachPendingComponent(pending) {
+    if (!pending) return false;
+    const urlLower = (pending.url || '').toLowerCase();
+    const pendingExtId = this.extractExtensionId(pending.url);
+    const normHandle = (pending.handle || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    for (const [appName, app] of this.detectedApps) {
+      const normApp = appName.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+      let matches = false;
+      if (pendingExtId && app.extensionIds && app.extensionIds.has(pendingExtId)) {
+        matches = true;
+      } else if (urlLower && urlLower.includes(normApp)) {
+        matches = true;
+      } else if (normApp.includes('zepto') && (urlLower.includes('zepto') || urlLower.includes('pplr') || normHandle.includes('embed') || normHandle.includes('zepto') || normHandle.includes('pplr') || normHandle.includes('personalizer'))) {
+        matches = true;
+      } else if (this.detectedApps.size === 1) {
+        matches = true;
+      }
+
+      if (matches) {
+        if (!app.components) app.components = new Set();
+        if (pending.handle) app.components.add(pending.handle);
+        if (pending.url) {
+          const comp = this.extractComponentName(pending.url);
+          if (comp) app.components.add(comp);
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+
   processExtractedHandle(handle, method, url = '') {
     if (!handle) return;
     let cleanHandle = handle.toLowerCase().replace(/[0-9]/g, '').replace(/-app$/, '').replace(/[^a-z-_]/g, '').replace(/[-_]+$/, '').trim();
-    const exactBlacklist = ['assets', 'scripts', 'files', 'shop', 'storefront', 'perf', 'monorail', 'site-declaration', 'shopify-pay', 'shopify-cloud', 'app-bridge', 'jquery', 'analytics', 'vitals'];
-    if (cleanHandle.length < 3 || exactBlacklist.includes(cleanHandle)) return;
+    if (cleanHandle.length < 3) return;
 
-    const brandMap = {
-      'cart-drawer-cart-upsell': 'Boostly', 'zepto-product-personalizer': 'Zepto Product Personalizer',
-      'zeptoapps': 'Zepto Product Personalizer', 'pplr-common': 'Zepto Product Personalizer',
-      'zepto-common': 'Zepto Product Personalizer',
-      'tinyseo': 'Tiny: SEO Image Optimizer', 'infinseo-seo-image-optimizer': 'InfinSEO',
-      'avada': 'Avada', 'popman-popups-social': 'Popman', 'blockify-fraud-filter': 'Blockify Fraud Filter',
-      'seoant': 'SEO Ant'
-    };
-    
-    let finalName = brandMap[cleanHandle] || '';
+    const normalized = cleanHandle.replace(/[-_.]/g, '');
+
+    // Step 1: Blacklist generic block and script handles
+    if (GENERIC_BLOCK_NAMES.has(cleanHandle) || GENERIC_BLOCK_NAMES.has(normalized)) {
+      const pendingItem = { handle: cleanHandle, method, url };
+      this.pendingComponents.push(pendingItem);
+      this.attachPendingComponent(pendingItem);
+      return;
+    }
+
+    // Step 3: Canonical alias mapping
+    let finalName = this.resolveCanonicalName(cleanHandle);
+
     if (!finalName) {
       // 1. Direct slug match (100% precision)
       const foundBySlug = this.apps.find(a => a.slug && a.slug.toLowerCase() === cleanHandle);
@@ -153,27 +253,11 @@ class DetectorEngine {
     }
     if (!finalName) finalName = cleanHandle.split(/[-_]/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
-    let existingMaster = null;
-    for (let [name, data] of this.detectedApps) {
-      const n1 = name.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const n2 = finalName.toLowerCase().replace(/[^a-z0-9]/g, '');
-      if (n1 === n2 || (n1.length >= 5 && n2.length >= 5 && Math.abs(n1.length - n2.length) <= 3 && (n1.includes(n2) || n2.includes(n1)))) {
-        existingMaster = name;
-        break;
-      }
-    }
+    const finalCanonical = this.resolveCanonicalName(finalName.toLowerCase().replace(/[^a-z0-9]/g, ''));
+    if (finalCanonical) finalName = finalCanonical;
 
-    if (existingMaster) {
-      const masterName = (finalName.length >= existingMaster.length) ? finalName : existingMaster;
-      if (masterName !== existingMaster) {
-        const data = this.detectedApps.get(existingMaster);
-        this.detectedApps.delete(existingMaster);
-        this.detectedApps.set(masterName, data);
-      }
-      this.recordDetection(masterName, method, 0.99, { handle: cleanHandle, url });
-    } else {
-      this.recordDetection(finalName, method, 0.85, { handle: cleanHandle, url });
-    }
+    this.recordDetection(finalName, method, 0.95, { handle: cleanHandle, url });
+    this.runSubsumptionPass();
   }
 
   scanAppBlocks() {
@@ -183,10 +267,16 @@ class DetectorEngine {
       while (node = iterator.nextNode()) {
         const comment = node.nodeValue;
         if (!comment) continue;
-        const blockMatch = comment.match(/BEGIN app (?:block|snippet|embed):\s*(?:shopify:\/\/apps\/)?([a-z0-9-_.]+)/i);
+        const blockMatch = comment.match(/BEGIN app (?:block|snippet|embed):\s*(?:shopify:\/\/apps\/)?([a-z0-9-_.]+)(?:\/blocks\/([a-z0-9-_.]+))?/i);
         if (blockMatch && blockMatch[1]) {
           const handle = blockMatch[1].split('/')[0];
+          const subBlock = blockMatch[2] ? blockMatch[2].split('/')[0] : '';
           this.processExtractedHandle(handle, 'App Block');
+          if (subBlock) {
+            const pendingSub = { handle: subBlock, parentHandle: handle, method: 'App Block' };
+            this.pendingComponents.push(pendingSub);
+            this.attachPendingComponent(pendingSub);
+          }
         }
       }
     } catch (e) {}
@@ -195,7 +285,12 @@ class DetectorEngine {
       const elements = document.querySelectorAll('[data-shopify-app-block], [id^="shopify-block-"], [class*="shopify-app-block"], script[data-app-id], script[data-handle]');
       elements.forEach(el => {
         const appId = el.getAttribute('data-app-id') || el.getAttribute('data-handle') || el.getAttribute('data-shopify-app-block') || '';
-        if (appId) this.processExtractedHandle(appId, 'App Block');
+        if (appId) {
+          this.processExtractedHandle(appId, 'App Block');
+        } else if (el.id && el.id.startsWith('shopify-block-')) {
+          const fullIdHandle = el.id.replace('shopify-block-', '');
+          if (fullIdHandle) this.processExtractedHandle(fullIdHandle, 'App Block');
+        }
       });
     } catch (e) {}
 
@@ -332,9 +427,197 @@ class DetectorEngine {
 
   recordDetection(appName, method, baseConfidence, data = {}) {
     if (!appName) return;
-    if (!this.detectedApps.has(appName)) this.detectedApps.set(appName, { name: appName, methods: [], totalScore: 0, appData: this.apps.find(a => a && a.name.toLowerCase() === appName.toLowerCase()) || null });
+    if (!this.detectedApps.has(appName)) {
+      this.detectedApps.set(appName, {
+        name: appName,
+        methods: [],
+        totalScore: 0,
+        components: new Set(),
+        extensionIds: new Set(),
+        appData: this.apps.find(a => a && a.name.toLowerCase() === appName.toLowerCase()) || null
+      });
+    }
     const app = this.detectedApps.get(appName);
-    if (!app.methods.find(m => m.method === method)) { app.methods.push({ method, confidence: baseConfidence, data }); app.totalScore += baseConfidence; }
+    if (!app.components) app.components = new Set();
+    if (!app.extensionIds) app.extensionIds = new Set();
+
+    if (data.handle && !GENERIC_BLOCK_NAMES.has(data.handle.toLowerCase())) {
+      app.components.add(data.handle);
+    }
+    if (data.component) {
+      app.components.add(data.component);
+    }
+    if (data.url) {
+      const extId = this.extractExtensionId(data.url);
+      if (extId) app.extensionIds.add(extId);
+      const comp = this.extractComponentName(data.url);
+      if (comp) app.components.add(comp);
+    }
+    if (data.variable) {
+      app.components.add(data.variable);
+    }
+
+    if (!app.methods.find(m => m.method === method)) {
+      app.methods.push({ method, confidence: baseConfidence, data });
+      app.totalScore += baseConfidence;
+    }
+  }
+
+  shouldSubsume(nameA, nameB) {
+    if (nameA === nameB) return null;
+
+    const normA = nameA.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const normB = nameB.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    // Canonical alias check
+    const canA = this.resolveCanonicalName(normA);
+    const canB = this.resolveCanonicalName(normB);
+    if (canA && canA === nameB) return { master: nameB, child: nameA };
+    if (canB && canB === nameA) return { master: nameA, child: nameB };
+
+    // Database-backed app priority check
+    const appA = this.detectedApps.get(nameA);
+    const appB = this.detectedApps.get(nameB);
+    const hasDbA = !!(appA && appA.appData);
+    const hasDbB = !!(appB && appB.appData);
+
+    // Subphrase check (e.g. "Product Personalizer" inside "Zepto Product Personalizer")
+    if (normA.length >= 5 && normB.length >= 5) {
+      if (normB.includes(normA) && normB.length > normA.length) {
+        if (hasDbA && !hasDbB) return { master: nameA, child: nameB };
+        return { master: nameB, child: nameA };
+      }
+      if (normA.includes(normB) && normA.length > normB.length) {
+        if (hasDbB && !hasDbA) return { master: nameB, child: nameA };
+        return { master: nameA, child: nameB };
+      }
+    }
+
+    // Brand root with generic suffix check (e.g. "Zepto Common" vs "Zepto Product Personalizer")
+    const wordsA = nameA.toLowerCase().split(/[\s-_]+/);
+    const wordsB = nameB.toLowerCase().split(/[\s-_]+/);
+    const genericSuffixes = new Set([
+      'common', 'core', 'embed', 'runtime', 'main', 'loader', 'widget',
+      'helper', 'script', 'base', 'sdk', 'bundle', 'api', 'tools', 'app'
+    ]);
+
+    if (wordsA.length >= 2 && wordsB.length >= 2 && wordsA[0] === wordsB[0]) {
+      const isAGeneric = wordsA.slice(1).every(w => genericSuffixes.has(w));
+      const isBGeneric = wordsB.slice(1).every(w => genericSuffixes.has(w));
+      if (isAGeneric && !isBGeneric) {
+        return { master: nameB, child: nameA };
+      }
+      if (isBGeneric && !isAGeneric) {
+        return { master: nameA, child: nameB };
+      }
+    }
+
+    // Generic name check
+    if (GENERIC_BLOCK_NAMES.has(normA) && !GENERIC_BLOCK_NAMES.has(normB)) {
+      return { master: nameB, child: nameA };
+    }
+    if (GENERIC_BLOCK_NAMES.has(normB) && !GENERIC_BLOCK_NAMES.has(normA)) {
+      return { master: nameA, child: nameB };
+    }
+
+    return null;
+  }
+
+  mergeApps(masterName, childName) {
+    if (masterName === childName) return;
+    const masterApp = this.detectedApps.get(masterName);
+    const childApp = this.detectedApps.get(childName);
+    if (!masterApp || !childApp) return;
+
+    if (!masterApp.components) masterApp.components = new Set();
+    if (!childApp.components) childApp.components = new Set();
+
+    // 1. Move child's name into components of master
+    if (childName !== masterName) {
+      masterApp.components.add(childName);
+    }
+
+    // 2. Transfer child's components into master
+    childApp.components.forEach(c => masterApp.components.add(c));
+
+    // 3. Transfer detection methods and confidence scores
+    for (const m of childApp.methods) {
+      if (!masterApp.methods.some(existing => existing.method === m.method)) {
+        masterApp.methods.push(m);
+      }
+      if (m.data?.handle) masterApp.components.add(m.data.handle);
+      if (m.data?.url) {
+        const comp = this.extractComponentName(m.data.url);
+        if (comp) masterApp.components.add(comp);
+        const extId = this.extractExtensionId(m.data.url);
+        if (extId) {
+          if (!masterApp.extensionIds) masterApp.extensionIds = new Set();
+          masterApp.extensionIds.add(extId);
+        }
+      }
+    }
+    masterApp.totalScore = Math.max(masterApp.totalScore, childApp.totalScore) + 0.1;
+
+    // 4. Inherit metadata if master is missing it
+    if (!masterApp.appData && childApp.appData) {
+      masterApp.appData = childApp.appData;
+    }
+
+    // 5. Delete child from detected apps
+    this.detectedApps.delete(childName);
+  }
+
+  runSubsumptionPass() {
+    // 1. Drain pending components into matching detected apps
+    if (this.pendingComponents && this.pendingComponents.length > 0) {
+      for (const pending of this.pendingComponents) {
+        this.attachPendingComponent(pending);
+      }
+    }
+
+    // 2. Canonical mapping normalization pass for existing apps
+    for (const [name, app] of Array.from(this.detectedApps.entries())) {
+      const normName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const canonical = this.resolveCanonicalName(normName);
+      if (canonical && canonical !== name) {
+        if (this.detectedApps.has(canonical)) {
+          this.mergeApps(canonical, name);
+        } else {
+          this.detectedApps.delete(name);
+          app.name = canonical;
+          if (!app.components) app.components = new Set();
+          app.components.add(name);
+          this.detectedApps.set(canonical, app);
+        }
+      }
+    }
+
+    // 3. Pairwise subsumption check
+    let merged = true;
+    let iterations = 0;
+    while (merged && iterations < 10) {
+      merged = false;
+      iterations++;
+      const currentNames = Array.from(this.detectedApps.keys());
+      for (let i = 0; i < currentNames.length; i++) {
+        const nameA = currentNames[i];
+        if (!this.detectedApps.has(nameA)) continue;
+
+        for (let j = 0; j < currentNames.length; j++) {
+          if (i === j) continue;
+          const nameB = currentNames[j];
+          if (!this.detectedApps.has(nameA) || !this.detectedApps.has(nameB)) continue;
+
+          const decision = this.shouldSubsume(nameA, nameB);
+          if (decision) {
+            this.mergeApps(decision.master, decision.child);
+            merged = true;
+            break;
+          }
+        }
+        if (merged) break;
+      }
+    }
   }
 
   handleGlobals(globalsList, shopifyObject) {
@@ -356,10 +639,27 @@ class DetectorEngine {
   }
 
   getResults() {
+    this.runSubsumptionPass();
+
     const active = [], scripts = [], ghosts = [];
     this.detectedApps.forEach((app, name) => {
+      // Final sanity check: if standalone app name is generic, do not output as an app
+      const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (GENERIC_BLOCK_NAMES.has(cleanName) || GENERIC_BLOCK_NAMES.has(name.toLowerCase())) {
+        return;
+      }
+
       const methods = app.methods.map(m => m.method);
-      const res = { name, slug: app.appData?.slug || null, category: app.appData?.category || 'Ecommerce', methods, alternative: this.getAlternative(name) };
+      const components = Array.from(app.components || []).filter(c => c && c.toLowerCase() !== name.toLowerCase());
+
+      const res = {
+        name,
+        slug: app.appData?.slug || null,
+        category: app.appData?.category || 'Ecommerce',
+        methods,
+        components,
+        alternative: this.getAlternative(name)
+      };
       const hasDirectEvidence = methods.includes('App Block') || methods.includes('App Snippet') || methods.includes('App Config');
       const hasStrongProof = methods.length >= 3;
       if (hasDirectEvidence || (hasStrongProof && methods.includes('dom'))) active.push(res);

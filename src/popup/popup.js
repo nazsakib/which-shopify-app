@@ -180,7 +180,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       const nameMatch = (app.name || '').toLowerCase().includes(q);
       const catMatch = (app.category || '').toLowerCase().includes(q);
       const methodMatch = Array.isArray(app.methods) && app.methods.some(m => (m || '').toLowerCase().includes(q));
-      return nameMatch || catMatch || methodMatch;
+      const compMatch = Array.isArray(app.components) && app.components.some(c => (c || '').toLowerCase().includes(q));
+      return nameMatch || catMatch || methodMatch || compMatch;
     };
 
     const filteredActive = active.filter(filterFn);
@@ -269,6 +270,13 @@ document.addEventListener('DOMContentLoaded', async () => {
           💡 <strong>Tip:</strong> Try <strong>${escapeHtml(app.alternative.name)}</strong> — ${escapeHtml(app.alternative.reason)}
         </div>` : '';
 
+      // Detected Components / Scripts (if any)
+      const componentsHtml = (Array.isArray(app.components) && app.components.length > 0) ? `
+        <div class="components-row" title="Detected Components & Scripts">
+          <span class="components-label">Scripts:</span>
+          ${app.components.map(c => `<span class="component-pill" title="${escapeHtml(c)}">${escapeHtml(c)}</span>`).join('')}
+        </div>` : '';
+
       return `
         <div class="app-card">
           <div class="card-top">
@@ -292,6 +300,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <span class="signal-pill">${signalText}</span>
           </div>
 
+          ${componentsHtml}
           ${altHtml}
         </div>`;
     }).join('');
@@ -366,7 +375,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     md += `## 1. Confirmed Active Apps (${active.length})\n`;
     if (active.length > 0) {
       active.forEach(a => {
-        md += `- **${a.name}** (${a.category || 'Ecommerce'}) — Signal: ${(a.methods || []).join(', ')}\n`;
+        const comps = (Array.isArray(a.components) && a.components.length > 0) ? ` | Scripts: ${a.components.join(', ')}` : '';
+        md += `- **${a.name}** (${a.category || 'Ecommerce'}) — Signal: ${(a.methods || []).join(', ')}${comps}\n`;
       });
     } else {
       md += `*None detected.*\n`;
