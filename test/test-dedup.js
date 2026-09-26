@@ -361,6 +361,77 @@ async function runAllTests() {
   });
 
   // -----------------------------------------------------------
+  // Suite 7: Gibberish Block IDs and Theme Assets Isolation Test
+  // -----------------------------------------------------------
+  suite('Suite 7: Gibberish Block IDs and Theme Assets Isolation Test');
+
+  await asyncTest('Random hash block IDs and theme assets are 100% filtered out', async () => {
+    const comments = [
+      'BEGIN app embed: shopify://apps/zepto-product-personalizer/blocks/embed-common/018b7c4a-6d1e-7b49-b000-018f3a532341'
+    ];
+
+    const elements = [
+      { id: 'shopify-block-atdhxcmyotfusdhc' },
+      { id: 'shopify-block-awujobbbkavzfo' },
+      { id: 'shopify-block-atkzjzsynvozhvwu__zepto_product_personalizer_product_personalizer_page_vyhp' }
+    ];
+
+    const scripts = [
+      { src: 'https://cdn.shopify.com/s/files/1/0000/assets/base.css' },
+      { src: 'https://cdn.shopify.com/s/files/1/0000/assets/constants.js' },
+      { src: 'https://cdn.shopify.com/s/files/1/0000/assets/cart.js' },
+      { src: 'https://cdn.shopify.com/s/files/1/0000/assets/global.js' },
+      { src: 'https://cdn.shopify.com/s/files/1/0000/assets/search-form.js' },
+      { src: 'https://cdn.shopify.com/s/files/1/0000/assets/details-modal.js' },
+      { src: 'https://cdn.shopify.com/s/files/1/0000/assets/component-accordion.css' },
+      { src: 'https://cdn.shopify.com/s/files/1/0000/assets/section-main-product.css' },
+      { src: 'https://cdn.shopify.com/shopifycloud/shopify_perf_kit/shopify-perf-kit-3.9.4.min.js' },
+      { src: 'https://cdn.shopify.com/shopifycloud/shop_events_listener-4e26a9ce.js' },
+      { src: 'https://cdn.shopify.com/shopifycloud/webmcp/webmcp-c6b62ece.js' },
+      { src: 'https://cdn.shopify.com/shopifycloud/origin_trials-318ab40a.js' },
+      { src: 'https://cdn.shopify.com/shopifycloud/load_feature-1bd60354.js' },
+      { src: 'https://cdn.shopify.com/shopifycloud/remote_product_tracking-91d95044.js' },
+      { src: 'https://cdn.shopify.com/extensions/018b7c4a-6d1e-7b49-b000-018f3a532341/zepto-product-personalizer/assets/zepto-common.js' },
+      { src: 'https://cdn.shopify.com/extensions/018b7c4a-6d1e-7b49-b000-018f3a532341/zepto-product-personalizer/assets/product-personalizer.js' },
+      { src: 'https://cdn.shopify.com/extensions/018b7c4a-6d1e-7b49-b000-018f3a532341/embed-common/assets/embed-common.js' }
+    ];
+
+    setupMockEnvironment({ comments, scripts, elements });
+
+    const engine = new DetectorEngine();
+    await engine.init(apps);
+
+    const results = await engine.startFullScan();
+    const activeNames = results.active.map(a => a.name);
+
+    console.log(`    Detected Active Apps: [${activeNames.join(', ')}]`);
+
+    // Verify ZERO gibberish apps
+    assert(!activeNames.includes('Atdhxcmyotfusdhc'), 'Gibberish hash Atdhxcmyotfusdhc must NOT be an app');
+    assert(!activeNames.includes('Awujobbbkavzfo'), 'Gibberish hash Awujobbbkavzfo must NOT be an app');
+    assert(!activeNames.some(n => n.includes('Atkzjzsynvozhvwu')), 'Random block prefix must NOT be in app names');
+
+    // Verify exactly ONE active app: Zepto Product Personalizer
+    assertEqual(results.active.length, 1, `Expected exactly 1 app, got ${results.active.length} (${activeNames.join(', ')})`);
+    assertEqual(results.active[0].name, 'Zepto Product Personalizer');
+
+    const zeptoApp = results.active[0];
+    const components = zeptoApp.components || [];
+    console.log(`    Zepto Components: [${components.join(', ')}]`);
+
+    // Verify NO theme files in components
+    const themeFiles = ['base.css', 'cart.js', 'global.js', 'constants.js', 'shopify-perf-kit', 'shop_events_listener', 'webmcp', 'origin_trials', 'load_feature', 'remote_product_tracking'];
+    for (const tf of themeFiles) {
+      assert(!components.some(c => c.toLowerCase().includes(tf)), `Theme/platform file '${tf}' must NOT be in app components`);
+    }
+
+    // Verify legitimate Zepto components are present
+    assert(components.some(c => c.toLowerCase().includes('embed-common') || c.toLowerCase().includes('embed_common')), 'embed-common must be in Zepto components');
+    assert(components.some(c => c.toLowerCase().includes('zepto-common')), 'zepto-common must be in Zepto components');
+    assert(components.some(c => c.toLowerCase().includes('product-personalizer')), 'product-personalizer must be in Zepto components');
+  });
+
+  // -----------------------------------------------------------
   // Summary Report
   // -----------------------------------------------------------
   console.log('\n=============================================');
