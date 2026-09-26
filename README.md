@@ -5,6 +5,7 @@
 **The definitive, multi-signal Shopify app & theme detector extension for Chrome.**
 
 [![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Download-blue?style=for-the-badge&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/which-shopify-app)
+[![Established](https://img.shields.io/badge/Established-March%208%2C%202026-blue?style=for-the-badge&logo=git&logoColor=white)](CHANGELOG.md)
 [![Shopify Apps](https://img.shields.io/badge/Catalog-27%2C000%2B%20Apps-008060?style=for-the-badge&logo=shopify&logoColor=white)](https://apps.shopify.com)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success?style=for-the-badge&logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/mv3/intro/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
@@ -22,6 +23,7 @@
 
 - [Overview](#-overview)
 - [Key Features](#-key-features)
+- [Changelog & History](CHANGELOG.md)
 - [How It Works](#-how-it-works)
 - [Directory Architecture](#-directory-architecture)
 - [Installation](#-installation)
