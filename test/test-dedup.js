@@ -487,13 +487,29 @@ async function runAllTests() {
     assert(appsWithIcons.length >= 5000, `Expected at least 5000 apps with logos, found ${appsWithIcons.length}`);
 
     // Verify key popular apps have their official logo
-    const verifyApps = ['Klaviyo', 'Loox', 'Judge.me', 'PageFly', 'Zepto Product Personalizer', 'Neon Sign Customizer'];
+    const verifyApps = [
+      'Klaviyo', 'Loox', 'Judge.me', 'PageFly', 'Zepto Product Personalizer', 'Neon Sign Customizer',
+      'Boostly', 'InfinSEO', 'Popman'
+    ];
     for (const appName of verifyApps) {
       const found = apps.find(a => a.name.toLowerCase() === appName.toLowerCase());
       assert(found, `App '${appName}' must exist in database`);
       assert(found.icon, `App '${appName}' must have an icon`);
       assert(found.icon.includes('cdn.shopify.com/app-store/listing_images/'), `App '${appName}' icon must be an official Shopify CDN listing image, got ${found.icon}`);
     }
+
+    // Verify exact slugs and icons for Boostly, InfinSEO, Popman
+    const boostly = apps.find(a => a.name.toLowerCase() === 'boostly');
+    assertEqual(boostly.slug, 'boostlycart-cart-drawer-upsell', 'Boostly must have slug boostlycart-cart-drawer-upsell');
+    assertEqual(boostly.icon, 'https://cdn.shopify.com/app-store/listing_images/8bc3e3690dfdca1336d343287995ec47/icon/CKLOs9Sog4kDEAE=.png', 'Boostly must have correct official icon');
+
+    const infinseo = apps.find(a => a.name.toLowerCase() === 'infinseo');
+    assertEqual(infinseo.slug, 'infinseo', 'InfinSEO must have slug infinseo');
+    assertEqual(infinseo.icon, 'https://cdn.shopify.com/app-store/listing_images/3a8d5cff02cc1b766c240b5ff627c918/icon/CNWU1-D344sDEAE=.png', 'InfinSEO must have correct official icon');
+
+    const popman = apps.find(a => a.name.toLowerCase() === 'popman');
+    assertEqual(popman.slug, 'popman-popups-social', 'Popman must have slug popman-popups-social');
+    assertEqual(popman.icon, 'https://cdn.shopify.com/app-store/listing_images/2345700d343d7e2d97f0e9155233ae72/icon/CNGF-v_FnocDEAE=.png', 'Popman must have correct official icon');
   });
 
   // -----------------------------------------------------------

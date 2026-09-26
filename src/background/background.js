@@ -70,11 +70,27 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 });
 
+const KNOWN_SLUG_ALIASES = {
+  'boostly': 'boostlycart-cart-drawer-upsell',
+  'boostlycart': 'boostlycart-cart-drawer-upsell',
+  'cart-drawer-cart-upsell': 'boostlycart-cart-drawer-upsell',
+  'cartdrawercartupsell': 'boostlycart-cart-drawer-upsell',
+  'infinseo-seo-image-optimizer': 'infinseo',
+  'infinseoseoimageoptimizer': 'infinseo',
+  'popman': 'popman-popups-social',
+  'popmanpopupssocial': 'popman-popups-social',
+  'pplr': 'product-personalizer',
+  'zepto': 'product-personalizer',
+  'zepto-product-personalizer': 'product-personalizer',
+  'sign-customizer': 'neon-sign-customizer'
+};
+
 // Dynamic On-Demand App Icon Resolver & Storage Cache
 async function handleGetAppIcon(slug, name) {
   if (!slug && !name) return null;
-  const target = (slug || name).toLowerCase().trim().replace(/[^a-z0-9_-]/g, '');
-  if (!target) return null;
+  const rawTarget = (slug || name).toLowerCase().trim().replace(/[^a-z0-9_-]/g, '');
+  if (!rawTarget) return null;
+  const target = KNOWN_SLUG_ALIASES[rawTarget] || rawTarget;
   const cacheKey = `app_icon_${target}`;
 
   // 1. Check Chrome Storage local cache
