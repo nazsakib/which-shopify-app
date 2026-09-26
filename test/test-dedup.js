@@ -432,6 +432,51 @@ async function runAllTests() {
   });
 
   // -----------------------------------------------------------
+  // Suite 8: Shopify Theme App Extensions & Neon Sign Customizer Test
+  // -----------------------------------------------------------
+  suite('Suite 8: Shopify Theme App Extensions & Neon Sign Customizer');
+
+  await asyncTest('Neon Sign Customizer bundle.js in /extensions/ is accurately detected as Active App', async () => {
+    const scripts = [
+      { src: 'https://cdn.shopify.com/s/files/1/0000/assets/base.css' },
+      { src: 'https://cdn.shopify.com/s/files/1/0000/assets/constants.js' },
+      { src: 'https://cdn.shopify.com/s/files/1/0000/assets/cart.js' },
+      { src: 'https://cdn.shopify.com/s/files/1/0000/assets/global.js' },
+      { src: 'https://cdn.shopify.com/shopifycloud/shopify_perf_kit/shopify-perf-kit-3.9.4.min.js' },
+      { src: 'https://cdn.shopify.com/shopifycloud/shop_events_listener-4e26a9ce.js' },
+      { src: 'https://cdn.shopify.com/extensions/01a06237-17e9-7283-8dd8-fae163d18c3e/sign-customizer-109/assets/bundle.js' }
+    ];
+
+    setupMockEnvironment({ scripts });
+
+    const engine = new DetectorEngine();
+    await engine.init(apps);
+
+    const results = await engine.startFullScan();
+    const activeNames = results.active.map(a => a.name);
+
+    console.log(`    Detected Active Apps: [${activeNames.join(', ')}]`);
+
+    // Verify Neon Sign Customizer is active
+    assert(activeNames.includes('Neon Sign Customizer'), `Expected 'Neon Sign Customizer' in active apps, got [${activeNames.join(', ')}]`);
+    assertEqual(results.active.length, 1, `Expected exactly 1 active app, got ${results.active.length}`);
+
+    const neonApp = results.active[0];
+    assertEqual(neonApp.name, 'Neon Sign Customizer');
+    assertEqual(neonApp.slug, 'neon-sign-customizer');
+    assert(neonApp.methods.includes('App Block'), `Methods should include 'App Block' for theme extension asset`);
+
+    const compStr = (neonApp.components || []).join(' ').toLowerCase();
+    assert(compStr.includes('bundle.js'), `Components should include bundle.js, got ${JSON.stringify(neonApp.components)}`);
+    assert(compStr.includes('sign-customizer'), `Components should include sign-customizer, got ${JSON.stringify(neonApp.components)}`);
+
+    // Verify zero false positives from generic platform domains
+    const scriptNames = (results.scripts || []).map(s => s.name);
+    assert(!scriptNames.includes('Shopify Flow'), 'Shopify Flow must NOT be falsely triggered by cdn.shopify.com');
+    assert(!scriptNames.includes('Order Printer'), 'Order Printer must NOT be falsely triggered by cdn.shopify.com');
+  });
+
+  // -----------------------------------------------------------
   // Summary Report
   // -----------------------------------------------------------
   console.log('\n=============================================');

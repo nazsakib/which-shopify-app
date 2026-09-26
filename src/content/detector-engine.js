@@ -31,9 +31,16 @@ const CANONICAL_ALIASES = {
   'popman-popups-social': 'Popman',
   'popmanpopupssocial': 'Popman',
   'blockify-fraud-filter': 'Blockify Fraud Filter',
-  'blockifyfraudfilter': 'Blockify Fraud Filter',
-  'seoant': 'SEO Ant'
+  'seoant': 'SEO Ant',
+  'sign-customizer': 'Neon Sign Customizer',
+  'signcustomizer': 'Neon Sign Customizer',
+  'neon-sign-customizer': 'Neon Sign Customizer',
+  'neonsigncustomizer': 'Neon Sign Customizer'
 };
+
+const GENERIC_PLATFORM_DOMAINS = new Set([
+  'shopify.com', 'myshopify.com', 'shopifycdn.net', 'shopifycloud.com', 'shopifysvc.com'
+]);
 
 class DetectorEngine {
   constructor() {
@@ -184,6 +191,12 @@ class DetectorEngine {
       }
     }
 
+    // 5. Suffix match if separated by hyphen (e.g. "sign-customizer" matching "neon-sign-customizer")
+    if (clean.includes('-') && clean.length >= 6) {
+      const foundBySuffix = this.apps.find(a => a && a.slug && a.slug.toLowerCase().endsWith('-' + clean));
+      if (foundBySuffix) return foundBySuffix;
+    }
+
     return null;
   }
 
@@ -204,10 +217,15 @@ class DetectorEngine {
   }
 
   isThemeOrPlatformAsset(url = '', name = '') {
+    // Theme App Extensions are 3rd-party apps, NEVER theme or platform assets
+    if (url && typeof url === 'string' && url.includes('cdn.shopify.com/extensions/')) {
+      return false;
+    }
+
     const str = ((url || '') + ' ' + (name || '')).toLowerCase();
     
-    // Shopify theme assets directory
-    if (str.includes('/s/files/') && str.includes('/assets/')) return true;
+    // Shopify theme assets directory (standard & modern CDN paths)
+    if ((str.includes('/s/files/') || str.includes('/cdn/shop/t/')) && str.includes('/assets/')) return true;
     if (str.includes('/assets/base.') || str.includes('/assets/global.') || str.includes('/assets/cart.')) return true;
     if (str.includes('/assets/constants.') || str.includes('/assets/theme.')) return true;
 
@@ -227,14 +245,14 @@ class DetectorEngine {
       return true;
     }
 
-    const filename = this.extractComponentName(url).toLowerCase();
+    const filename = this.extractComponentName(url || name).toLowerCase();
     const coreFilenames = new Set([
       'base.css', 'global.js', 'constants.js', 'cart.js', 'pubsub.js', 'scripts.js',
       'search-form.js', 'details-disclosure.js', 'details-modal.js', 'cart-notification.js',
       'cart-drawer.js', 'product-info.js', 'product-form.js', 'pickup-availability.js',
       'product-modal.js', 'media-gallery.js', 'selling-plans.js', 'predictive-search.js',
       'localization-form.js', 'theme.js', 'theme.css', 'storefront.js', 'storefront',
-      'shopify-pay.js', 'bundle.js', 'bundle', 'shop.js', 'shop'
+      'shopify-pay.js', 'shop.js', 'shop'
     ]);
 
     if (coreFilenames.has(filename)) return true;
@@ -331,7 +349,7 @@ class DetectorEngine {
       } else if (normApp.includes('zepto') && (urlLower.includes('zepto') || urlLower.includes('pplr') || normHandle.includes('pplr') || normHandle.includes('zepto') || normHandle.includes('personalizer'))) {
         matches = true;
       } else if (app.appData && Array.isArray(app.appData.domains)) {
-        if (app.appData.domains.some(d => urlLower.includes(d.toLowerCase()))) {
+        if (app.appData.domains.some(d => d && !GENERIC_PLATFORM_DOMAINS.has(d.toLowerCase()) && urlLower.includes(d.toLowerCase()))) {
           matches = true;
         }
       }
@@ -453,7 +471,8 @@ class DetectorEngine {
         for (const pattern of patterns) {
           const match = url.match(pattern);
           if (match && match[1]) {
-            this.processExtractedHandle(match[1].split('/')[0], 'App CDN', url);
+            const method = pattern === patterns[0] ? 'App Block' : 'App CDN';
+            this.processExtractedHandle(match[1].split('/')[0], method, url);
             break;
           }
         }
@@ -496,7 +515,10 @@ class DetectorEngine {
       
       if (Array.isArray(app.domains)) {
         for (const domain of app.domains) {
-          if (domain && urlLower.includes(domain.toLowerCase())) {
+          if (!domain) continue;
+          const dLower = domain.toLowerCase();
+          if (GENERIC_PLATFORM_DOMAINS.has(dLower)) continue;
+          if (urlLower.includes(dLower)) {
             this.recordDetection(app.name, 'network', this.confidenceWeights.network, { url });
             return;
           }
@@ -524,11 +546,20 @@ class DetectorEngine {
   matchScript(app, url) {
     if (!url) return false;
     const urlLower = url.toLowerCase();
-    if (Array.isArray(app.domains)) for (const domain of app.domains) if (domain && urlLower.includes(domain.toLowerCase())) return true;
-    if (Array.isArray(app.scripts)) for (const script of app.scripts) {
-      if (!script) continue;
-      const scriptLower = script.toLowerCase();
-      if (urlLower.includes(scriptLower)) return true;
+    if (Array.isArray(app.domains)) {
+      for (const domain of app.domains) {
+        if (!domain) continue;
+        const dLower = domain.toLowerCase();
+        if (GENERIC_PLATFORM_DOMAINS.has(dLower)) continue;
+        if (urlLower.includes(dLower)) return true;
+      }
+    }
+    if (Array.isArray(app.scripts)) {
+      for (const script of app.scripts) {
+        if (!script) continue;
+        const scriptLower = script.toLowerCase();
+        if (urlLower.includes(scriptLower)) return true;
+      }
     }
     return false;
   }
