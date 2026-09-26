@@ -1,40 +1,33 @@
 /**
  * Which Shopify App — Popup Controller (Manifest V3)
- * High-performance, single-pass scan with pinned headers and zero card reloading
+ * Two-row layout: Store Info Bar + Sidebar/Content Panel
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
   // --- Element Selectors ---
   const storeDomainEl = document.getElementById('store-domain');
-  const myshopifyContainer = document.getElementById('myshopify-container');
   const myshopifyUrlEl = document.getElementById('myshopify-url');
   const copyMyshopifyBtn = document.getElementById('copy-myshopify');
   const quickExportBtn = document.getElementById('quick-export-btn');
-  const popoutBtn = document.getElementById('popout-btn');
 
   const scanProgress = document.getElementById('scan-progress');
-  const activeCountEl = document.getElementById('active-count');
-  const scriptsCountEl = document.getElementById('scripts-count');
-  const ghostsCountEl = document.getElementById('ghosts-count');
   const themeNameEl = document.getElementById('theme-name');
   const growthStackEl = document.getElementById('growth-stack');
 
+  const sidebarActiveCount = document.getElementById('sidebar-active-count');
+  const sidebarScriptsCount = document.getElementById('sidebar-scripts-count');
+  const sidebarGhostsCount = document.getElementById('sidebar-ghosts-count');
+  const totalAppsCount = document.getElementById('total-apps-count');
+  const panelHeaderTitle = document.getElementById('panel-header-title');
+
   const appSearchInput = document.getElementById('app-search');
   const clearSearchBtn = document.getElementById('clear-search');
-  const filterTabs = document.querySelectorAll('.filter-tab');
-  const tabAllCount = document.getElementById('tab-all-count');
-  const tabActiveCount = document.getElementById('tab-active-count');
-  const tabScriptsCount = document.getElementById('tab-scripts-count');
-  const tabGhostsCount = document.getElementById('tab-ghosts-count');
 
-  const triageHeaderBar = document.getElementById('triage-header-bar');
-  const triageGrid = document.getElementById('triage-grid');
   const listActive = document.getElementById('list-active');
   const listScripts = document.getElementById('list-scripts');
   const listGhosts = document.getElementById('list-ghosts');
-  const badgeActive = document.getElementById('badge-active');
-  const badgeScripts = document.getElementById('badge-scripts');
-  const badgeGhosts = document.getElementById('badge-ghosts');
+
+  const sidebarItems = document.querySelectorAll('.sidebar-item');
 
   const spyContainer = document.getElementById('spy-alerts');
   const footerStatus = document.getElementById('footer-status');
@@ -45,11 +38,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // --- State ---
   let rawData = null;
-  let activeTabFilter = 'all';
+  let activeCategory = 'active'; // 'active' | 'scripts' | 'ghosts'
   let searchQuery = '';
   let toastTimeout = null;
   let isScanning = false;
   let lastRenderFingerprint = '';
+
+  // Category labels map
+  const CATEGORY_LABELS = {
+    active: 'Active Apps',
+    scripts: 'Apps w/ Scripts',
+    ghosts: 'Residual Ghosts'
+  };
 
   // --- Toast Notification ---
   function showToast(msg) {
@@ -76,10 +76,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     return activeTab || null;
   }
 
-  // --- Single-Pass Scan Lifecycle (Runs once on popup open or manual rescan) ---
-  async function performSingleScan() {
+  // --- Sidebar Navigation ---
+  function switchCategory(category) {
+    activeCategory = category;
+
+    // Update sidebar active state
+    sidebarItems.forEach(item => {
+      item.classList.toggle('active', item.getAttribute('data-category') === category);
+    });
+
+    // Update panel header title
+    if (panelHeaderTitle) {
+      panelHeaderTitle.textContent = CATEGORY_LABELS[category] || 'Active Apps';
+    }
+
+    // Show/hide the correct app list
+    const lists = { active: listActive, scripts: listScripts, ghosts: listGhosts };
+    Object.entries(lists).forEach(([key, el]) => {
+      if (el) el.style.display = key === category ? 'flex' : 'none';
+    });
+  }
+
+  // Bind sidebar click events
+  sidebarItems.forEach(item => {
+    item.addEventListener('click', () => {
+      switchCategory(item.getAttribute('data-category'));
+    });
+  });
+
+  // --- Instant Load & Scan Lifecycle ---
+  async function performSingleScan(forceRescan = false) {
     if (isScanning) return;
-    isScanning = true;
 
     const tab = await resolveTargetTab();
     if (!tab || !tab.id || !tab.url || tab.url.startsWith('chrome://')) {
@@ -88,18 +115,38 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    let tabHostname = '';
     try {
       const url = new URL(tab.url);
-      if (storeDomainEl) storeDomainEl.textContent = url.hostname;
+      tabHostname = url.hostname;
+      if (storeDomainEl) storeDomainEl.textContent = tabHostname;
     } catch (e) {
       if (storeDomainEl) storeDomainEl.textContent = 'Storefront';
     }
 
-    // Show initial scanning indicator
+    const storageKey = `results_${tab.id}`;
+    const domainKey = tabHostname ? `results_${tabHostname}` : '';
+
+    // 1. FAST PATH (Instant Load): If not forced rescan, check cache first!
+    // Shows loading only once per page; closing & reopening loads instantly with 0ms delay!
+    if (!forceRescan) {
+      try {
+        const cacheData = await chrome.storage.local.get([storageKey, domainKey].filter(Boolean));
+        const cached = cacheData[storageKey] || (domainKey ? cacheData[domainKey] : null);
+        if (cached && cached.results) {
+          rawData = cached;
+          renderAll();
+          return; // Instant render, zero loading screens!
+        }
+      } catch (err) {}
+    }
+
+    // 2. SLOW/INITIAL PATH: Run scan only when cache is missing or explicitly re-scanning
+    isScanning = true;
     setLoadingState(true);
 
-    // Send single scan request directly to the page content script
-    chrome.tabs.sendMessage(tab.id, { type: 'SCAN_REQUEST' }, async (response) => {
+    // Send scan request directly to the page content script
+    chrome.tabs.sendMessage(tab.id, { type: 'SCAN_REQUEST', force: forceRescan }, async (response) => {
       isScanning = false;
       setLoadingState(false);
 
@@ -114,8 +161,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // Fallback: Check local storage for cached results if content script response was missed
       try {
-        const data = await chrome.storage.local.get([`results_${tab.id}`]);
-        const cached = data[`results_${tab.id}`];
+        const data = await chrome.storage.local.get([storageKey, domainKey].filter(Boolean));
+        const cached = data[storageKey] || (domainKey ? data[domainKey] : null);
         if (cached && cached.results) {
           rawData = cached;
           renderAll();
@@ -144,19 +191,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (restrictedUi) restrictedUi.style.display = 'none';
     }
 
-    // Store Info & MyShopify Domain
+    // Store Info Bar
     const myshopify = storeInfo.shop || '';
-    if (myshopify && myshopifyContainer && myshopifyUrlEl) {
-      myshopifyUrlEl.textContent = myshopify;
-      myshopifyContainer.style.display = 'inline-flex';
-    } else if (myshopifyContainer) {
-      myshopifyContainer.style.display = 'none';
+    if (myshopifyUrlEl) {
+      myshopifyUrlEl.textContent = myshopify || '—';
     }
-
-    // KPI Metric Strip
-    if (activeCountEl) activeCountEl.textContent = active.length;
-    if (scriptsCountEl) scriptsCountEl.textContent = scripts.length;
-    if (ghostsCountEl) ghostsCountEl.textContent = ghosts.length;
     if (themeNameEl) themeNameEl.textContent = storeInfo.theme || 'Custom Theme';
     if (growthStackEl) growthStackEl.textContent = growthStack || 'Standard Stack';
 
@@ -191,30 +230,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     const totalFiltered = filteredActive.length + filteredScripts.length + filteredGhosts.length;
     const totalAll = active.length + scripts.length + ghosts.length;
 
-    // Deduplication Fingerprint: Prevent unnecessary DOM re-creation
+    // Deduplication Fingerprint
     const currentFingerprint = JSON.stringify({
       fa: filteredActive.length,
       fs: filteredScripts.length,
       fg: filteredGhosts.length,
       theme: storeInfo.theme,
       q,
-      tab: activeTabFilter
+      cat: activeCategory
     });
     if (currentFingerprint === lastRenderFingerprint && document.querySelector('.app-card')) {
       return;
     }
     lastRenderFingerprint = currentFingerprint;
 
-    // Update Tab Badges
-    if (tabAllCount) tabAllCount.textContent = totalFiltered;
-    if (tabActiveCount) tabActiveCount.textContent = filteredActive.length;
-    if (tabScriptsCount) tabScriptsCount.textContent = filteredScripts.length;
-    if (tabGhostsCount) tabGhostsCount.textContent = filteredGhosts.length;
-
-    // Update Column Header Badges (Inside Pinned Header Bar)
-    if (badgeActive) badgeActive.textContent = filteredActive.length;
-    if (badgeScripts) badgeScripts.textContent = filteredScripts.length;
-    if (badgeGhosts) badgeGhosts.textContent = filteredGhosts.length;
+    // Update Sidebar Counts
+    if (sidebarActiveCount) sidebarActiveCount.textContent = filteredActive.length;
+    if (sidebarScriptsCount) sidebarScriptsCount.textContent = filteredScripts.length;
+    if (sidebarGhostsCount) sidebarGhostsCount.textContent = filteredGhosts.length;
+    if (totalAppsCount) totalAppsCount.textContent = totalFiltered;
 
     // Update Footer Status
     if (footerStatus) {
@@ -227,9 +261,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderAppList(listActive, filteredActive, 'active', changes.added || []);
     renderAppList(listScripts, filteredScripts, 'script', []);
     renderAppList(listGhosts, filteredGhosts, 'ghost', []);
+
+    // Ensure correct panel is visible
+    switchCategory(activeCategory);
   }
 
-  // --- Render Individual Column List ---
+  // --- Render Individual App List ---
   function renderAppList(container, apps, type, addedApps = []) {
     if (!container) return;
 
@@ -317,7 +354,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadMissingAppIcons(container);
   }
 
-  // --- Dynamic On-Demand Logo Loader (Option B Dynamic Fallback) ---
+  // --- Dynamic On-Demand Logo Loader ---
   function loadMissingAppIcons(container) {
     if (!container) return;
     const avatars = container.querySelectorAll('.app-avatar[data-slug]:not([data-icon-loaded])');
@@ -389,9 +426,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (listActive) listActive.innerHTML = '';
     if (listScripts) listScripts.innerHTML = '';
     if (listGhosts) listGhosts.innerHTML = '';
-    if (activeCountEl) activeCountEl.textContent = '0';
-    if (scriptsCountEl) scriptsCountEl.textContent = '0';
-    if (ghostsCountEl) ghostsCountEl.textContent = '0';
+    if (sidebarActiveCount) sidebarActiveCount.textContent = '0';
+    if (sidebarScriptsCount) sidebarScriptsCount.textContent = '0';
+    if (sidebarGhostsCount) sidebarGhostsCount.textContent = '0';
+    if (totalAppsCount) totalAppsCount.textContent = '0';
     if (themeNameEl) themeNameEl.textContent = '---';
     if (growthStackEl) growthStackEl.textContent = 'Non-Shopify';
     if (footerStatus) footerStatus.textContent = 'Storefront not recognized';
@@ -460,25 +498,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     copyMyshopifyBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const text = myshopifyUrlEl ? myshopifyUrlEl.textContent : '';
-      if (text) {
+      if (text && text !== '—') {
         navigator.clipboard.writeText(text).then(() => {
           showToast(`Copied ${text}`);
         });
       }
-    });
-  }
-
-  // --- Expand / Popout in Full Window ---
-  if (popoutBtn) {
-    popoutBtn.addEventListener('click', async () => {
-      const tab = await resolveTargetTab();
-      const targetTabId = tab ? tab.id : '';
-      chrome.windows.create({
-        url: chrome.runtime.getURL(`src/popup/popup.html?tabId=${targetTabId}`),
-        type: 'popup',
-        width: 1080,
-        height: 760
-      });
     });
   }
 
@@ -489,6 +513,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (clearSearchBtn) {
         clearSearchBtn.style.display = searchQuery ? 'block' : 'none';
       }
+      lastRenderFingerprint = ''; // Force re-render on search
       renderAll();
     });
   }
@@ -500,44 +525,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         searchQuery = '';
         clearSearchBtn.style.display = 'none';
         appSearchInput.focus();
+        lastRenderFingerprint = '';
         renderAll();
       }
     });
   }
 
-  // --- Filter Tabs Handlers (Synchronizes Header Bar & Card Lists) ---
-  filterTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      filterTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-
-      activeTabFilter = tab.getAttribute('data-tab');
-
-      const focusClass = activeTabFilter === 'active' ? 'focus-active'
-        : activeTabFilter === 'scripts' ? 'focus-scripts'
-        : activeTabFilter === 'ghosts' ? 'focus-ghosts' : '';
-
-      if (triageGrid) {
-        triageGrid.classList.remove('focus-active', 'focus-scripts', 'focus-ghosts');
-        if (focusClass) triageGrid.classList.add(focusClass);
-      }
-      if (triageHeaderBar) {
-        triageHeaderBar.classList.remove('focus-active', 'focus-scripts', 'focus-ghosts');
-        if (focusClass) triageHeaderBar.classList.add(focusClass);
-      }
-    });
-  });
-
   // --- Action Buttons ---
-  if (rescanBtn) rescanBtn.addEventListener('click', performSingleScan);
-  if (restrictedRetryBtn) restrictedRetryBtn.addEventListener('click', performSingleScan);
+  if (rescanBtn) rescanBtn.addEventListener('click', () => performSingleScan(true));
+  if (restrictedRetryBtn) restrictedRetryBtn.addEventListener('click', () => performSingleScan(true));
   if (quickExportBtn) quickExportBtn.addEventListener('click', copyMarkdownAudit);
 
   // --- Keyboard Shortcuts ---
   document.addEventListener('keydown', (e) => {
     // Press 'R' to rescan (when not typing in search)
     if (e.key === 'r' && document.activeElement !== appSearchInput) {
-      performSingleScan();
+      performSingleScan(true);
     }
     // Press '/' to focus search
     if (e.key === '/' && document.activeElement !== appSearchInput) {
@@ -557,7 +560,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       .replace(/'/g, '&#39;');
   }
 
-  // --- Initial Single Scan Trigger ---
-  // Runs ONCE on popup launch to scan the storefront cleanly. No continuous re-triggers.
-  performSingleScan();
+  // --- Initial Launch: Instant Cache Load (0ms wait, no loading screen) ---
+  performSingleScan(false);
 });

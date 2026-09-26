@@ -72,6 +72,13 @@
       }
       
       if (message.type === 'SCAN_REQUEST') {
+        // Fast path: If already scanned and not forced rescan, return instantly!
+        if (!message.force && detectorEngine.hasScanned) {
+          const results = detectorEngine.getResults();
+          if (sendResponse) sendResponse({ success: true, results, storeInfo: detectorEngine.getStoreInfo() });
+          return false;
+        }
+
         detectorEngine.startFullScan().then(results => {
           sendResults(results);
           if (sendResponse) sendResponse({ success: true, results, storeInfo: detectorEngine.getStoreInfo() });
@@ -88,12 +95,6 @@
 
   function sendResults(results) {
     if (!results || typeof results !== 'object') return;
-    
-    const activeCount = Array.isArray(results.active) ? results.active.length : 0;
-    const scriptsCount = Array.isArray(results.scripts) ? results.scripts.length : 0;
-    const ghostsCount = Array.isArray(results.ghosts) ? results.ghosts.length : 0;
-    
-    if (activeCount === 0 && scriptsCount === 0 && ghostsCount === 0) return;
     if (!chrome.runtime?.id) return;
     
     chrome.runtime.sendMessage({

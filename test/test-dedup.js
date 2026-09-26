@@ -513,6 +513,60 @@ async function runAllTests() {
   });
 
   // -----------------------------------------------------------
+  // Suite 10: Residual Ghost Apps Official Logos
+  // -----------------------------------------------------------
+  suite('Suite 10: Residual Ghost Apps Official Logos');
+
+  test('All 20 user-reported ghost and script apps have genuine official logos and slugs', () => {
+    const ghostAppsToVerify = [
+      { name: 'Lucky Orange', slug: 'lucky-orange' },
+      { name: 'Mailchimp', slug: 'mailchimp' },
+      { name: 'PerimeterX', slug: 'perimeterx' },
+      { name: 'Pinterest Pixel', slug: 'pinterest' },
+      { name: 'Post Affiliate Pro', slug: 'post-affiliate-pro' },
+      { name: 'Reviews.io', slug: 'reviews-co-uk-product-and-merchant-review-collection' },
+      { name: 'Segment', slug: 'segment-com-by-littledata' },
+      { name: 'Sendinblue', slug: 'sendinblue-tools' },
+      { name: 'Snapchat Pixel', slug: 'snapchat-ads' },
+      { name: 'Global-E', slug: 'global-e' },
+      { name: 'Google Optimize', slug: 'google-optimize' },
+      { name: 'Heap', slug: 'heap' },
+      { name: 'LoyaltyLion', slug: 'loyaltylion' },
+      { name: 'Meta Pixel', slug: 'facebook' },
+      { name: 'TikTok Pixel', slug: 'tiktok' },
+      { name: 'Attentive', slug: 'attentive' },
+      { name: 'GA4', slug: 'google-analytics-4-ga4' },
+      { name: 'Google Tag Manager', slug: 'google-tag-manager-installer' },
+      { name: 'Klaviyo SMS', slug: 'klaviyo-email-marketing' },
+      { name: 'Stamped.io', slug: 'product-reviews-addon' }
+    ];
+
+    setupMockEnvironment();
+    const engine = new DetectorEngine();
+    engine.apps = apps;
+    engine.isShopify = true;
+
+    for (const item of ghostAppsToVerify) {
+      const found = apps.find(a => a.name.toLowerCase() === item.name.toLowerCase());
+      assert(found, `App '${item.name}' must exist in database`);
+      assertEqual(found.slug, item.slug, `App '${item.name}' must have slug '${item.slug}'`);
+      assert(found.icon && found.icon.length > 10, `App '${item.name}' must have an icon URL`);
+      assert(found.icon.startsWith('http'), `App '${item.name}' icon must be a valid http URL`);
+
+      // Test detection output
+      engine.recordDetection(item.name, 'Script Code', 0.85);
+    }
+
+    const results = engine.getResults();
+    assertEqual(results.ghosts.length, 20, `All 20 apps should be detected with valid findings, got ${results.ghosts.length}`);
+
+    for (const appItem of results.ghosts) {
+      assert(appItem.icon, `App '${appItem.name}' must output an icon in getResults()`);
+      assert(appItem.slug, `App '${appItem.name}' must output a slug in getResults()`);
+    }
+  });
+
+  // -----------------------------------------------------------
   // Summary Report
   // -----------------------------------------------------------
   console.log('\n=============================================');

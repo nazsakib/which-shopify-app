@@ -41,16 +41,6 @@
       </div>
 
       <div class="header-actions">
-        <button id="popout-btn" class="icon-action-btn" title="Open in Expanded Full Window">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 3 21 3 21 9"/>
-            <polyline points="9 21 3 21 3 15"/>
-            <line x1="21" y1="3" x2="14" y2="10"/>
-            <line x1="3" y1="21" x2="10" y2="14"/>
-          </svg>
-          <span>Expand</span>
-        </button>
-
         <button id="quick-export-btn" class="icon-action-btn" title="Copy Markdown Audit to Clipboard">
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
@@ -60,159 +50,118 @@
         </button>
       </div>
     </div>
-
-    <!-- Store Metadata Bar -->
-    <div class="store-meta-bar">
-      <div class="store-identity">
-        <span class="live-dot" id="live-indicator"></span>
-        <span class="store-domain" id="store-domain">Connecting to storefront...</span>
-      </div>
-      <div id="myshopify-container" class="myshopify-chip" style="display: none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-        </svg>
-        <span id="myshopify-url"></span>
-        <button id="copy-myshopify" class="copy-chip-btn" title="Copy MyShopify domain">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-          </svg>
-        </button>
-      </div>
-    </div>
   </header>
 
-  <!-- Slim Scan Progress Indicator (Shows once during initial scan) -->
+  <!-- Slim Scan Progress Indicator -->
   <div id="scan-progress" class="scan-progress-bar" style="display: none;"></div>
 
-  <!-- Hero KPI Metric Strip -->
-  <div class="metrics-strip">
-    <div class="metric-card active-metric">
-      <div class="metric-header">
-        <span class="metric-dot emerald"></span>
-        <span class="metric-label">Active Apps</span>
-      </div>
-      <div class="metric-value-wrap">
-        <span class="metric-val" id="active-count">0</span>
-        <span class="metric-badge">Confirmed</span>
-      </div>
+  <!-- Row 1: Store Info Bar -->
+  <div class="store-info-bar">
+    <div class="store-info-item">
+      <span class="store-info-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        Store URL
+      </span>
+      <span class="store-info-value" id="store-domain">Connecting...</span>
     </div>
-
-    <div class="metric-card script-metric">
-      <div class="metric-header">
-        <span class="metric-dot blue"></span>
-        <span class="metric-label">Apps w/ Scripts</span>
-      </div>
-      <div class="metric-value-wrap">
-        <span class="metric-val" id="scripts-count">0</span>
-        <span class="metric-badge">Background</span>
-      </div>
+    <div class="store-info-divider"></div>
+    <div class="store-info-item">
+      <span class="store-info-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        </svg>
+        MyShopify
+      </span>
+      <span class="store-info-value mono" id="myshopify-url">—</span>
+      <button id="copy-myshopify" class="copy-chip-btn" title="Copy MyShopify domain">
+        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+      </button>
     </div>
-
-    <div class="metric-card ghost-metric">
-      <div class="metric-header">
-        <span class="metric-dot amber"></span>
-        <span class="metric-label">Residual Ghosts</span>
-      </div>
-      <div class="metric-value-wrap">
-        <span class="metric-val" id="ghosts-count">0</span>
-        <span class="metric-badge">Uninstalled</span>
-      </div>
-    </div>
-
-    <div class="metric-card theme-metric">
-      <div class="metric-header">
-        <span class="metric-dot purple"></span>
-        <span class="metric-label">Active Theme</span>
-      </div>
-      <div class="metric-value-wrap">
-        <span class="metric-val theme-val" id="theme-name">Detecting...</span>
-        <span class="metric-badge" id="growth-stack">Architecture</span>
-      </div>
+    <div class="store-info-divider"></div>
+    <div class="store-info-item">
+      <span class="store-info-label">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+        Theme
+      </span>
+      <span class="store-info-value" id="theme-name">Detecting...</span>
+      <span class="store-info-badge" id="growth-stack">Architecture</span>
     </div>
   </div>
 
-  <!-- Search & Filter Controls -->
-  <div class="toolbar">
-    <div class="search-input-wrap">
-      <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input type="search" id="app-search" placeholder="Filter detected apps (e.g. Klaviyo, Reviews, CDN)..." autocomplete="off" spellcheck="false">
-      <button id="clear-search" class="clear-btn" title="Clear filter" style="display: none;">&times;</button>
-    </div>
+  <!-- Row 2: Sidebar + Content Panel -->
+  <div class="main-layout">
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <button class="sidebar-item active" data-category="active">
+          <span class="sidebar-dot emerald"></span>
+          <span class="sidebar-label">Active Apps</span>
+          <span class="sidebar-count" id="sidebar-active-count">0</span>
+        </button>
+        <button class="sidebar-item" data-category="scripts">
+          <span class="sidebar-dot blue"></span>
+          <span class="sidebar-label">Apps w/ Scripts</span>
+          <span class="sidebar-count" id="sidebar-scripts-count">0</span>
+        </button>
+        <button class="sidebar-item" data-category="ghosts">
+          <span class="sidebar-dot amber"></span>
+          <span class="sidebar-label">Residual Ghosts</span>
+          <span class="sidebar-count" id="sidebar-ghosts-count">0</span>
+        </button>
+      </nav>
 
-    <div class="filter-tabs">
-      <button class="filter-tab active" data-tab="all">
-        <span>All</span>
-        <span class="tab-badge" id="tab-all-count">0</span>
-      </button>
-      <button class="filter-tab" data-tab="active">
-        <span>Active</span>
-        <span class="tab-badge" id="tab-active-count">0</span>
-      </button>
-      <button class="filter-tab" data-tab="scripts">
-        <span>Scripts</span>
-        <span class="tab-badge" id="tab-scripts-count">0</span>
-      </button>
-      <button class="filter-tab" data-tab="ghosts">
-        <span>Residuals</span>
-        <span class="tab-badge" id="tab-ghosts-count">0</span>
-      </button>
+      <div class="sidebar-summary">
+        <div class="summary-total">
+          <span class="summary-label">Total Detected</span>
+          <span class="summary-value" id="total-apps-count">0</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Content Panel -->
+    <div class="content-panel">
+      <!-- Search Bar -->
+      <div class="panel-toolbar">
+        <div class="search-input-wrap">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="search" id="app-search" placeholder="Filter detected apps..." autocomplete="off" spellcheck="false">
+          <button id="clear-search" class="clear-btn" title="Clear filter" style="display: none;">&times;</button>
+        </div>
+        <span class="panel-header-title" id="panel-header-title">Active Apps</span>
+      </div>
+
+      <!-- Alert Banner Area -->
+      <div id="spy-alerts" class="alerts-container"></div>
+
+      <!-- Scrollable App Cards -->
+      <div class="panel-scroll">
+        <div class="app-list active-theme" id="list-active"></div>
+        <div class="app-list script-theme" id="list-scripts" style="display: none;"></div>
+        <div class="app-list residual-theme" id="list-ghosts" style="display: none;"></div>
+      </div>
     </div>
   </div>
-
-  <!-- Alert Banner Area -->
-  <div id="spy-alerts" class="alerts-container"></div>
-
-  <!-- Pinned Column Header Bar (Fixed, never floats over cards) -->
-  <div class="triage-header-bar" id="triage-header-bar">
-    <div class="header-anchor active-theme" id="anchor-active">
-      <div class="col-title">
-        <span class="header-indicator"></span>
-        <h2>Active Apps</h2>
-      </div>
-      <span class="col-count" id="badge-active">0</span>
-    </div>
-
-    <div class="header-anchor script-theme" id="anchor-scripts">
-      <div class="col-title">
-        <span class="header-indicator"></span>
-        <h2>Apps using scripts</h2>
-      </div>
-      <span class="col-count" id="badge-scripts">0</span>
-    </div>
-
-    <div class="header-anchor residual-theme" id="anchor-ghosts">
-      <div class="col-title">
-        <span class="header-indicator"></span>
-        <h2>Residual App Code</h2>
-      </div>
-      <span class="col-count" id="badge-ghosts">0</span>
-    </div>
-  </div>
-
-  <!-- Main Scrollable Body: 3-Column Triage Grid of Cards -->
-  <main class="content-scrollable">
-    <div class="triage-grid" id="triage-grid">
-      <!-- Column 1 Cards -->
-      <div class="app-list active-theme" id="list-active"></div>
-
-      <!-- Column 2 Cards -->
-      <div class="app-list script-theme" id="list-scripts"></div>
-
-      <!-- Column 3 Cards -->
-      <div class="app-list residual-theme" id="list-ghosts"></div>
-    </div>
-  </main>
 
   <!-- Sticky Footer -->
   <footer class="app-footer">
     <div class="footer-meta">
       <span class="client-badge">🔒 100% Client-Side</span>
-      <span class="audit-summary" id="footer-status">Ready</span>
     </div>
+    <a href="https://whichshopifyapp.vercel.app/" target="_blank" rel="noopener noreferrer" class="footer-site-link">whichshopifyapp.vercel.app</a>
     <div class="footer-actions">
       <button id="rescan-btn" class="primary-btn">
         <svg id="rescan-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">

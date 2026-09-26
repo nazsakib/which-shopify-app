@@ -41,7 +41,11 @@ const CANONICAL_ALIASES = {
   'sign-customizer': 'Neon Sign Customizer',
   'signcustomizer': 'Neon Sign Customizer',
   'neon-sign-customizer': 'Neon Sign Customizer',
-  'neonsigncustomizer': 'Neon Sign Customizer'
+  'neonsigncustomizer': 'Neon Sign Customizer',
+  'attentive': 'Attentive',
+  'attn': 'Attentive',
+  'attn-tag': 'Attentive',
+  'attntag': 'Attentive'
 };
 
 const GENERIC_PLATFORM_DOMAINS = new Set([
@@ -68,16 +72,61 @@ class DetectorEngine {
 
   async init(appsData) {
     this.apps = Array.isArray(appsData) ? appsData : [];
+    this.buildIndexes();
     this.fingerprintEngine = new FingerprintEngine(this.apps);
     this.mutationDetector = new MutationDetector(this.apps);
     // Instant initial check
     this.isShopify = this.detectIfShopify();
   }
 
+  buildIndexes() {
+    this.appsWithDomains = [];
+    this.appsWithGlobals = [];
+    this.appsWithDom = [];
+    this.appsWithProxy = [];
+    this.appsWithWebhooks = [];
+    this.scriptIndex = new Map();
+
+    const apps = this.apps || [];
+    for (let i = 0; i < apps.length; i++) {
+      const app = apps[i];
+      if (!app) continue;
+
+      if (Array.isArray(app.domains) && app.domains.length > 0) {
+        this.appsWithDomains.push(app);
+      }
+      if (Array.isArray(app.globals) && app.globals.length > 0) {
+        this.appsWithGlobals.push(app);
+      }
+      if (Array.isArray(app.dom) && app.dom.length > 0) {
+        this.appsWithDom.push(app);
+      }
+      if (Array.isArray(app.proxy_paths) && app.proxy_paths.length > 0) {
+        this.appsWithProxy.push(app);
+      }
+      if (Array.isArray(app.webhook_patterns) && app.webhook_patterns.length > 0) {
+        this.appsWithWebhooks.push(app);
+      }
+      if (Array.isArray(app.scripts)) {
+        for (let j = 0; j < app.scripts.length; j++) {
+          const s = app.scripts[j];
+          if (s) {
+            const sLower = s.toLowerCase();
+            if (!this.scriptIndex.has(sLower)) {
+              this.scriptIndex.set(sLower, []);
+            }
+            this.scriptIndex.get(sLower).push(app);
+          }
+        }
+      }
+    }
+  }
+
   reset() {
     this.detectedApps.clear();
     this.pendingComponents = [];
     this.isScanning = false;
+    this.hasScanned = false;
     this.globalsChecked = false;
     this.isShopify = false;
   }
@@ -113,15 +162,18 @@ class DetectorEngine {
           }
         }, () => {
           this.isScanning = false;
+          this.hasScanned = true;
           resolve(this.getResults());
         });
         
         setTimeout(() => {
           this.isScanning = false;
+          this.hasScanned = true;
           resolve(this.getResults());
         }, 450);
       } catch (err) {
         this.isScanning = false;
+        this.hasScanned = true;
         resolve(this.getResults());
       }
     });
@@ -489,63 +541,96 @@ class DetectorEngine {
   checkNetwork(url) {
     if (!url || !this.isShopify) return;
     const urlLower = url.toLowerCase();
-    this.apps.forEach(app => {
-      if (!app) return;
-      
-      if (Array.isArray(app.cdn_fingerprints)) {
-        for (const fp of app.cdn_fingerprints) {
-          if (fp && urlLower.includes(fp.toLowerCase())) {
-            this.recordDetection(app.name, 'network', this.confidenceWeights.network, { url });
-            return;
-          }
+    if (!this.appsWithProxy) this.buildIndexes();
+
+    // 1. Fast domain check (only apps with domains, ~308 apps)
+    const appsWithDomains = this.appsWithDomains || this.apps;
+    for (let i = 0; i < appsWithDomains.length; i++) {
+      const app = appsWithDomains[i];
+      for (let j = 0; j < app.domains.length; j++) {
+        const domain = app.domains[j];
+        if (!domain) continue;
+        const dLower = domain.toLowerCase();
+        if (GENERIC_PLATFORM_DOMAINS.has(dLower)) continue;
+        if (urlLower.includes(dLower)) {
+          this.recordDetection(app.name, 'network', this.confidenceWeights.network, { url });
+          return;
         }
       }
-      
-      if (Array.isArray(app.proxy_paths)) {
-        for (const path of app.proxy_paths) {
-          if (path && urlLower.includes(path.toLowerCase())) {
-            this.recordDetection(app.name, 'network', this.confidenceWeights.proxy, { url });
-            return;
-          }
+    }
+
+    // 2. Fast proxy paths (apps with proxy)
+    const appsWithProxy = this.appsWithProxy || this.apps;
+    for (let i = 0; i < appsWithProxy.length; i++) {
+      const app = appsWithProxy[i];
+      for (let j = 0; j < app.proxy_paths.length; j++) {
+        const path = app.proxy_paths[j];
+        if (path && urlLower.includes(path.toLowerCase())) {
+          this.recordDetection(app.name, 'network', this.confidenceWeights.proxy, { url });
+          return;
         }
       }
-      
-      if (Array.isArray(app.webhook_patterns)) {
-        for (const pattern of app.webhook_patterns) {
-          if (pattern && urlLower.includes(pattern.toLowerCase())) {
-            this.recordDetection(app.name, 'network', this.confidenceWeights.webhook, { url });
-            return;
-          }
+    }
+
+    // 3. Fast webhook patterns (apps with webhooks)
+    const appsWithWebhooks = this.appsWithWebhooks || this.apps;
+    for (let i = 0; i < appsWithWebhooks.length; i++) {
+      const app = appsWithWebhooks[i];
+      for (let j = 0; j < app.webhook_patterns.length; j++) {
+        const pattern = app.webhook_patterns[j];
+        if (pattern && urlLower.includes(pattern.toLowerCase())) {
+          this.recordDetection(app.name, 'network', this.confidenceWeights.webhook, { url });
+          return;
         }
       }
-      
-      if (Array.isArray(app.domains)) {
-        for (const domain of app.domains) {
+    }
+
+    // 4. Fast script filename check via Map O(1)
+    const cleanUrl = urlLower.split('?')[0].split('#')[0];
+    const filename = cleanUrl.substring(cleanUrl.lastIndexOf('/') + 1);
+    if (filename && this.scriptIndex && this.scriptIndex.has(filename)) {
+      const matched = this.scriptIndex.get(filename);
+      for (let i = 0; i < matched.length; i++) {
+        this.recordDetection(matched[i].name, 'network', this.confidenceWeights.script, { url });
+      }
+    }
+  }
+
+  scanScripts() {
+    if (!this.appsWithDomains || !this.scriptIndex) this.buildIndexes();
+    const scripts = document.querySelectorAll('script[src]');
+    const appsWithDomains = this.appsWithDomains || this.apps;
+    const scriptIndex = this.scriptIndex;
+
+    scripts.forEach(script => {
+      const src = script.src;
+      if (!src) return;
+      const urlLower = src.toLowerCase();
+
+      // 1. Fast Domain Matching (only ~308 apps instead of 27,247)
+      for (let i = 0; i < appsWithDomains.length; i++) {
+        const app = appsWithDomains[i];
+        for (let j = 0; j < app.domains.length; j++) {
+          const domain = app.domains[j];
           if (!domain) continue;
           const dLower = domain.toLowerCase();
           if (GENERIC_PLATFORM_DOMAINS.has(dLower)) continue;
           if (urlLower.includes(dLower)) {
-            this.recordDetection(app.name, 'network', this.confidenceWeights.network, { url });
-            return;
+            this.recordDetection(app.name, 'script', this.confidenceWeights.script, { url: src });
+            break;
           }
         }
       }
-      
-      if (Array.isArray(app.scripts)) {
-        for (const script of app.scripts) {
-          if (script && urlLower.includes(script.toLowerCase())) {
-            this.recordDetection(app.name, 'network', this.confidenceWeights.script, { url });
-            return;
-          }
-        }
-      }
-    });
-  }
 
-  scanScripts() {
-    const scripts = document.querySelectorAll('script[src]');
-    scripts.forEach(script => {
-      if (script.src) this.apps.forEach(app => { if (this.matchScript(app, script.src)) this.recordDetection(app.name, 'script', this.confidenceWeights.script, { url: script.src }); });
+      // 2. Fast Script Filename Matching (O(1) Map lookup)
+      const cleanUrl = urlLower.split('?')[0].split('#')[0];
+      const filename = cleanUrl.substring(cleanUrl.lastIndexOf('/') + 1);
+      if (filename && scriptIndex && scriptIndex.has(filename)) {
+        const matched = scriptIndex.get(filename);
+        for (let i = 0; i < matched.length; i++) {
+          this.recordDetection(matched[i].name, 'script', this.confidenceWeights.script, { url: src });
+        }
+      }
     });
   }
 
@@ -571,19 +656,43 @@ class DetectorEngine {
   }
 
   scanInlineScripts() {
+    if (!this.appsWithGlobals) this.buildIndexes();
     const scripts = document.querySelectorAll('script:not([src])');
+    const appsWithGlobals = this.appsWithGlobals || this.apps;
     scripts.forEach(script => {
       const content = script.textContent;
-      if (content) this.apps.forEach(app => { if (app.globals) app.globals.forEach(global => { if (content.includes(global)) this.recordDetection(app.name, 'Script Code', 0.85, { variable: global }); }); });
+      if (!content) return;
+      for (let i = 0; i < appsWithGlobals.length; i++) {
+        const app = appsWithGlobals[i];
+        if (app.globals) {
+          for (let j = 0; j < app.globals.length; j++) {
+            const global = app.globals[j];
+            if (content.includes(global)) {
+              this.recordDetection(app.name, 'Script Code', 0.85, { variable: global });
+            }
+          }
+        }
+      }
     });
   }
 
   scanDOM() {
-    this.apps.forEach(app => {
-      if (Array.isArray(app.dom)) app.dom.forEach(selector => {
-        try { const elements = document.querySelectorAll(selector); if (elements && elements.length > 0) this.recordDetection(app.name, 'dom', this.confidenceWeights.dom, { selector, count: elements.length }); } catch (e) {}
-      });
-    });
+    if (!this.appsWithDom) this.buildIndexes();
+    const appsWithDom = this.appsWithDom || this.apps;
+    for (let i = 0; i < appsWithDom.length; i++) {
+      const app = appsWithDom[i];
+      if (Array.isArray(app.dom)) {
+        for (let j = 0; j < app.dom.length; j++) {
+          const selector = app.dom[j];
+          try {
+            const elements = document.querySelectorAll(selector);
+            if (elements && elements.length > 0) {
+              this.recordDetection(app.name, 'dom', this.confidenceWeights.dom, { selector, count: elements.length });
+            }
+          } catch (e) {}
+        }
+      }
+    }
   }
 
   scanCDNFingerprints() {
