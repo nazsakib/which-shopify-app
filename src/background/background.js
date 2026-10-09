@@ -133,10 +133,27 @@ const KNOWN_SLUG_ALIASES = {
   'stamped': 'product-reviews-addon',
   'stamped.io': 'product-reviews-addon',
   'stamped-io': 'product-reviews-addon',
-  'stampedio': 'product-reviews-addon'
+  'stampedio': 'product-reviews-addon',
+  'crisp': 'crisp',
+  'crisp-chat': 'crisp',
+  'crispchat': 'crisp',
+  'mouseflow': 'mouseflow',
+  'hubspot': 'hubspot-2',
+  'hubspot-crm': 'hubspot-2',
+  'smartlook': 'smartlook',
+  'reconvert': 'reconvert-upsell-cross-sell'
 };
 
 const STATIC_APP_ICONS = {
+  'reconvert': 'https://cdn.shopify.com/app-store/listing_images/66d9956edf807b697e7f539e5e9bbaf3/icon/CPzHv72IuZQDEAE=.png',
+  'reconvert-upsell-cross-sell': 'https://cdn.shopify.com/app-store/listing_images/66d9956edf807b697e7f539e5e9bbaf3/icon/CPzHv72IuZQDEAE=.png',
+  'smartlook': 'https://logotyp.us/file/smartlook.svg',
+  'crisp': 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Logo_de_Crisp.svg',
+  'crisp-chat': 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Logo_de_Crisp.svg',
+  'crispchat': 'https://upload.wikimedia.org/wikipedia/commons/0/0b/Logo_de_Crisp.svg',
+  'mouseflow': 'https://cdn.shopify.com/app-store/listing_images/9aab2c8d9be0639868dc3142c4e0b8fa/icon/CM3iruCArfkCEAE=.png',
+  'hubspot': 'https://cdn.shopify.com/app-store/listing_images/e4d465ef040f358f41065cc71e218071/icon/CK3a0u3Ntv8CEAE=.png',
+  'hubspot-2': 'https://cdn.shopify.com/app-store/listing_images/e4d465ef040f358f41065cc71e218071/icon/CK3a0u3Ntv8CEAE=.png',
   'perimeterx': 'https://storage.googleapis.com/perimeterx-logos/primary_logo_red_cropped.png',
   'post-affiliate-pro': 'https://images.postaffiliatepro.com/images/logo.svg',
   'postaffiliatepro': 'https://images.postaffiliatepro.com/images/logo.svg',
@@ -160,6 +177,9 @@ async function handleGetAppIcon(slug, name) {
   // Static icon fast path
   if (STATIC_APP_ICONS[target]) {
     return STATIC_APP_ICONS[target];
+  }
+  if (STATIC_APP_ICONS[rawTarget]) {
+    return STATIC_APP_ICONS[rawTarget];
   }
 
   const cacheKey = `app_icon_${target}`;

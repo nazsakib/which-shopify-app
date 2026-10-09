@@ -79,6 +79,10 @@
           return false;
         }
 
+        if (message.force) {
+          window.postMessage({ type: 'REQUEST_SHOPIFY_GLOBALS' }, '*');
+        }
+
         detectorEngine.startFullScan().then(results => {
           sendResults(results);
           if (sendResponse) sendResponse({ success: true, results, storeInfo: detectorEngine.getStoreInfo() });

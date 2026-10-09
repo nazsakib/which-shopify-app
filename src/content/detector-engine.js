@@ -146,6 +146,9 @@ class DetectorEngine {
     if (this.isScanning) return this.getResults();
     
     this.detectedApps.clear();
+    if (this.latestGlobalsList && this.latestGlobalsList.length > 0) {
+      this.handleGlobals(this.latestGlobalsList, this.latestShopifyObject);
+    }
     if (!this.isShopify) {
       this.scanCDNFingerprints();
       this.scanInlineScripts();
@@ -942,19 +945,24 @@ class DetectorEngine {
   }
 
   handleGlobals(globalsList, shopifyObject) {
-    if (this.globalsChecked) return;
-    this.globalsChecked = true;
     if (shopifyObject) {
+      this.latestShopifyObject = shopifyObject;
       if (shopifyObject.theme) this.themeInfo.name = shopifyObject.theme.name || this.themeInfo.name;
       if (shopifyObject.shop) this.shopDomain = shopifyObject.shop;
     }
-    if (!Array.isArray(globalsList)) return;
-    const globalsSet = new Set(globalsList);
+    if (Array.isArray(globalsList)) {
+      this.latestGlobalsList = globalsList;
+    }
+    const currentGlobals = this.latestGlobalsList || globalsList;
+    if (!Array.isArray(currentGlobals)) return;
+    const globalsSet = new Set(currentGlobals);
     const commonGlobals = ['analytics', 'dataLayer', 'google_tag_manager', 'Shopify'];
     this.apps.forEach(app => {
       if (app.globals) app.globals.forEach(global => {
         const topLevel = global.split('.')[0];
-        if (!commonGlobals.includes(topLevel) && globalsSet.has(topLevel)) this.recordDetection(app.name, 'global', this.confidenceWeights.global, { variable: global });
+        if (!commonGlobals.includes(topLevel) && globalsSet.has(topLevel)) {
+          this.recordDetection(app.name, 'global', this.confidenceWeights.global, { variable: global });
+        }
       });
     });
   }
@@ -1005,11 +1013,32 @@ class DetectorEngine {
         components,
         alternative: this.getAlternative(name)
       };
-      const hasDirectEvidence = methods.includes('App Block') || methods.includes('App Snippet') || methods.includes('App Config');
-      const hasStrongProof = methods.length >= 3;
-      if (hasDirectEvidence || (hasStrongProof && methods.includes('dom'))) active.push(res);
-      else if (methods.includes('App CDN') || (methods.includes('script') && app.totalScore > 0.8)) scripts.push(res);
-      else ghosts.push(res);
+      // Evidence classification
+      const hasThemeBlock = methods.some(m => ['App Block', 'App Snippet', 'App Config'].includes(m));
+      const hasActiveScript = methods.some(m => ['script', 'App CDN', 'cdn'].includes(m));
+      const hasRuntime = methods.some(m => ['global', 'network', 'proxy', 'webhook', 'mutation'].includes(m));
+      const hasDom = methods.includes('dom');
+      const hasSnippetCode = methods.includes('Script Code');
+
+      // Pure background tag managers and tracking pixels
+      const isPureBackgroundScript = ['Tag Management', 'Pixels & Tracking'].includes(dbApp?.category);
+
+      // 1. Active Apps: Theme blocks, active runtime execution, or verified installed storefront apps
+      const isCorroboratedScript = hasActiveScript && (hasDom || hasRuntime || hasSnippetCode || methods.length >= 2 || !isPureBackgroundScript);
+      const isRuntimeActive = hasRuntime && (hasActiveScript || hasDom || methods.length >= 2 || !isPureBackgroundScript);
+      const isDomActiveWithCode = hasDom && (hasActiveScript || hasRuntime || hasSnippetCode);
+
+      if (hasThemeBlock || isCorroboratedScript || isRuntimeActive || isDomActiveWithCode) {
+        active.push(res);
+      }
+      // 2. Apps Using Scripts: Pure background scripts, pixels, tag managers, or network-only dependencies
+      else if (hasActiveScript || hasRuntime || (hasSnippetCode && app.totalScore >= 0.8)) {
+        scripts.push(res);
+      }
+      // 3. Residual Ghosts: ONLY orphaned DOM elements or static snippets with ZERO active script/runtime execution
+      else {
+        ghosts.push(res);
+      }
     });
     const activeApps = active.sort((firstApp, secondApp) => firstApp.name.localeCompare(secondApp.name));
     const names = activeApps.map(app => app.name.toLowerCase());

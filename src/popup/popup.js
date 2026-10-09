@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Show/hide the correct app list
     const lists = { active: listActive, scripts: listScripts, ghosts: listGhosts };
     Object.entries(lists).forEach(([key, el]) => {
-      if (el) el.style.display = key === category ? 'flex' : 'none';
+      if (el) el.style.display = key === category ? 'grid' : 'none';
     });
   }
 
@@ -356,11 +356,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // --- Dynamic On-Demand Logo Loader ---
   function loadMissingAppIcons(container) {
     if (!container) return;
-    const avatarElements = container.querySelectorAll('.app-avatar[data-slug]:not([data-icon-loaded])');
+    const avatarElements = container.querySelectorAll('.app-avatar:not([data-icon-loaded])');
     avatarElements.forEach(avatarElement => {
-      const appSlug = avatarElement.getAttribute('data-slug');
-      const appName = avatarElement.getAttribute('data-name');
-      if (!appSlug || avatarElement.querySelector('img.app-logo-img')) return;
+      const appSlug = avatarElement.getAttribute('data-slug') || '';
+      const appName = avatarElement.getAttribute('data-name') || '';
+      if ((!appSlug && !appName) || avatarElement.querySelector('img.app-logo-img')) return;
       avatarElement.setAttribute('data-icon-loaded', 'pending');
       try {
         chrome.runtime.sendMessage({ type: 'GET_APP_ICON', slug: appSlug, name: appName }, (response) => {
@@ -407,6 +407,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (loading) {
       if (restrictedUi) restrictedUi.style.display = 'none';
       const skeletonHtml = `
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
         <div class="skeleton-card"></div>
         <div class="skeleton-card"></div>
         <div class="skeleton-card"></div>
